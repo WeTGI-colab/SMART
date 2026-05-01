@@ -124,7 +124,7 @@ All reference files can be downloaded using the provided `utils/get_ref_files.sh
 ### 1. Clone and build
 
 ```bash
-git clone https://github.com/kaine-veal/SMART.git
+git clone https://github.com/Manuel-DominguezCBG/SMART.git
 cd SMART
 docker build -t smart:latest .
 ```
@@ -161,8 +161,8 @@ For example, using the verification1 test set:
 
 ```bash
 docker run --rm \
-  -v /path/to/tso500_project/tests/verification1:/data \
-  -v /path/to/tso500_project/tests/verification1/output:/output \
+  -v /path/to/SMART/tests/verification1:/data \
+  -v /path/to/SMART/tests/verification1/output:/output \
   -v /path/to/refs:/refs:ro \
   monkiky/smart:latest \
   "$ONCOKB_TOKEN" \
@@ -252,7 +252,7 @@ When `--keep-tmp` is used, intermediate files are retained:
 
 The example below is taken from the [verification1](tests/verification1/) test run — 18 curated variants from a single sample. The variant shown is **IDH1 R132H**, a well-characterised oncogenic hotspot with OncoKB Level 1 actionability in glioma and cholangiocarcinoma.
 
-> **[Browse the full verification1 output interactively →](https://kaine-veal.github.io/tso500_project/example-output.html)**
+> **[Browse the full verification1 output interactively →](https://manuel-dominguezcbg.github.io/SMART/example-output.html)**
 > All three tier files (Tier 3: 77 cols · Tier 2: 670 cols · Tier 1: 1,028 cols) rendered as searchable,
 > sortable tables with colour-coded OncoKB levels and per-tier column visibility controls.
 
@@ -313,7 +313,7 @@ Designed for direct input to downstream tools such as cBioPortal, oncoPrint gene
 
 ---
 
-## Output Annotations (~300–900 columns) — [Full field reference →](https://kaine-veal.github.io/tso500_project/)
+## Output Annotations (~300–900 columns) — [Full field reference →](https://manuel-dominguezcbg.github.io/SMART/)
 
 The final table includes annotations from multiple sources. Key field groups:
 

@@ -63,7 +63,7 @@ Fields not verified (require local plugin databases unavailable via REST API):
 
 ```bash
 # Build and run the pipeline first (something like)
-docker run --rm -v /Users/monkiky/Desktop/tso500_project/tests/verification1:/data -v /Users/monkiky/Desktop/tso500_project/tests/verification1/output:/output -v /Volumes/ExternalSSD/refs:/refs:ro monkiky/smart:1.0.0 "$ONCOKB_TOKEN" --transcripts-file /data/verification1_transcripts.txt --ref-dir /refs --config /data/Config.yaml --no-liftover --keep-tmp --input-dir /data --keep-tables
+docker run --rm -v /path/to/SMART/tests/verification1:/data -v /path/to/SMART/tests/verification1/output:/output -v /Volumes/ExternalSSD/refs:/refs:ro monkiky/smart:1.0.0 "$ONCOKB_TOKEN" --transcripts-file /data/verification1_transcripts.txt --ref-dir /refs --config /data/Config.yaml --no-liftover --keep-tmp --input-dir /data --keep-tables
 
 # Run both verification modules
 python3 tests/verification1/verify.py \

@@ -254,7 +254,7 @@ TEMPLATE = r"""<!DOCTYPE html>
     &nbsp;|&nbsp;
     <a href="./">&#8592; Field reference</a>
     &nbsp;&middot;&nbsp;
-    <a href="https://github.com/kaine-veal/SMART">GitHub &#8599;</a>
+    <a href="https://github.com/Manuel-DominguezCBG/SMART">GitHub &#8599;</a>
   </p>
 </header>
 
@@ -344,8 +344,8 @@ TEMPLATE = r"""<!DOCTYPE html>
 <footer>
   SMART &middot; Somatic Mutation Annotation and Reporting Tool &middot; University Hospital Southampton<br>
   <a href="./">Field reference</a> &nbsp;&middot;&nbsp;
-  <a href="https://github.com/kaine-veal/SMART">GitHub</a> &nbsp;&middot;&nbsp;
-  <a href="https://github.com/kaine-veal/SMART/blob/main/README.md">Documentation</a>
+  <a href="https://github.com/Manuel-DominguezCBG/SMART">GitHub</a> &nbsp;&middot;&nbsp;
+  <a href="https://github.com/Manuel-DominguezCBG/SMART/blob/main/README.md">Documentation</a>
 </footer>
 
 <!-- ── Embedded data ─────────────────────────────────────────────────────────── -->

@@ -35,8 +35,8 @@ For each caller verify:
 
 ```bash
 docker run --rm \
-  -v /Users/manolodominguez/tso500_project/tests/verification2:/data \
-  -v /Users/manolodominguez/tso500_project/tests/verification2/output:/output \
+  -v /path/to/SMART/tests/verification2:/data \
+  -v /path/to/SMART/tests/verification2/output:/output \
   -v /Volumes/ExternalSSD/refs:/refs:ro \
   monkiky/smart:1.1.0 \
   "$ONCOKB_TOKEN" \
@@ -45,15 +45,15 @@ docker run --rm \
   --input-dir /data \
   --output-dir /output \
   --no-liftover \
-  --keep-tmp 2>&1 | tee /Users/manolodominguez/tso500_project/tests/verification2/output/smart.log
+  --keep-tmp 2>&1 | tee /path/to/SMART/tests/verification2/output/smart.log
 ```
 
 ### SomaticSniper (PASS filter off)
 
 ```bash
 docker run --rm \
-  -v /Users/manolodominguez/tso500_project/tests/verification2:/data \
-  -v /Users/manolodominguez/tso500_project/tests/verification2/output:/output \
+  -v /path/to/SMART/tests/verification2:/data \
+  -v /path/to/SMART/tests/verification2/output:/output \
   -v /Volumes/ExternalSSD/refs:/refs:ro \
   monkiky/smart:1.1.0 \
   "$ONCOKB_TOKEN" \
@@ -63,14 +63,14 @@ docker run --rm \
   --output-dir /output \
   --no-liftover \
   --no-pass \
-  --keep-tmp 2>&1 | tee /Users/manolodominguez/tso500_project/tests/verification2/output/smart_nopass.log
+  --keep-tmp 2>&1 | tee /path/to/SMART/tests/verification2/output/smart_nopass.log
 ```
 
 ### Verify MAF output
 
 ```bash
-for maf in /Users/manolodominguez/tso500_project/tests/verification2/output/output/*.maf; do
+for maf in /path/to/SMART/tests/verification2/output/output/*.maf; do
   echo "--- $maf ---"
-  python3 /Users/manolodominguez/tso500_project/tests/verify_maf.py "$maf"
+  python3 /path/to/SMART/tests/verify_maf.py "$maf"
 done
 ```
