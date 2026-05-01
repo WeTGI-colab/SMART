@@ -428,15 +428,13 @@ var extOn = { t2: false, t1: false };
 
 function initTable(tblId, headers, data, visSet) {
   var render = makeRenderer(headers);
-  var cols = headers.map(function(h, i) {
-    return {
-      title: h,
-      defaultContent: '',
-      visible: visSet ? visSet.has(i) : true,
-      render: render
-    };
+  // Always initialise with all columns visible — FixedColumns and width
+  // calculations break when many columns are hidden at construction time,
+  // especially inside a display:none panel.
+  var cols = headers.map(function(h) {
+    return { title: h, defaultContent: '', render: render };
   });
-  return new DataTable('#' + tblId, {
+  var opts = {
     data: data,
     columns: cols,
     scrollX: true,
@@ -444,14 +442,24 @@ function initTable(tblId, headers, data, visSet) {
     scrollCollapse: true,
     paging: false,
     order: [],
-    fixedColumns: { start: 2 },
-    layout: {
-      topStart: 'search',
-      topEnd: null,
-      bottomStart: null,
-      bottomEnd: null
+    layout: { topStart: 'search', topEnd: null, bottomStart: null, bottomEnd: null }
+  };
+  // FixedColumns only for T3: it is always visible on load so widths are correct.
+  // T2/T1 are lazy-init inside a hidden panel; skip FixedColumns to avoid the
+  // zero-width glitch.
+  if (!visSet) opts.fixedColumns = { start: 2 };
+  var dt = new DataTable('#' + tblId, opts);
+  // Hide extended columns after init using the batch API (much faster than
+  // looping with .column(i).visible() and avoids intermediate redraws).
+  if (visSet) {
+    var extIdx = [];
+    for (var i = 0; i < headers.length; i++) {
+      if (!visSet.has(i)) extIdx.push(i);
     }
-  });
+    dt.columns(extIdx).visible(false, false);
+    dt.columns.adjust().draw(false);
+  }
+  return dt;
 }
 
 // ── Tab switching (lazy-init T2/T1 on first view) ─────────────────────────────
@@ -462,26 +470,33 @@ function showTab(id, btn) {
   btn.classList.add('active');
 
   if (!DT[id]) {
-    if (id === 't2') DT.t2 = initTable('tbl-t2', T2H, T2D, T2_VIS);
-    if (id === 't1') DT.t1 = initTable('tbl-t1', T1H, T1D, T1_VIS);
+    // Wait one frame so the panel is visible before DataTables measures widths.
+    setTimeout(function() {
+      if (id === 't2') DT.t2 = initTable('tbl-t2', T2H, T2D, T2_VIS);
+      if (id === 't1') DT.t1 = initTable('tbl-t1', T1H, T1D, T1_VIS);
+    }, 50);
+  } else {
+    DT[id].columns.adjust().draw(false);
   }
-  if (DT[id]) DT[id].columns.adjust().draw(false);
 }
 
 // ── Column visibility toggle for T2 / T1 ─────────────────────────────────────
 function toggleExt(tier) {
+  if (!DT[tier]) return;   // guard: table not yet initialised (clicked too fast)
   extOn[tier] = !extOn[tier];
-  var vis = (tier === 't2') ? T2_VIS : T1_VIS;
-  var nc  = (tier === 't2') ? __T2_NCOLS__ : __T1_NCOLS__;
-  DT[tier].columns().every(function(i) {
-    if (!vis.has(i)) this.visible(extOn[tier]);
-  });
+  var vis     = (tier === 't2') ? T2_VIS : T1_VIS;
+  var headers = (tier === 't2') ? T2H    : T1H;
+  var extIdx  = [];
+  for (var i = 0; i < headers.length; i++) {
+    if (!vis.has(i)) extIdx.push(i);
+  }
+  DT[tier].columns(extIdx).visible(extOn[tier], false);
   DT[tier].columns.adjust().draw(false);
   var btn = document.getElementById('btn-' + tier);
   btn.classList.toggle('on', extOn[tier]);
   btn.textContent = extOn[tier]
-    ? 'Show core columns only (__T3_NCOLS__)'
-    : 'Show all ' + nc + ' columns';
+    ? 'Show core columns only'
+    : 'Show all ' + headers.length + ' columns';
 }
 
 // ── Boot: Tier 3 is always visible on load ────────────────────────────────────
