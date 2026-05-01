@@ -1,0 +1,45 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##ALT=<ID=DUP,Description="Duplication">
+##ALT=<ID=DEL,Description="Deletion">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of the variant">
+##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">
+##INFO=<ID=SVLEN,Number=1,Type=Integer,Description="Difference in length between REF and ALT alleles">
+##INFO=<ID=CIPOS,Number=2,Type=Integer,Description="Confidence interval around POS">
+##INFO=<ID=CIEND,Number=2,Type=Integer,Description="Confidence interval around END">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths for the ref and alt alleles">
+##FORMAT=<ID=AF,Number=1,Type=Float,Description="Allele fraction in tumor">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Total read depth">
+##FORMAT=<ID=PR,Number=.,Type=Integer,Description="Spanning paired-read support for the ref and alt alleles">
+##FORMAT=<ID=SR,Number=.,Type=Integer,Description="Split reads for the ref and alt alleles">
+##contig=<ID=chr1,length=248956422>
+##contig=<ID=chr2,length=242193529>
+##contig=<ID=chr3,length=198295559>
+##contig=<ID=chr7,length=159345973>
+##contig=<ID=chr9,length=138394717>
+##contig=<ID=chr10,length=133797422>
+##contig=<ID=chr12,length=133275309>
+##contig=<ID=chr13,length=114364328>
+##contig=<ID=chr14,length=107043718>
+##contig=<ID=chr17,length=83257441>
+##reference=GRCh38
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TUMOR
+chr1	114713908	NRAS_Q61R	T	C	.	PASS	.	GT:AD:AF:DP	0/1:55,23:0.29:78
+chr2	208248388	IDH1_R132H	C	T	.	PASS	.	GT:AD:AF:DP	0/1:62,30:0.33:92
+chr3	179234297	PIK3CA_H1047R	A	G	.	PASS	.	GT:AD:AF:DP	0/1:55,40:0.42:95
+chr7	55174772	EGFR_del19	GAATTAAGAGAAGCAT	G	.	PASS	.	GT:AD:AF:DP	0/1:58,37:0.39:95
+chr7	55191822	EGFR_L858R	T	G	.	PASS	.	GT:AD:AF:DP	0/1:65,40:0.38:105
+chr7	116672196	MantaDUP:MET_AMP	N	<DUP>	.	PASS	END=116798037;SVTYPE=DUP;SVLEN=125841;CIPOS=0,1;CIEND=0,1	GT:PR:SR	0/1:30,22:12,9
+chr7	140753336	BRAF_V600E	A	T	.	PASS	.	GT:AD:AF:DP	0/1:55,45:0.45:100
+chr9	21967753	MantaDEL:CDKN2A_DEL	N	<DEL>	.	PASS	END=22009812;SVTYPE=DEL;SVLEN=-42059;CIPOS=0,1;CIEND=0,1	GT:PR:SR	0/1:28,19:11,8
+chr9	77794572	GNAQ_Q209L	A	T	.	PASS	.	GT:AD:AF:DP	0/1:55,28:0.34:83
+chr10	87933147	PTEN_R130stop	C	T	.	PASS	.	GT:AD:AF:DP	0/1:64,51:0.44:115
+chr12	25245347	KRAS_G13D	C	T	.	PASS	.	GT:AD:AF:DP	0/1:80,31:0.28:111
+chr12	25245350	KRAS_G12D	C	T	.	PASS	.	GT:AD:AF:DP	0/1:78,42:0.35:120
+chr12	57748512	MantaDUP:CDK4_AMP	N	<DUP>	.	PASS	END=57793240;SVTYPE=DUP;SVLEN=44728;CIPOS=0,1;CIEND=0,1	GT:PR:SR	0/1:32,24:13,10
+chr13	32394734	BRCA2_L3101R	T	G	.	PASS	.	GT:AD:AF:DP	0/1:65,25:0.28:90
+chr14	95094139	DICER1_E1705K	G	A	.	PASS	.	GT:AD:AF:DP	0/1:60,30:0.33:90
+chr17	7675088	TP53_R175H	C	T	.	PASS	.	GT:AD:AF:DP	0/1:43,45:0.51:88
+chr17	39687914	MantaDUP:ERBB2_AMP	N	<DUP>	.	PASS	END=39730426;SVTYPE=DUP;SVLEN=42512;CIPOS=0,1;CIEND=0,1	GT:PR:SR	0/1:25,18:10,8
+chr17	39711955	ERBB2_S310F	C	T	.	PASS	.	GT:AD:AF:DP	0/1:72,58:0.44:130

@@ -1,0 +1,3 @@
+Sample	Original_Variants	PASS_Variants	Lifted_Variants	VEP_Annotated_Variants	OncoKB_Annotated_Variants	VariantsInTable
+par_sample_A	22	22	22	22	22	22
+par_sample_B	22	22	22	22	22	22

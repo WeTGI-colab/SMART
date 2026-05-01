@@ -1,0 +1,806 @@
+Module	Sample	Variant_ID	Gene	HGVSp	MAF_Field	API_Field	MAF_Value	API_Value	Result	Note
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_GENE_SUMMARY	geneSummary	NRAS, a GTPase, is mutated in a diverse range of cancers, most frequently in melanoma and thyroid cancer.	NRAS, a GTPase, is mutated in a diverse range of cancers, most frequently in melanoma and thyroid cancer.	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_VARIANT_SUMMARY	variantSummary	The NRAS Q61R mutation is known to be oncogenic.	The NRAS Q61R mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	LEVEL_2	treatments LEVEL_2	Cobimetinib,Trametinib	Cobimetinib,Trametinib	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	LEVEL_3A	treatments LEVEL_3A	Binimetinib,Cobimetinib,Selumetinib+Iodine I 131-6-Beta-Iodomethyl-19-Norcholesterol,Trametinib	Binimetinib,Cobimetinib,Selumetinib,Iodine I 131-6-Beta-Iodomethyl-19-Norcholesterol,Trametinib	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	LEVEL_4	treatments LEVEL_4	Binimetinib+Ribociclib	Binimetinib,Ribociclib	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	LEVEL_R1	treatments LEVEL_R1	Cetuximab,Tucatinib+Trastuzumab,Panitumumab	Cetuximab,Tucatinib,Trastuzumab,Panitumumab	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_2	LEVEL_2	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel	LEVEL_R1	LEVEL_R1	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx2	LEVEL_Dx2	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel	LEVEL_Px1	LEVEL_Px1	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_GENE_SUMMARY	geneSummary	IDH1, a cell metabolism enzyme, is recurrently mutated in various cancer types including acute myeloid leukemia and gliomas.	IDH1, a cell metabolism enzyme, is recurrently mutated in various cancer types including acute myeloid leukemia and gliomas.	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_VARIANT_SUMMARY	variantSummary	The IDH1 R132H mutation is known to be oncogenic.	The IDH1 R132H mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	MUTATION_EFFECT	mutationEffect.knownEffect	Switch-of-function	Switch-of-function	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	LEVEL_1	treatments LEVEL_1	Ivosidenib,Olutasidenib,Vorasidenib	Ivosidenib,Olutasidenib,Vorasidenib	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	LEVEL_2	treatments LEVEL_2	Ivosidenib	Ivosidenib	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	LEVEL_3A	treatments LEVEL_3A	Ivosidenib	Ivosidenib	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx2	LEVEL_Dx2	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel	LEVEL_Px2	LEVEL_Px2	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_GENE_SUMMARY	geneSummary	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_VARIANT_SUMMARY	variantSummary	The PIK3CA E545K mutation is known to be oncogenic.	The PIK3CA E545K mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	LEVEL_1	treatments LEVEL_1	Alpelisib+Fulvestrant,Capivasertib+Fulvestrant,Inavolisib+Palbociclib+Fulvestrant	Alpelisib,Fulvestrant,Capivasertib,Inavolisib,Palbociclib	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	LEVEL_4	treatments LEVEL_4	RLY-2608,RLY-2608+Fulvestrant	RLY-2608,Fulvestrant	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_GENE_SUMMARY	geneSummary	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_VARIANT_SUMMARY	variantSummary	The PIK3CA H1047R mutation is known to be oncogenic.	The PIK3CA H1047R mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	LEVEL_1	treatments LEVEL_1	Alpelisib+Fulvestrant,Capivasertib+Fulvestrant,Inavolisib+Palbociclib+Fulvestrant	Alpelisib,Fulvestrant,Capivasertib,Inavolisib,Palbociclib	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	LEVEL_4	treatments LEVEL_4	RLY-2608,RLY-2608+Fulvestrant	RLY-2608,Fulvestrant	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_GENE_SUMMARY	geneSummary	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_VARIANT_SUMMARY	variantSummary	The EGFR E746_A750del alteration is known to be oncogenic.	The EGFR E746_A750del alteration is known to be oncogenic.	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	LEVEL_1	treatments LEVEL_1	Afatinib,Amivantamab+Chemotherapy,Amivantamab+Lazertinib,Dacomitinib,Datopotamab Deruxtecan,Erlotinib,Gefitinib,Osimertinib,Osimertinib+Chemotherapy,Erlotinib+Ramucirumab	Afatinib,Amivantamab,Chemotherapy,Lazertinib,Dacomitinib,Datopotamab Deruxtecan,Erlotinib,Gefitinib,Osimertinib,Ramucirumab	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	LEVEL_3A	treatments LEVEL_3A	Patritumab Deruxtecan	Patritumab Deruxtecan	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_GENE_SUMMARY	geneSummary	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_VARIANT_SUMMARY	variantSummary	The EGFR T790M mutation is known to be oncogenic.	The EGFR T790M mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	LEVEL_1	treatments LEVEL_1	Datopotamab Deruxtecan,Osimertinib	Datopotamab Deruxtecan,Osimertinib	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	LEVEL_R1	treatments LEVEL_R1	Erlotinib,Gefitinib,Afatinib	Erlotinib,Gefitinib,Afatinib	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel	LEVEL_R1	LEVEL_R1	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_GENE_SUMMARY	geneSummary	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_VARIANT_SUMMARY	variantSummary	The EGFR L858R mutation is known to be oncogenic.	The EGFR L858R mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	LEVEL_1	treatments LEVEL_1	Afatinib,Amivantamab+Chemotherapy,Amivantamab+Lazertinib,Dacomitinib,Datopotamab Deruxtecan,Erlotinib,Gefitinib,Osimertinib,Osimertinib+Chemotherapy,Erlotinib+Ramucirumab	Afatinib,Amivantamab,Chemotherapy,Lazertinib,Dacomitinib,Datopotamab Deruxtecan,Erlotinib,Gefitinib,Osimertinib,Ramucirumab	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	LEVEL_3A	treatments LEVEL_3A	Patritumab Deruxtecan	Patritumab Deruxtecan	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_GENE_SUMMARY	geneSummary	MET, a receptor tyrosine kinase, is recurrently altered by mutation or amplification in various cancer types.	MET, a receptor tyrosine kinase, is recurrently altered by mutation or amplification in various cancer types.	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_VARIANT_SUMMARY	variantSummary	MET amplification is known to be oncogenic.	MET amplification is known to be oncogenic.	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		LEVEL_2	treatments LEVEL_2	Capmatinib,Crizotinib,Tepotinib	Capmatinib,Crizotinib,Tepotinib	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		LEVEL_3A	treatments LEVEL_3A	Telisotuzumab Vedotin	Telisotuzumab Vedotin	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		LEVEL_R2	treatments LEVEL_R2	Erlotinib,Gefitinib,Osimertinib	Erlotinib,Gefitinib,Osimertinib	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_2	LEVEL_2	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel	LEVEL_R2	LEVEL_R2	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_GENE_SUMMARY	geneSummary	BRAF, an intracellular kinase, is frequently mutated in melanoma, thyroid and lung cancers among others.	BRAF, an intracellular kinase, is frequently mutated in melanoma, thyroid and lung cancers among others.	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_VARIANT_SUMMARY	variantSummary	The BRAF V600E mutation is known to be oncogenic.	The BRAF V600E mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	LEVEL_1	treatments LEVEL_1	Dabrafenib,Dabrafenib+Trametinib,Encorafenib+Binimetinib,Encorafenib+Cetuximab,Encorafenib+Cetuximab+FOLFOX Regimen,Tovorafenib,Trametinib,Vemurafenib,Vemurafenib+Atezolizumab+Cobimetinib,Vemurafenib+Cobimetinib	Dabrafenib,Trametinib,Encorafenib,Binimetinib,Cetuximab,FOLFOX Regimen,Tovorafenib,Vemurafenib,Atezolizumab,Cobimetinib	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	LEVEL_2	treatments LEVEL_2	Encorafenib+Panitumumab,Selumetinib,Vemurafenib,Vemurafenib+Cobimetinib,Dabrafenib	Encorafenib,Panitumumab,Selumetinib,Vemurafenib,Cobimetinib,Dabrafenib	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	LEVEL_3A	treatments LEVEL_3A	Vemurafenib,Dabrafenib	Vemurafenib,Dabrafenib	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx2	LEVEL_Dx2	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_GENE_SUMMARY	geneSummary	CDKN2A, which encodes both a cyclin-dependent kinase inhibitor and an MDM2 inhibitor, is altered by mutation and deletion in various cancers.	CDKN2A, which encodes both a cyclin-dependent kinase inhibitor and an MDM2 inhibitor, is altered by mutation and deletion in various cancers.	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda3	LEVEL_Fda3	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_VARIANT_SUMMARY	variantSummary	CDKN2A deletion is known to be oncogenic.	CDKN2A deletion is known to be oncogenic.	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		MUTATION_EFFECT	mutationEffect.knownEffect	Loss-of-function	Loss-of-function	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		LEVEL_4	treatments LEVEL_4	Palbociclib,Ribociclib,Abemaciclib	Palbociclib,Ribociclib,Abemaciclib	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_4	LEVEL_4	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx2	LEVEL_Dx2	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_GENE_SUMMARY	geneSummary	GNAQ, a G protein subunit, is recurrently mutated in uveal melanoma.	GNAQ, a G protein subunit, is recurrently mutated in uveal melanoma.	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_VARIANT_SUMMARY	variantSummary	This is a synonymous mutation and is not annotated by OncoKB.	This is a synonymous mutation and is not annotated by OncoKB.	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	VARIANT_IN_ONCOKB	variantExist	False	False	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	MUTATION_EFFECT	mutationEffect.knownEffect	Unknown	Unknown	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOGENIC	oncogenic	Unknown	Unknown	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_GENE_SUMMARY	geneSummary	PTEN, a lipid and protein phosphatase, is one of the most frequently mutated genes in cancer.	PTEN, a lipid and protein phosphatase, is one of the most frequently mutated genes in cancer.	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_VARIANT_SUMMARY	variantSummary	The PTEN R130* mutation is known to be oncogenic.	The PTEN R130* mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	MUTATION_EFFECT	mutationEffect.knownEffect	Loss-of-function	Loss-of-function	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	LEVEL_1	treatments LEVEL_1	Capivasertib+Fulvestrant	Capivasertib,Fulvestrant	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	LEVEL_4	treatments LEVEL_4	GSK2636771,AZD8186	GSK2636771,AZD8186	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx3	LEVEL_Dx3	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_GENE_SUMMARY	geneSummary	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_VARIANT_SUMMARY	variantSummary	The KRAS G13D mutation is known to be oncogenic.	The KRAS G13D mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	LEVEL_1	treatments LEVEL_1	Avutometinib+Defactinib	Avutometinib,Defactinib	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	LEVEL_2	treatments LEVEL_2	Cobimetinib,Trametinib	Cobimetinib,Trametinib	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	LEVEL_3A	treatments LEVEL_3A	Cobimetinib,Trametinib	Cobimetinib,Trametinib	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	LEVEL_4	treatments LEVEL_4	Trametinib,Cobimetinib,Binimetinib	Trametinib,Cobimetinib,Binimetinib	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	LEVEL_R1	treatments LEVEL_R1	Cetuximab,Tucatinib+Trastuzumab,Panitumumab	Cetuximab,Tucatinib,Trastuzumab,Panitumumab	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel	LEVEL_R1	LEVEL_R1	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx2	LEVEL_Dx2	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_GENE_SUMMARY	geneSummary	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_VARIANT_SUMMARY	variantSummary	The KRAS G12D mutation is known to be oncogenic.	The KRAS G12D mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	LEVEL_1	treatments LEVEL_1	Avutometinib+Defactinib	Avutometinib,Defactinib	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	LEVEL_2	treatments LEVEL_2	Cobimetinib,Trametinib	Cobimetinib,Trametinib	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	LEVEL_3A	treatments LEVEL_3A	Cobimetinib,Daraxonrasib,Setidegrasib,Trametinib	Cobimetinib,Daraxonrasib,Setidegrasib,Trametinib	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	LEVEL_4	treatments LEVEL_4	Daraxonrasib,MRTX1133,Setidegrasib,Trametinib,Cobimetinib,Binimetinib	Daraxonrasib,MRTX1133,Setidegrasib,Trametinib,Cobimetinib,Binimetinib	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	LEVEL_R1	treatments LEVEL_R1	Cetuximab,Tucatinib+Trastuzumab,Panitumumab	Cetuximab,Tucatinib,Trastuzumab,Panitumumab	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel	LEVEL_R1	LEVEL_R1	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx2	LEVEL_Dx2	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_GENE_SUMMARY	geneSummary	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_VARIANT_SUMMARY	variantSummary	The KRAS G12C mutation is known to be oncogenic.	The KRAS G12C mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	LEVEL_1	treatments LEVEL_1	Adagrasib,Adagrasib+Cetuximab,Avutometinib+Defactinib,Sotorasib,Sotorasib+Panitumumab	Adagrasib,Cetuximab,Avutometinib,Defactinib,Sotorasib,Panitumumab	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	LEVEL_2	treatments LEVEL_2	Adagrasib,Adagrasib+Panitumumab,Cobimetinib,Sotorasib,Sotorasib+Cetuximab,Trametinib	Adagrasib,Panitumumab,Cobimetinib,Sotorasib,Cetuximab,Trametinib	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	LEVEL_3A	treatments LEVEL_3A	Adagrasib,Cobimetinib,Trametinib	Adagrasib,Cobimetinib,Trametinib	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	LEVEL_4	treatments LEVEL_4	Trametinib,Cobimetinib,Binimetinib	Trametinib,Cobimetinib,Binimetinib	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	LEVEL_R1	treatments LEVEL_R1	Cetuximab,Tucatinib+Trastuzumab,Panitumumab	Cetuximab,Tucatinib,Trastuzumab,Panitumumab	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel	LEVEL_R1	LEVEL_R1	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel	LEVEL_Dx2	LEVEL_Dx2	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_GENE_SUMMARY	geneSummary	CDK4, an intracellular kinase, is altered by amplification or mutation in various cancer types including soft tissue sarcomas and gliomas.	CDK4, an intracellular kinase, is altered by amplification or mutation in various cancer types including soft tissue sarcomas and gliomas.	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda3	LEVEL_Fda3	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_VARIANT_SUMMARY	variantSummary	CDK4 amplification is known to be oncogenic.	CDK4 amplification is known to be oncogenic.	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		LEVEL_4	treatments LEVEL_4	Palbociclib,Abemaciclib	Palbociclib,Abemaciclib	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_4	LEVEL_4	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_GENE_SUMMARY	geneSummary	BRCA2, a tumor suppressor involved in the DNA damage response, is mutated in various cancer types.	BRCA2, a tumor suppressor involved in the DNA damage response, is mutated in various cancer types.	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_VARIANT_SUMMARY	variantSummary	The BRCA2 L3101R mutation is likely oncogenic.	The BRCA2 L3101R mutation is likely oncogenic.	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	MUTATION_EFFECT	mutationEffect.knownEffect	Likely Loss-of-function	Likely Loss-of-function	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOGENIC	oncogenic	Likely Oncogenic	Likely Oncogenic	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	LEVEL_1	treatments LEVEL_1	Niraparib,Niraparib+Abiraterone Acetate+Prednisone,Olaparib,Olaparib+Abiraterone+Prednisone,Rucaparib,Talazoparib+Enzalutamide,Olaparib+Bevacizumab	Niraparib,Abiraterone Acetate,Prednisone,Olaparib,Abiraterone,Rucaparib,Talazoparib,Enzalutamide,Bevacizumab	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	LEVEL_2	treatments LEVEL_2	Olaparib,Rucaparib,Niraparib	Olaparib,Rucaparib,Niraparib	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	LEVEL_3A	treatments LEVEL_3A	Olaparib,Talazoparib	Olaparib,Talazoparib	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_GENE_SUMMARY	geneSummary	DICER1, an endoribonuclease, is altered in various cancer types.	DICER1, an endoribonuclease, is altered in various cancer types.	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_VARIANT_SUMMARY	variantSummary	The DICER1 E1705* is a truncating mutation in a tumor suppressor gene, and therefore is likely oncogenic.	The DICER1 E1705* is a truncating mutation in a tumor suppressor gene, and therefore is likely oncogenic.	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	VARIANT_IN_ONCOKB	variantExist	False	False	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	MUTATION_EFFECT	mutationEffect.knownEffect	Likely Loss-of-function	Likely Loss-of-function	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOGENIC	oncogenic	Likely Oncogenic	Likely Oncogenic	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_GENE_SUMMARY	geneSummary	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_VARIANT_SUMMARY	variantSummary	The TP53 R248W mutation is likely oncogenic.	The TP53 R248W mutation is likely oncogenic.	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	MUTATION_EFFECT	mutationEffect.knownEffect	Loss-of-function	Loss-of-function	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOGENIC	oncogenic	Likely Oncogenic	Likely Oncogenic	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel	LEVEL_Px1	LEVEL_Px1	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_GENE_SUMMARY	geneSummary	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_VARIANT_SUMMARY	variantSummary	The TP53 R175H mutation is known to be oncogenic.	The TP53 R175H mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	MUTATION_EFFECT	mutationEffect.knownEffect	Loss-of-function	Loss-of-function	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	LEVEL_1	treatments LEVEL_1			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	LEVEL_2	treatments LEVEL_2			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	LEVEL_3A	treatments LEVEL_3A			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel	LEVEL_Px1	LEVEL_Px1	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_GENE_SUMMARY	geneSummary	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_VARIANT_SUMMARY	variantSummary	ERBB2 amplification is known to be oncogenic.	ERBB2 amplification is known to be oncogenic.	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		LEVEL_1	treatments LEVEL_1	Ado-Trastuzumab Emtansine,Lapatinib,Capecitabine,Margetuximab,Chemotherapy,Neratinib,Pembrolizumab,Trastuzumab,Trastuzumab Deruxtecan,Pertuzumab,Tucatinib,Letrozole	Ado-Trastuzumab Emtansine,Lapatinib,Capecitabine,Margetuximab,Chemotherapy,Neratinib,Pembrolizumab,Trastuzumab,Trastuzumab Deruxtecan,Pertuzumab,Tucatinib,Letrozole	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		LEVEL_2	treatments LEVEL_2	Ado-Trastuzumab Emtansine,Lapatinib,Trastuzumab,Trastuzumab Deruxtecan,Carboplatin-Taxol Regimen,Pertuzumab,Tucatinib,Docetaxel	Ado-Trastuzumab Emtansine,Lapatinib,Trastuzumab,Trastuzumab Deruxtecan,Carboplatin-Taxol Regimen,Pertuzumab,Tucatinib,Docetaxel	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		LEVEL_3A	treatments LEVEL_3A	Trastuzumab Deruxtecan,Zanidatamab	Trastuzumab Deruxtecan,Zanidatamab	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		LEVEL_4	treatments LEVEL_4			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_prognosticSummary	prognosticSummary			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_GENE_SUMMARY	geneSummary	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_VARIANT_SUMMARY	variantSummary	The ERBB2 S310F mutation is known to be oncogenic.	The ERBB2 S310F mutation is known to be oncogenic.	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	GENE_IN_ONCOKB	geneExist	True	True	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	VARIANT_IN_ONCOKB	variantExist	True	True	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	MUTATION_EFFECT	mutationEffect.knownEffect	Gain-of-function	Gain-of-function	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOGENIC	oncogenic	Oncogenic	Oncogenic	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	LEVEL_1	treatments LEVEL_1	Trastuzumab Deruxtecan	Trastuzumab Deruxtecan	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	LEVEL_2	treatments LEVEL_2	Ado-Trastuzumab Emtansine,Neratinib,Neratinib+Trastuzumab+Fulvestrant,Zongertinib	Ado-Trastuzumab Emtansine,Neratinib,Trastuzumab,Fulvestrant,Zongertinib	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	LEVEL_3A	treatments LEVEL_3A	Neratinib,Sevabertinib,Trastuzumab+Pertuzumab+Docetaxel	Neratinib,Sevabertinib,Trastuzumab,Pertuzumab,Docetaxel	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	LEVEL_3B	treatments LEVEL_3B			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	LEVEL_4	treatments LEVEL_4	Neratinib,Pertuzumab+Trastuzumab,Trastuzumab Deruxtecan	Neratinib,Pertuzumab,Trastuzumab,Trastuzumab Deruxtecan	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	LEVEL_R1	treatments LEVEL_R1			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	LEVEL_R2	treatments LEVEL_R2			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	HIGHEST_SENSITIVE_LEVEL	highestSensitiveLevel	LEVEL_1	LEVEL_1	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	HIGHEST_RESISTANCE_LEVEL	highestResistanceLevel			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_DIAG_LVL	highestDiagnosticImplicationLevel			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_PROG_LVL	highestPrognosticImplicationLevel			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_diagnosticSummary	diagnosticSummary			PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_prognosticSummary	prognosticSummary			PASS	
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	EXON	exon	3/7	3/7	PASS	e.g. 15/18
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	HGVSc	hgvsc (c. part only)	c.182A>G	c.182A>G	PASS	transcript version stripped
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	HGVSp	hgvsp (version stripped)	ENSP00000358548.4:p.Gln61Arg	ENSP00000358548:p.Gln61Arg	PASS	3-letter AA notation
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	Protein_position	protein_start/end	61	61	PASS	
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	Amino_acids	amino_acids	Q/R	Q/R	PASS	e.g. V/E
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	Codons	codons	cAa/cGa	cAa/cGa	PASS	case-insensitive
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	SIFT	sift_prediction(score)	deleterious_low_confidence(0.02)	deleterious_low_confidence(0.02)	PASS	score tolerance 1e-4
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	NRAS_Q61R	NRAS	p.Q61R	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	EXON	exon	4/10	4/10	PASS	e.g. 15/18
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	HGVSc	hgvsc (c. part only)	c.395G>A	c.395G>A	PASS	transcript version stripped
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	HGVSp	hgvsp (version stripped)	ENSP00000260985.2:p.Arg132His	ENSP00000260985:p.Arg132His	PASS	3-letter AA notation
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	Protein_position	protein_start/end	132	132	PASS	
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	Amino_acids	amino_acids	R/H	R/H	PASS	e.g. V/E
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	Codons	codons	cGt/cAt	cGt/cAt	PASS	case-insensitive
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	SIFT	sift_prediction(score)	tolerated_low_confidence(0.07)	tolerated_low_confidence(0.07)	PASS	score tolerance 1e-4
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	PolyPhen	polyphen_prediction(score)	benign(0.009)	benign(0.009)	PASS	score tolerance 1e-4
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	IDH1_R132H	IDH1	p.R132H	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	EXON	exon	10/21	10/21	PASS	e.g. 15/18
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	HGVSc	hgvsc (c. part only)	c.1633G>A	c.1633G>A	PASS	transcript version stripped
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	HGVSp	hgvsp (version stripped)	ENSP00000263967.3:p.Glu545Lys	ENSP00000263967:p.Glu545Lys	PASS	3-letter AA notation
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	Protein_position	protein_start/end	545	545	PASS	
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	Amino_acids	amino_acids	E/K	E/K	PASS	e.g. V/E
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	Codons	codons	Gag/Aag	Gag/Aag	PASS	case-insensitive
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	SIFT	sift_prediction(score)	deleterious(0)	deleterious(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	PolyPhen	polyphen_prediction(score)	probably_damaging(0.912)	probably_damaging(0.912)	PASS	score tolerance 1e-4
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	EXON	exon	21/21	21/21	PASS	e.g. 15/18
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	HGVSc	hgvsc (c. part only)	c.3140A>G	c.3140A>G	PASS	transcript version stripped
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	HGVSp	hgvsp (version stripped)	ENSP00000263967.3:p.His1047Arg	ENSP00000263967:p.His1047Arg	PASS	3-letter AA notation
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	Protein_position	protein_start/end	1047	1047	PASS	
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	Amino_acids	amino_acids	H/R	H/R	PASS	e.g. V/E
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	Codons	codons	cAt/cGt	cAt/cGt	PASS	case-insensitive
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	SIFT	sift_prediction(score)	deleterious(0)	deleterious(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	PolyPhen	polyphen_prediction(score)	benign(0.088)	benign(0.088)	PASS	score tolerance 1e-4
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	Consequence	consequence_terms	inframe_deletion	inframe_deletion	PASS	sorted, comma-joined
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	EXON	exon	19/28	19/28	PASS	e.g. 15/18
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	HGVSc	hgvsc (c. part only)	c.2236_2250del	c.2236_2250del	PASS	transcript version stripped
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	HGVSp	hgvsp (version stripped)	ENSP00000275493.2:p.Glu746_Ala750del	ENSP00000275493:p.Glu746_Ala750del	PASS	3-letter AA notation
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	Protein_position	protein_start/end	746-750	746-750	PASS	
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	Amino_acids	amino_acids	ELREA/-	ELREA/-	PASS	e.g. V/E
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	Codons	codons	GAATTAAGAGAAGCA/-	GAATTAAGAGAAGCA/-	PASS	case-insensitive
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	SIFT	sift_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	EXON	exon	20/28	20/28	PASS	e.g. 15/18
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	HGVSc	hgvsc (c. part only)	c.2369C>T	c.2369C>T	PASS	transcript version stripped
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	HGVSp	hgvsp (version stripped)	ENSP00000275493.2:p.Thr790Met	ENSP00000275493:p.Thr790Met	PASS	3-letter AA notation
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	Protein_position	protein_start/end	790	790	PASS	
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	Amino_acids	amino_acids	T/M	T/M	PASS	e.g. V/E
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	Codons	codons	aCg/aTg	aCg/aTg	PASS	case-insensitive
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	SIFT	sift_prediction(score)	deleterious_low_confidence(0)	deleterious_low_confidence(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	PolyPhen	polyphen_prediction(score)	probably_damaging(1)	probably_damaging(1)	PASS	score tolerance 1e-4
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	EGFR_T790M	EGFR	p.T790M	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	EXON	exon	21/28	21/28	PASS	e.g. 15/18
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	HGVSc	hgvsc (c. part only)	c.2573T>G	c.2573T>G	PASS	transcript version stripped
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	HGVSp	hgvsp (version stripped)	ENSP00000275493.2:p.Leu858Arg	ENSP00000275493:p.Leu858Arg	PASS	3-letter AA notation
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	Protein_position	protein_start/end	858	858	PASS	
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	Amino_acids	amino_acids	L/R	L/R	PASS	e.g. V/E
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	Codons	codons	cTg/cGg	cTg/cGg	PASS	case-insensitive
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	SIFT	sift_prediction(score)	deleterious_low_confidence(0)	deleterious_low_confidence(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	PolyPhen	polyphen_prediction(score)	probably_damaging(0.997)	probably_damaging(0.997)	PASS	score tolerance 1e-4
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	EGFR_L858R	EGFR	p.L858R	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	EXON	exon	15/18	15/18	PASS	e.g. 15/18
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	HGVSc	hgvsc (c. part only)	c.1799T>A	c.1799T>A	PASS	transcript version stripped
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	HGVSp	hgvsp (version stripped)	ENSP00000493543.1:p.Val600Glu	ENSP00000493543:p.Val600Glu	PASS	3-letter AA notation
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	Protein_position	protein_start/end	600	600	PASS	
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	Amino_acids	amino_acids	V/E	V/E	PASS	e.g. V/E
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	Codons	codons	gTg/gAg	gTg/gAg	PASS	case-insensitive
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	SIFT	sift_prediction(score)	deleterious_low_confidence(0)	deleterious_low_confidence(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	PolyPhen	polyphen_prediction(score)	probably_damaging(0.935)	probably_damaging(0.935)	PASS	score tolerance 1e-4
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	BRAF_V600E	BRAF	p.V600E	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	NO_HGVSC				SKIP: no HGVSc/Feature	
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	Consequence	consequence_terms	stop_gained	stop_gained	PASS	sorted, comma-joined
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	IMPACT	impact	HIGH	HIGH	PASS	
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	EXON	exon	5/9	5/9	PASS	e.g. 15/18
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	HGVSc	hgvsc (c. part only)	c.388C>T	c.388C>T	PASS	transcript version stripped
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	HGVSp	hgvsp (version stripped)	ENSP00000361021.3:p.Arg130Ter	ENSP00000361021:p.Arg130Ter	PASS	3-letter AA notation
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	Protein_position	protein_start/end	130	130	PASS	
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	Amino_acids	amino_acids	R/*	R/*	PASS	e.g. V/E
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	Codons	codons	Cga/Tga	Cga/Tga	PASS	case-insensitive
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	SIFT	sift_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	PTEN_R130stop	PTEN	p.R130*	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	EXON	exon	2/5	2/5	PASS	e.g. 15/18
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	HGVSc	hgvsc (c. part only)	c.38G>A	c.38G>A	PASS	transcript version stripped
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	HGVSp	hgvsp (version stripped)	ENSP00000308495.3:p.Gly13Asp	ENSP00000308495:p.Gly13Asp	PASS	3-letter AA notation
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	Protein_position	protein_start/end	13	13	PASS	
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	Amino_acids	amino_acids	G/D	G/D	PASS	e.g. V/E
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	Codons	codons	gGc/gAc	gGc/gAc	PASS	case-insensitive
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	SIFT	sift_prediction(score)	deleterious_low_confidence(0.04)	deleterious_low_confidence(0.04)	PASS	score tolerance 1e-4
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	KRAS_G13D	KRAS	p.G13D	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	EXON	exon	2/5	2/5	PASS	e.g. 15/18
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	HGVSc	hgvsc (c. part only)	c.35G>A	c.35G>A	PASS	transcript version stripped
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	HGVSp	hgvsp (version stripped)	ENSP00000308495.3:p.Gly12Asp	ENSP00000308495:p.Gly12Asp	PASS	3-letter AA notation
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	Protein_position	protein_start/end	12	12	PASS	
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	Amino_acids	amino_acids	G/D	G/D	PASS	e.g. V/E
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	Codons	codons	gGt/gAt	gGt/gAt	PASS	case-insensitive
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	SIFT	sift_prediction(score)	deleterious_low_confidence(0.04)	deleterious_low_confidence(0.04)	PASS	score tolerance 1e-4
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	KRAS_G12D	KRAS	p.G12D	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	EXON	exon	2/5	2/5	PASS	e.g. 15/18
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	HGVSc	hgvsc (c. part only)	c.34G>T	c.34G>T	PASS	transcript version stripped
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	HGVSp	hgvsp (version stripped)	ENSP00000308495.3:p.Gly12Cys	ENSP00000308495:p.Gly12Cys	PASS	3-letter AA notation
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	Protein_position	protein_start/end	12	12	PASS	
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	Amino_acids	amino_acids	G/C	G/C	PASS	e.g. V/E
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	Codons	codons	Ggt/Tgt	Ggt/Tgt	PASS	case-insensitive
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	SIFT	sift_prediction(score)	deleterious_low_confidence(0)	deleterious_low_confidence(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	KRAS_G12C	KRAS	p.G12C	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	EXON	exon	25/27	25/27	PASS	e.g. 15/18
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	HGVSc	hgvsc (c. part only)	c.9302T>G	c.9302T>G	PASS	transcript version stripped
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	HGVSp	hgvsp (version stripped)	ENSP00000369497.3:p.Leu3101Arg	ENSP00000369497:p.Leu3101Arg	PASS	3-letter AA notation
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	Protein_position	protein_start/end	3101	3101	PASS	
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	Amino_acids	amino_acids	L/R	L/R	PASS	e.g. V/E
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	Codons	codons	cTg/cGg	cTg/cGg	PASS	case-insensitive
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	SIFT	sift_prediction(score)	deleterious(0)	deleterious(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	PolyPhen	polyphen_prediction(score)	possibly_damaging(0.888)	possibly_damaging(0.888)	PASS	score tolerance 1e-4
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	Consequence	consequence_terms	stop_gained	stop_gained	PASS	sorted, comma-joined
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	IMPACT	impact	HIGH	HIGH	PASS	
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	EXON	exon	26/29	26/29	PASS	e.g. 15/18
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	HGVSc	hgvsc (c. part only)	c.5113G>T	c.5113G>T	PASS	transcript version stripped
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	HGVSp	hgvsp (version stripped)	NP_085124.2:p.Glu1705Ter	NP_085124:p.Glu1705Ter	PASS	3-letter AA notation
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	Protein_position	protein_start/end	1705	1705	PASS	
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	Amino_acids	amino_acids	E/*	E/*	PASS	e.g. V/E
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	Codons	codons	Gaa/Taa	Gaa/Taa	PASS	case-insensitive
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	SIFT	sift_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	DICER1_E1705K	DICER1	p.E1705*	CANONICAL	canonical			PASS	
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	EXON	exon	7/11	7/11	PASS	e.g. 15/18
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	HGVSc	hgvsc (c. part only)	c.742C>T	c.742C>T	PASS	transcript version stripped
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	HGVSp	hgvsp (version stripped)	ENSP00000269305.4:p.Arg248Trp	ENSP00000269305:p.Arg248Trp	PASS	3-letter AA notation
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	Protein_position	protein_start/end	248	248	PASS	
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	Amino_acids	amino_acids	R/W	R/W	PASS	e.g. V/E
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	Codons	codons	Cgg/Tgg	Cgg/Tgg	PASS	case-insensitive
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	SIFT	sift_prediction(score)	deleterious(0)	deleterious(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	TP53_R248W	TP53	p.R248W	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	EXON	exon	5/11	5/11	PASS	e.g. 15/18
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	HGVSc	hgvsc (c. part only)	c.524G>A	c.524G>A	PASS	transcript version stripped
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	HGVSp	hgvsp (version stripped)	ENSP00000269305.4:p.Arg175His	ENSP00000269305:p.Arg175His	PASS	3-letter AA notation
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	Protein_position	protein_start/end	175	175	PASS	
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	Amino_acids	amino_acids	R/H	R/H	PASS	e.g. V/E
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	Codons	codons	cGc/cAc	cGc/cAc	PASS	case-insensitive
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	SIFT	sift_prediction(score)	tolerated(0.08)	tolerated(0.08)	PASS	score tolerance 1e-4
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	PolyPhen	polyphen_prediction(score)			PASS	score tolerance 1e-4
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	STRAND	strand	-1	-1	PASS	1 or -1
+VEP	TUMOR	TP53_R175H	TP53	p.R175H	CANONICAL	canonical	YES	YES	PASS	
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	Consequence	consequence_terms	missense_variant	missense_variant	PASS	sorted, comma-joined
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	IMPACT	impact	MODERATE	MODERATE	PASS	
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	BIOTYPE	biotype	protein_coding	protein_coding	PASS	
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	EXON	exon	8/27	8/27	PASS	e.g. 15/18
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	INTRON	intron			PASS	only for intronic variants
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	HGVSc	hgvsc (c. part only)	c.929C>T	c.929C>T	PASS	transcript version stripped
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	HGVSp	hgvsp (version stripped)	ENSP00000269571.4:p.Ser310Phe	ENSP00000269571:p.Ser310Phe	PASS	3-letter AA notation
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	Protein_position	protein_start/end	310	310	PASS	
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	Amino_acids	amino_acids	S/F	S/F	PASS	e.g. V/E
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	Codons	codons	tCc/tTc	tCc/tTc	PASS	case-insensitive
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	SIFT	sift_prediction(score)	deleterious(0)	deleterious(0)	PASS	score tolerance 1e-4
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	PolyPhen	polyphen_prediction(score)	probably_damaging(0.984)	probably_damaging(0.984)	PASS	score tolerance 1e-4
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	STRAND	strand	1	1	PASS	1 or -1
+VEP	TUMOR	ERBB2_S310F	ERBB2	p.S310F	CANONICAL	canonical	YES	YES	PASS	
+CIViC	TUMOR	NRAS_Q61R	NRAS	p.Q61R	CIViC_CSQ_CIViC Variant Name	name	Q61R	Q61R	PASS	
+CIViC	TUMOR	NRAS_Q61R	NRAS	p.Q61R	CIViC_CSQ_SYMBOL	feature.name	NRAS	NRAS	PASS	
+CIViC	TUMOR	NRAS_Q61R	NRAS	p.Q61R	CIViC_CSQ_CIViC Variant ID	id	96	96	PASS	
+CIViC	TUMOR	NRAS_Q61R	NRAS	p.Q61R	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	NRAS_Q61R	NRAS Q61R	PASS	first profile only
+CIViC	TUMOR	IDH1_R132H	IDH1	p.R132H	CIViC_CSQ_CIViC Variant Name	name	R132H	R132H	PASS	
+CIViC	TUMOR	IDH1_R132H	IDH1	p.R132H	CIViC_CSQ_SYMBOL	feature.name	IDH1	IDH1	PASS	
+CIViC	TUMOR	IDH1_R132H	IDH1	p.R132H	CIViC_CSQ_CIViC Variant ID	id	420	420	PASS	
+CIViC	TUMOR	IDH1_R132H	IDH1	p.R132H	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	IDH1_R132H	IDH1 R132H	PASS	first profile only
+CIViC	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	CIViC_CSQ_CIViC Variant Name	name	E545K	E545K	PASS	
+CIViC	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	CIViC_CSQ_SYMBOL	feature.name	PIK3CA	PIK3CA	PASS	
+CIViC	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	CIViC_CSQ_CIViC Variant ID	id	104	104	PASS	
+CIViC	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	PIK3CA_E545K	PIK3CA E545K	PASS	first profile only
+CIViC	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	CIViC_CSQ_CIViC Variant Name	name	H1047R	H1047R	PASS	
+CIViC	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	CIViC_CSQ_SYMBOL	feature.name	PIK3CA	PIK3CA	PASS	
+CIViC	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	CIViC_CSQ_CIViC Variant ID	id	107	107	PASS	
+CIViC	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	PIK3CA_H1047R	PIK3CA H1047R	PASS	first profile only
+CIViC	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	PRESENCE	variant_exists	empty	no match	PASS	No CIViC record found via API for this gene+variant
+CIViC	TUMOR	EGFR_T790M	EGFR	p.T790M	CIViC_CSQ_CIViC Variant Name	name	T790M	T790M	PASS	
+CIViC	TUMOR	EGFR_T790M	EGFR	p.T790M	CIViC_CSQ_SYMBOL	feature.name	EGFR	EGFR	PASS	
+CIViC	TUMOR	EGFR_T790M	EGFR	p.T790M	CIViC_CSQ_CIViC Variant ID	id	34	34	PASS	
+CIViC	TUMOR	EGFR_T790M	EGFR	p.T790M	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	EGFR_T790M	EGFR T790M	PASS	first profile only
+CIViC	TUMOR	EGFR_L858R	EGFR	p.L858R	CIViC_CSQ_CIViC Variant Name	name	L858R	L858R	PASS	
+CIViC	TUMOR	EGFR_L858R	EGFR	p.L858R	CIViC_CSQ_SYMBOL	feature.name	EGFR	EGFR	PASS	
+CIViC	TUMOR	EGFR_L858R	EGFR	p.L858R	CIViC_CSQ_CIViC Variant ID	id	33	33	PASS	
+CIViC	TUMOR	EGFR_L858R	EGFR	p.L858R	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	EGFR_L858R	EGFR L858R	PASS	first profile only
+CIViC	TUMOR	BRAF_V600E	BRAF	p.V600E	CIViC_CSQ_CIViC Variant Name	name	V600E	V600E	PASS	
+CIViC	TUMOR	BRAF_V600E	BRAF	p.V600E	CIViC_CSQ_SYMBOL	feature.name	BRAF	BRAF	PASS	
+CIViC	TUMOR	BRAF_V600E	BRAF	p.V600E	CIViC_CSQ_CIViC Variant ID	id	12	12	PASS	
+CIViC	TUMOR	BRAF_V600E	BRAF	p.V600E	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	BRAF_V600E	BRAF V600E	PASS	first profile only
+CIViC	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	PRESENCE	variant_exists	empty	no match	PASS	No CIViC record found via API for this gene+variant
+CIViC	TUMOR	PTEN_R130stop	PTEN	p.R130*	CIViC_CSQ_CIViC Variant Name	name	R130*	R130*	PASS	
+CIViC	TUMOR	PTEN_R130stop	PTEN	p.R130*	CIViC_CSQ_SYMBOL	feature.name	PTEN	PTEN	PASS	
+CIViC	TUMOR	PTEN_R130stop	PTEN	p.R130*	CIViC_CSQ_CIViC Variant ID	id	636	636	PASS	
+CIViC	TUMOR	PTEN_R130stop	PTEN	p.R130*	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	PTEN_R130*	PTEN R130*	PASS	first profile only
+CIViC	TUMOR	KRAS_G13D	KRAS	p.G13D	CIViC_CSQ_CIViC Variant Name	name	G13D	G13D	PASS	
+CIViC	TUMOR	KRAS_G13D	KRAS	p.G13D	CIViC_CSQ_SYMBOL	feature.name	KRAS	KRAS	PASS	
+CIViC	TUMOR	KRAS_G13D	KRAS	p.G13D	CIViC_CSQ_CIViC Variant ID	id	81	81	PASS	
+CIViC	TUMOR	KRAS_G13D	KRAS	p.G13D	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	KRAS_G13D	KRAS G13D	PASS	first profile only
+CIViC	TUMOR	KRAS_G12D	KRAS	p.G12D	CIViC_CSQ_CIViC Variant Name	name	G12D	G12D	PASS	
+CIViC	TUMOR	KRAS_G12D	KRAS	p.G12D	CIViC_CSQ_SYMBOL	feature.name	KRAS	KRAS	PASS	
+CIViC	TUMOR	KRAS_G12D	KRAS	p.G12D	CIViC_CSQ_CIViC Variant ID	id	79	79	PASS	
+CIViC	TUMOR	KRAS_G12D	KRAS	p.G12D	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	KRAS_G12D	KRAS G12D	PASS	first profile only
+CIViC	TUMOR	KRAS_G12C	KRAS	p.G12C	CIViC_CSQ_CIViC Variant Name	name	G12C	G12C	PASS	
+CIViC	TUMOR	KRAS_G12C	KRAS	p.G12C	CIViC_CSQ_SYMBOL	feature.name	KRAS	KRAS	PASS	
+CIViC	TUMOR	KRAS_G12C	KRAS	p.G12C	CIViC_CSQ_CIViC Variant ID	id	78	78	PASS	
+CIViC	TUMOR	KRAS_G12C	KRAS	p.G12C	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	KRAS_G12C	KRAS G12C	PASS	first profile only
+CIViC	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	PRESENCE	variant_exists	empty	no match	PASS	No CIViC record found via API for this gene+variant
+CIViC	TUMOR	DICER1_E1705K	DICER1	p.E1705*	PRESENCE	variant_exists	empty	no match	PASS	No CIViC record found via API for this gene+variant
+CIViC	TUMOR	TP53_R248W	TP53	p.R248W	CIViC_CSQ_CIViC Variant Name	name	R248W	R248W	PASS	
+CIViC	TUMOR	TP53_R248W	TP53	p.R248W	CIViC_CSQ_SYMBOL	feature.name	TP53	TP53	PASS	
+CIViC	TUMOR	TP53_R248W	TP53	p.R248W	CIViC_CSQ_CIViC Variant ID	id	118	118	PASS	
+CIViC	TUMOR	TP53_R248W	TP53	p.R248W	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	TP53_R248W	TP53 R248W	PASS	first profile only
+CIViC	TUMOR	TP53_R175H	TP53	p.R175H	CIViC_CSQ_CIViC Variant Name	name	R175H	R175H	PASS	
+CIViC	TUMOR	TP53_R175H	TP53	p.R175H	CIViC_CSQ_SYMBOL	feature.name	TP53	TP53	PASS	
+CIViC	TUMOR	TP53_R175H	TP53	p.R175H	CIViC_CSQ_CIViC Variant ID	id	116	116	PASS	
+CIViC	TUMOR	TP53_R175H	TP53	p.R175H	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	TP53_R175H	TP53 R175H	PASS	first profile only
+CIViC	TUMOR	ERBB2_S310F	ERBB2	p.S310F	CIViC_CSQ_CIViC Variant Name	name	S310F/Y	S310F/Y	PASS	
+CIViC	TUMOR	ERBB2_S310F	ERBB2	p.S310F	CIViC_CSQ_SYMBOL	feature.name	ERBB2	ERBB2	PASS	
+CIViC	TUMOR	ERBB2_S310F	ERBB2	p.S310F	CIViC_CSQ_CIViC Variant ID	id	497	497	PASS	
+CIViC	TUMOR	ERBB2_S310F	ERBB2	p.S310F	CIViC_CSQ_CIViC Molecular Profile Name	molecularProfiles.nodes[0].name	ERBB2_S310F/Y	ERBB2 S310F/Y	PASS	first profile only

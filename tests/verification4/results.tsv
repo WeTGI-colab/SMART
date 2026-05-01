@@ -1,0 +1,13 @@
+Check	Status	Detail
+log_exists:par_sample_A	PASS	
+log_complete:par_sample_A	PASS	
+log_exists:par_sample_B	PASS	
+log_complete:par_sample_B	PASS	
+counts_file_exists	PASS	
+counts_row_count	PASS	2 rows as expected
+counts_has_sample:par_sample_A	PASS	
+counts_has_sample:par_sample_B	PASS	
+maf_exists:par_sample_A	PASS	
+maf_exists:par_sample_B	PASS	
+maf_identical:par_sample_A_vs_par_sample_B	PASS	22 data rows match
+maf_content_identical	PASS	all sample MAFs match after excluding Tumor_Sample_Barcode
