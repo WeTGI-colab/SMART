@@ -1,0 +1,140 @@
+###################### Processing: par_sample_B ##########################################
+>>> PASS filtering: par_sample_B
+>>> LiftOver DISABLED: par_sample_B
+>>> VEP annotation: par_sample_B
+2026-04-28 13:48:31 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: par_sample_B
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 15 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr1:114713908 T>C] Selected: Preferred List Match (NM/MANE Select). Gene: NRAS. Tx: ENST00000369535. Protein: Q61R
+  [Variant chr2:208248388 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: IDH1. Tx: ENST00000345146. Protein: R132H
+  [Variant chr3:179218303 G>A] Selected: Preferred List Match (NM/MANE Select). Gene: PIK3CA. Tx: ENST00000263967. Protein: E545K
+  [Variant chr3:179234297 A>G] Selected: Preferred List Match (NM/MANE Select). Gene: PIK3CA. Tx: ENST00000263967. Protein: H1047R
+  [Variant chr7:55174772 GAATTAAGAGAAGCAT>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: Glu746_Ala750del
+  [Variant chr7:55181378 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: T790M
+  [Variant chr7:55191822 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: L858R
+  [Variant chr7:116672196 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: MET. Tx: ENST00000397752. Protein: None
+  [Variant chr7:140753336 A>T] Selected: Preferred List Match (NM/MANE Select). Gene: BRAF. Tx: ENST00000646891. Protein: V600E
+  [Variant chr9:21967753 N><DEL>] Selected: Preferred List Match (NM/MANE Select). Gene: CDKN2A. Tx: ENST00000304494. Protein: None
+  [Variant chr9:77794572 A>T] Selected: Preferred List Match (NM/MANE Select). Gene: GNAQ. Tx: ENST00000286548. Protein: Gln209=
+  [Variant chr10:87933147 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: PTEN. Tx: ENST00000371953. Protein: Arg130*
+  [Variant chr12:25245347 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G13D
+  [Variant chr12:25245350 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G12D
+  [Variant chr12:25245351 C>A] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G12C
+  [Variant chr12:57748512 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: CDK4. Tx: ENST00000257904. Protein: None
+  [Variant chr13:32394734 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: BRCA2. Tx: ENST00000380152. Protein: L3101R
+  [Variant chr14:95094139 G>A] Selected: MANE Select. Gene: DICER1. Tx: ENST00000343455. Protein: Glu1705*
+  [Variant chr17:7674221 G>A] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R248W
+  [Variant chr17:7675088 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R175H
+  [Variant chr17:39687914 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: ERBB2. Tx: ENST00000269571. Protein: None
+  [Variant chr17:39711955 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: ERBB2. Tx: ENST00000269571. Protein: S310F
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 22
+  Mutations annotated:      18
+  CNVs annotated:           4
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/par_sample_B.oncoKB.vcf
+>>> VCF2TABLE: par_sample_B
+>>> MafAnnotator: par_sample_B
+INFO:MafAnnotator:annotating /output/Table/par_sample_B.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 5
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 6
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 7
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 8
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 9
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 10
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 11
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 12
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 13
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 14
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 15
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 16
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 17
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 18
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 19
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 20
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 21
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 22
+INFO:MafAnnotator:done!
+--- par_sample_B complete ---
+###################### Processing: par_sample_B ##########################################
+>>> PASS filtering: par_sample_B
+>>> LiftOver DISABLED: par_sample_B
+>>> VEP annotation: par_sample_B
+2026-04-30 13:45:31 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: par_sample_B
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 15 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr1:114713908 T>C] Preferred match: NM_002524. Gene: NRAS. Protein: Q61R
+  [Variant chr2:208248388 C>T] Preferred match: NM_005896. Gene: IDH1. Protein: R132H
+  [Variant chr3:179218303 G>A] Preferred match: NM_006218. Gene: PIK3CA. Protein: E545K
+  [Variant chr3:179234297 A>G] Preferred match: NM_006218. Gene: PIK3CA. Protein: H1047R
+  [Variant chr7:55174772 GAATTAAGAGAAGCAT>G] Preferred match: NM_005228. Gene: EGFR. Protein: Glu746_Ala750del
+  [Variant chr7:55181378 C>T] Preferred match: NM_005228. Gene: EGFR. Protein: T790M
+  [Variant chr7:55191822 T>G] Preferred match: NM_005228. Gene: EGFR. Protein: L858R
+  [Variant chr7:116672196 N><DUP>] Preferred match: NM_000245. Gene: MET. Protein: None
+  [Variant chr7:140753336 A>T] Preferred match: NM_004333. Gene: BRAF. Protein: V600E
+  [Variant chr9:21967753 N><DEL>] Preferred match: NM_000077. Gene: CDKN2A. Protein: None
+  [Variant chr9:77794572 A>T] Preferred match: NM_002072. Gene: GNAQ. Protein: Gln209=
+  [Variant chr10:87933147 C>T] Preferred match: NM_000314. Gene: PTEN. Protein: Arg130*
+  [Variant chr12:25245347 C>T] Preferred match: NM_004985. Gene: KRAS. Protein: G13D
+  [Variant chr12:25245350 C>T] Preferred match: NM_004985. Gene: KRAS. Protein: G12D
+  [Variant chr12:25245351 C>A] Preferred match: NM_004985. Gene: KRAS. Protein: G12C
+  [Variant chr12:57748512 N><DUP>] Preferred match: NM_000075. Gene: CDK4. Protein: None
+  [Variant chr13:32394734 T>G] Preferred match: NM_000059. Gene: BRCA2. Protein: L3101R
+  [Variant chr14:95094139 G>A] Preferred match: NM_030621. Gene: DICER1. Protein: Glu1705*
+  [Variant chr17:7674221 G>A] Preferred match: NM_000546. Gene: TP53. Protein: R248W
+  [Variant chr17:7675088 C>T] Preferred match: NM_000546. Gene: TP53. Protein: R175H
+  [Variant chr17:39687914 N><DUP>] Preferred match: NM_004448. Gene: ERBB2. Protein: None
+  [Variant chr17:39711955 C>T] Preferred match: NM_004448. Gene: ERBB2. Protein: S310F
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 22
+  Mutations annotated:      18
+  CNVs annotated:           4
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/par_sample_B.oncoKB.vcf
+>>> VCF2TABLE: par_sample_B
+>>> MafAnnotator: par_sample_B
+INFO:MafAnnotator:annotating /output/Table/par_sample_B.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 5
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 6
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 7
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 8
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 9
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 10
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 11
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 12
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 13
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 14
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 15
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 16
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 17
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 18
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 19
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 20
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 21
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 22
+INFO:MafAnnotator:done!
+--- par_sample_B complete ---

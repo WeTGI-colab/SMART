@@ -1,0 +1,132 @@
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+============================================================
+SMART — Somatic Mutation Annotation and Reporting Tool  v0.2.0
+============================================================
+Tool versions:
+  VEP:               114.0
+  GATK:              4.6.0.0
+  bcftools:          bcftools 1.13
+  Python:            Python 3.10.12
+  OncoKB API:        v1.5.0
+
+Reference versions:
+  ClinVar:           clinvar.vcf.gz
+  CIViC:             civic_grch38.vcf.gz
+  CancerHotSpots:    hg38.hotspots_changv2_gao_nc.vcf.gz
+  SpliceAI SNV:      spliceai_scores.raw.snv.hg38.vcf.gz
+  SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
+  REVEL:             new_tabbed_revel_grch38.tsv.gz
+  LOEUF:             loeuf_dataset_grch38.tsv.gz
+  OncoKB data:       v7.0 (03/30/2026)
+
+
+Config:
+  PASS filter:      ENABLED
+  Liftover:         DISABLED
+  Clean tmp:        DISABLED
+  Clean tables:     ENABLED
+  Parallel jobs:    1
+  Transcript file:  /data/transcripts_A.txt
+  Config file:      /data/Config.yaml
+  Reference dir:    /refs
+  Input dir:        /data
+============================================================
+
+Cleaning previous results...
+Cleanup complete.
+------------------------------------------------------------
+Input VCF directory: /data
+Number of VCF files found: 1
+VCF files:
+/data/verification3.vcf.gz
+------------------------------------------------------------
+>>> Launching: verification3 (log: /output/logs/verification3.log)
+>>> OK: verification3
+###################### Post Analysis ##########################################
+/opt/smart/scripts/post_analysis.py:528: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  df = df.replace({"[]": "", "%3D": "="}, regex=False).infer_objects(copy=False)
+/opt/smart/scripts/post_analysis.py:808: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value 'Palbociclib,Ribociclib,Abemaciclib' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  merged.at[cna_idx, lc] = val
+/opt/smart/scripts/post_analysis.py:816: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value '['.']' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  merged.loc[hr_empty, "HIGHEST_RESISTANCE_LEVEL"] = merged.loc[hr_empty, "ONCOKB_RESIST_LVL"].fillna("")
+Reading: ./FINAL_Table/verification3.oncoKB.maf
+
+=== Expanding OncoKB JSON array columns ===
+  ONCOKB_treatments: all rows empty — skipping expansion
+  ONCOKB_diagnosticImplications: all rows empty — skipping expansion
+  ONCOKB_prognosticImplications: all rows empty — skipping expansion
+
+Filled 2 empty ONCOKB_highestFdaLevel values from ONCOKB_FDA_LVL
+
+Applied CNA overwrite fix for 1 CNA rows (VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION_EFFECT, treatment levels, highest levels)
+
+=== WARNING: Undocumented columns found ===
+Undocumented column: BAM_EDIT
+Undocumented column: GIVEN_REF
+Undocumented column: ONCOKB_ABSTRACTS
+Undocumented column: ONCOKB_DIAG_SUMMARY
+Undocumented column: ONCOKB_EXON
+Undocumented column: ONCOKB_OTHER_RESIST_LVLS
+Undocumented column: ONCOKB_OTHER_SENS_LVLS
+Undocumented column: ONCOKB_PROG_LVL
+Undocumented column: ONCOKB_PROG_SUMMARY
+Undocumented column: ONCOKB_RESIST_LVL
+Undocumented column: REFSEQ_MATCH
+Undocumented column: REFSEQ_OFFSET
+Undocumented column: USED_REF
+Undocumented column: Variant_Classification
+Undocumented column: Variant_Type
+
+Dropped columns (tier=drop): 40
+  - CHROM
+  - ONCOKB_EFFECT
+  - ONCOKB_GENE_EXIST
+  - ONCOKB_ONCOGENIC
+  - ONCOKB_PROGNOSTIC_IMPLICATIONS
+  - ONCOKB_VARIANT_EXIST
+  - ONCOKB_geneExist
+  - ONCOKB_variantExist
+  - ONCOKB_alleleExist
+  - ONCOKB_oncogenic
+  - ONCOKB_highestSensitiveLevel
+  - ONCOKB_highestResistanceLevel
+  - ONCOKB_highestDiagnosticImplicationLevel
+  - ONCOKB_highestPrognosticImplicationLevel
+  - ONCOKB_VUS.1
+  - ONCOKB_hotspot
+  - ONCOKB_exon
+  - ONCOKB_geneSummary
+  - ONCOKB_variantSummary
+  - ONCOKB_tumorTypeSummary
+  - ONCOKB_diagnosticImplications
+  - ONCOKB_prognosticImplications
+  - ONCOKB_treatments
+  - ONCOKB_dataVersion
+  - ONCOKB_lastUpdate
+  - ONCOKB_query.id
+  - ONCOKB_query.referenceGenome
+  - ONCOKB_query.hugoSymbol
+  - ONCOKB_query.entrezGeneId
+  - ONCOKB_query.alteration
+  - ONCOKB_query.alterationType
+  - ONCOKB_query.svType
+  - ONCOKB_query.tumorType
+  - ONCOKB_query.consequence
+  - ONCOKB_query.proteinStart
+  - ONCOKB_query.proteinEnd
+  - ONCOKB_query.hgvs
+  - ONCOKB_query.hgvsInfo
+  - ONCOKB_query.canonicalTranscript
+  - ONCOKB_mutationEffect.knownEffect
+
+Tier1 columns: 546
+Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
+
+Tier2 columns: 404
+Tier3 columns: 75
+Writing Tier2 TSV (bioinformaticians, two-row header): ./output/Final_result_tier2.tsv
+Writing Tier3 TSV (clinical scientists, two-row header): ./output/Final_result_tier3.tsv
+>>> Cleaning table files after post_analysis
+============================================================
+SMART PIPELINE COMPLETE
+============================================================

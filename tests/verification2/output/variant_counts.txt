@@ -1,0 +1,2 @@
+Sample	Original_Variants	PASS_Variants	Lifted_Variants	VEP_Annotated_Variants	OncoKB_Annotated_Variants	VariantsInTable
+FFG_GZ_T_24h-B_VS_WGS_IL_N_1.bwa.strelka.subsample	232	1	1	1	1	1

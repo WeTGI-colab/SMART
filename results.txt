@@ -1,0 +1,1385 @@
+================================================================
+ STEP 1: Running SMART pipeline on verification_combined
+================================================================
+>>> Clearing previous output...
+============================================================
+SMART — Somatic Mutation Annotation and Reporting Tool
+============================================================
+Tool versions:
+  VEP:               114.0
+  GATK:              4.6.0.0
+  bcftools:          bcftools 1.13
+  Python:            Python 3.10.12
+  OncoKB API:        v1.5.0
+
+Reference versions:
+  ClinVar:           clinvar.vcf.gz
+  CIViC:             civic_grch38.vcf.gz
+  CancerHotSpots:    hg38.hotspots_changv2_gao_nc.vcf.gz
+  SpliceAI SNV:      spliceai_scores.raw.snv.hg38.vcf.gz
+  SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
+  REVEL:             new_tabbed_revel_grch38.tsv.gz
+  LOEUF:             loeuf_dataset_grch38.tsv.gz
+  OncoKB data:       v7.0 (03/30/2026)
+
+
+Config:
+  PASS filter:      ENABLED
+  Liftover:         DISABLED
+  Clean tmp:        DISABLED
+  Clean tables:     DISABLED
+  Transcript file:  /data/verification_combined_transcripts.txt
+  Config file:      /data/Config.yaml
+  Reference dir:    /refs
+  Input dir:        /data
+============================================================
+
+Cleaning previous results...
+Cleanup complete.
+------------------------------------------------------------
+Input VCF directory: /data
+Number of VCF files found: 1
+VCF files:
+/data/verification_combined.vcf.gz
+------------------------------------------------------------
+###################### Processing: verification_combined ##########################################
+>>> PASS filtering: verification_combined
+>>> LiftOver DISABLED: verification_combined
+>>> VEP annotation: verification_combined
+2026-04-14 18:07:02 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: verification_combined
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 15 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr1:114713908 T>C] Selected: Preferred List Match (NM/MANE Select). Gene: NRAS. Tx: ENST00000369535. Protein: Q61R
+  [Variant chr2:208248388 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: IDH1. Tx: ENST00000345146. Protein: R132H
+  [Variant chr3:179218303 G>A] Selected: Preferred List Match (NM/MANE Select). Gene: PIK3CA. Tx: ENST00000263967. Protein: E545K
+  [Variant chr3:179234297 A>G] Selected: Preferred List Match (NM/MANE Select). Gene: PIK3CA. Tx: ENST00000263967. Protein: H1047R
+  [Variant chr7:55174772 GAATTAAGAGAAGCAT>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: Glu746_Ala750del
+  [Variant chr7:55181378 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: T790M
+  [Variant chr7:55191822 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: L858R
+  [Variant chr7:116672196 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: MET. Tx: ENST00000397752. Protein: None
+  [Variant chr7:140753336 A>T] Selected: Preferred List Match (NM/MANE Select). Gene: BRAF. Tx: ENST00000646891. Protein: V600E
+  [Variant chr9:21967753 N><DEL>] Selected: Preferred List Match (NM/MANE Select). Gene: CDKN2A. Tx: ENST00000304494. Protein: None
+  [Variant chr9:77794572 A>T] Selected: Preferred List Match (NM/MANE Select). Gene: GNAQ. Tx: ENST00000286548. Protein: Gln209=
+  [Variant chr10:87933147 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: PTEN. Tx: ENST00000371953. Protein: Arg130*
+  [Variant chr12:25245347 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G13D
+  [Variant chr12:25245350 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G12D
+  [Variant chr12:25245351 C>A] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G12C
+  [Variant chr12:57748512 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: CDK4. Tx: ENST00000257904. Protein: None
+  [Variant chr13:32394734 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: BRCA2. Tx: ENST00000380152. Protein: L3101R
+  [Variant chr14:95094139 G>A] Selected: MANE Select. Gene: DICER1. Tx: ENST00000343455. Protein: Glu1705*
+  [Variant chr17:7674221 G>A] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R248W
+  [Variant chr17:7675088 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R175H
+  [Variant chr17:39687914 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: ERBB2. Tx: ENST00000269571. Protein: None
+  [Variant chr17:39711955 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: ERBB2. Tx: ENST00000269571. Protein: S310F
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 22
+  Mutations annotated:      18
+  CNVs annotated:           4
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/verification_combined.oncoKB.vcf
+>>> VCF2TABLE: verification_combined
+>>> MafAnnotator: verification_combined
+--- verification_combined complete ---
+###################### Post Analysis ##########################################
+Reading: ./FINAL_Table/verification_combined.oncoKB.maf
+
+=== Expanding OncoKB JSON array columns ===
+  ONCOKB_treatments: all rows empty — skipping expansion
+  ONCOKB_diagnosticImplications: all rows empty — skipping expansion
+  ONCOKB_prognosticImplications: all rows empty — skipping expansion
+
+Filled 4 empty ONCOKB_highestFdaLevel values from ONCOKB_FDA_LVL
+
+Applied CNA overwrite fix for 4 CNA rows (VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION_EFFECT, treatment levels, highest levels)
+
+=== WARNING: Undocumented columns found ===
+Undocumented column: BAM_EDIT
+Undocumented column: GIVEN_REF
+Undocumented column: ONCOKB_ABSTRACTS
+Undocumented column: ONCOKB_PROG_LVL
+Undocumented column: ONCOKB_RESIST_LVL
+Undocumented column: REFSEQ_MATCH
+Undocumented column: REFSEQ_OFFSET
+Undocumented column: USED_REF
+Undocumented column: Variant_Classification
+Undocumented column: Variant_Type
+
+Dropped columns (tier=drop): 40
+  - CHROM
+  - ONCOKB_EFFECT
+  - ONCOKB_GENE_EXIST
+  - ONCOKB_ONCOGENIC
+  - ONCOKB_PROGNOSTIC_IMPLICATIONS
+  - ONCOKB_VARIANT_EXIST
+  - ONCOKB_geneExist
+  - ONCOKB_variantExist
+  - ONCOKB_alleleExist
+  - ONCOKB_oncogenic
+  - ONCOKB_highestSensitiveLevel
+  - ONCOKB_highestResistanceLevel
+  - ONCOKB_highestDiagnosticImplicationLevel
+  - ONCOKB_highestPrognosticImplicationLevel
+  - ONCOKB_VUS.1
+  - ONCOKB_hotspot
+  - ONCOKB_exon
+  - ONCOKB_geneSummary
+  - ONCOKB_variantSummary
+  - ONCOKB_tumorTypeSummary
+  - ONCOKB_diagnosticImplications
+  - ONCOKB_prognosticImplications
+  - ONCOKB_treatments
+  - ONCOKB_dataVersion
+  - ONCOKB_lastUpdate
+  - ONCOKB_query.id
+  - ONCOKB_query.referenceGenome
+  - ONCOKB_query.hugoSymbol
+  - ONCOKB_query.entrezGeneId
+  - ONCOKB_query.alteration
+  - ONCOKB_query.alterationType
+  - ONCOKB_query.svType
+  - ONCOKB_query.tumorType
+  - ONCOKB_query.consequence
+  - ONCOKB_query.proteinStart
+  - ONCOKB_query.proteinEnd
+  - ONCOKB_query.hgvs
+  - ONCOKB_query.hgvsInfo
+  - ONCOKB_query.canonicalTranscript
+  - ONCOKB_mutationEffect.knownEffect
+
+Tier1 columns: 1021
+Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
+
+Tier2 columns: 668
+Tier3 columns: 77
+Writing Tier2 TSV (bioinformaticians, two-row header): ./output/Final_result_tier2.tsv
+Writing Tier3 TSV (clinical scientists, two-row header): ./output/Final_result_tier3.tsv
+============================================================
+SMART PIPELINE COMPLETE
+============================================================
+
+================================================================
+ STEP 2: Running field-level verification
+================================================================
+Loaded MAF: Final_result_tier1.maf  (22 rows, 1021 columns)
+
+############################################################
+MODULE: OncoKB
+############################################################
+
+────────────────────────────────────────────────────────────
+[1/22]  TUMOR  |  NRAS  |  NRAS_Q61R  |  p.Q61R
+  → Mutation query: NRAS Q61R
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='NRAS, a GTPase, is mutated in a diverse range of cancer'  API='NRAS, a GTPase, is mutated in a diverse range of cancer'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The NRAS Q61R mutation is known to be oncogenic.'  API='The NRAS Q61R mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF='Cobimetinib,Trametinib'  API='Cobimetinib,Trametinib'  [PASS]
+  ✓ LEVEL_3A                            MAF='Binimetinib,Cobimetinib,Selumetinib+Iodine I 131-6-Beta'  API='Binimetinib,Cobimetinib,Selumetinib,Iodine I 131-6-Beta'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='Binimetinib+Ribociclib'  API='Binimetinib,Ribociclib'  [PASS]
+  ✓ LEVEL_R1                            MAF='Cetuximab,Tucatinib+Trastuzumab,Panitumumab'  API='Cetuximab,Tucatinib,Trastuzumab,Panitumumab'  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_2'  API='LEVEL_2'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF='LEVEL_R1'  API='LEVEL_R1'  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx2'  API='LEVEL_Dx2'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF='LEVEL_Px1'  API='LEVEL_Px1'  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[2/22]  TUMOR  |  IDH1  |  IDH1_R132H  |  p.R132H
+  → Mutation query: IDH1 R132H
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='IDH1, a cell metabolism enzyme, is recurrently mutated '  API='IDH1, a cell metabolism enzyme, is recurrently mutated '  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The IDH1 R132H mutation is known to be oncogenic.'  API='The IDH1 R132H mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Switch-of-function'  API='Switch-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Ivosidenib,Olutasidenib,Vorasidenib'  API='Ivosidenib,Olutasidenib,Vorasidenib'  [PASS]
+  ✓ LEVEL_2                             MAF='Ivosidenib'  API='Ivosidenib'  [PASS]
+  ✓ LEVEL_3A                            MAF='Ivosidenib'  API='Ivosidenib'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx2'  API='LEVEL_Dx2'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF='LEVEL_Px2'  API='LEVEL_Px2'  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[3/22]  TUMOR  |  PIK3CA  |  PIK3CA_E545K  |  p.E545K
+  → Mutation query: PIK3CA E545K
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  API='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The PIK3CA E545K mutation is known to be oncogenic.'  API='The PIK3CA E545K mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Alpelisib+Fulvestrant,Capivasertib+Fulvestrant,Inavolis'  API='Alpelisib,Fulvestrant,Capivasertib,Inavolisib,Palbocicl'  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='RLY-2608,RLY-2608+Fulvestrant'  API='RLY-2608,Fulvestrant'  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[4/22]  TUMOR  |  PIK3CA  |  PIK3CA_H1047R  |  p.H1047R
+  → Mutation query: PIK3CA H1047R
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  API='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The PIK3CA H1047R mutation is known to be oncogenic.'  API='The PIK3CA H1047R mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Alpelisib+Fulvestrant,Capivasertib+Fulvestrant,Inavolis'  API='Alpelisib,Fulvestrant,Capivasertib,Inavolisib,Palbocicl'  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='RLY-2608,RLY-2608+Fulvestrant'  API='RLY-2608,Fulvestrant'  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[5/22]  TUMOR  |  EGFR  |  EGFR_del19  |  p.Glu746_Ala750del
+  → Mutation query: EGFR Glu746_Ala750del
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='EGFR, a receptor tyrosine kinase, is altered by amplifi'  API='EGFR, a receptor tyrosine kinase, is altered by amplifi'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The EGFR E746_A750del alteration is known to be oncogen'  API='The EGFR E746_A750del alteration is known to be oncogen'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Afatinib,Amivantamab+Chemotherapy,Amivantamab+Lazertini'  API='Afatinib,Amivantamab,Chemotherapy,Lazertinib,Dacomitini'  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF='Patritumab Deruxtecan'  API='Patritumab Deruxtecan'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[6/22]  TUMOR  |  EGFR  |  EGFR_T790M  |  p.T790M
+  → Mutation query: EGFR T790M
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='EGFR, a receptor tyrosine kinase, is altered by amplifi'  API='EGFR, a receptor tyrosine kinase, is altered by amplifi'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The EGFR T790M mutation is known to be oncogenic.'  API='The EGFR T790M mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Datopotamab Deruxtecan,Osimertinib'  API='Datopotamab Deruxtecan,Osimertinib'  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF='Erlotinib,Gefitinib,Afatinib'  API='Erlotinib,Gefitinib,Afatinib'  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF='LEVEL_R1'  API='LEVEL_R1'  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[7/22]  TUMOR  |  EGFR  |  EGFR_L858R  |  p.L858R
+  → Mutation query: EGFR L858R
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='EGFR, a receptor tyrosine kinase, is altered by amplifi'  API='EGFR, a receptor tyrosine kinase, is altered by amplifi'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The EGFR L858R mutation is known to be oncogenic.'  API='The EGFR L858R mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Afatinib,Amivantamab+Chemotherapy,Amivantamab+Lazertini'  API='Afatinib,Amivantamab,Chemotherapy,Lazertinib,Dacomitini'  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF='Patritumab Deruxtecan'  API='Patritumab Deruxtecan'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[8/22]  TUMOR  |  MET  |  MantaDUP:MET_AMP  |  
+  → CNA query: MET AMPLIFICATION
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='MET, a receptor tyrosine kinase, is recurrently altered'  API='MET, a receptor tyrosine kinase, is recurrently altered'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='MET amplification is known to be oncogenic.'  API='MET amplification is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF='Capmatinib,Crizotinib,Tepotinib'  API='Capmatinib,Crizotinib,Tepotinib'  [PASS]
+  ✓ LEVEL_3A                            MAF='Telisotuzumab Vedotin'  API='Telisotuzumab Vedotin'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF='Erlotinib,Gefitinib,Osimertinib'  API='Erlotinib,Gefitinib,Osimertinib'  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_2'  API='LEVEL_2'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF='LEVEL_R2'  API='LEVEL_R2'  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[9/22]  TUMOR  |  BRAF  |  BRAF_V600E  |  p.V600E
+  → Mutation query: BRAF V600E
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='BRAF, an intracellular kinase, is frequently mutated in'  API='BRAF, an intracellular kinase, is frequently mutated in'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The BRAF V600E mutation is known to be oncogenic.'  API='The BRAF V600E mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Dabrafenib,Dabrafenib+Trametinib,Encorafenib+Binimetini'  API='Dabrafenib,Trametinib,Encorafenib,Binimetinib,Cetuximab'  [PASS]
+  ✓ LEVEL_2                             MAF='Encorafenib+Panitumumab,Selumetinib,Vemurafenib,Vemuraf'  API='Encorafenib,Panitumumab,Selumetinib,Vemurafenib,Cobimet'  [PASS]
+  ✓ LEVEL_3A                            MAF='Vemurafenib,Dabrafenib'  API='Vemurafenib,Dabrafenib'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx2'  API='LEVEL_Dx2'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[10/22]  TUMOR  |  CDKN2A  |  MantaDEL:CDKN2A_DEL  |  
+  → CNA query: CDKN2A DELETION
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='CDKN2A, which encodes both a cyclin-dependent kinase in'  API='CDKN2A, which encodes both a cyclin-dependent kinase in'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda3'  API='LEVEL_Fda3'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='CDKN2A deletion is known to be oncogenic.'  API='CDKN2A deletion is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Loss-of-function'  API='Loss-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='Palbociclib,Ribociclib,Abemaciclib'  API='Palbociclib,Ribociclib,Abemaciclib'  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_4'  API='LEVEL_4'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx2'  API='LEVEL_Dx2'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[11/22]  TUMOR  |  GNAQ  |  GNAQ_Q209L  |  p.Gln209=
+  → Mutation query: GNAQ Gln209=
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='GNAQ, a G protein subunit, is recurrently mutated in uv'  API='GNAQ, a G protein subunit, is recurrently mutated in uv'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='This is a synonymous mutation and is not annotated by O'  API='This is a synonymous mutation and is not annotated by O'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='False'  API='False'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Unknown'  API='Unknown'  [PASS]
+  ✓ ONCOGENIC                           MAF='Unknown'  API='Unknown'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF=''  API=''  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[12/22]  TUMOR  |  PTEN  |  PTEN_R130stop  |  p.R130*
+  → Mutation query: PTEN R130*
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='PTEN, a lipid and protein phosphatase, is one of the mo'  API='PTEN, a lipid and protein phosphatase, is one of the mo'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The PTEN R130* mutation is known to be oncogenic.'  API='The PTEN R130* mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Loss-of-function'  API='Loss-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Capivasertib+Fulvestrant'  API='Capivasertib,Fulvestrant'  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='GSK2636771,AZD8186'  API='GSK2636771,AZD8186'  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx3'  API='LEVEL_Dx3'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[13/22]  TUMOR  |  KRAS  |  KRAS_G13D  |  p.G13D
+  → Mutation query: KRAS G13D
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='KRAS, a GTPase which functions as an upstream regulator'  API='KRAS, a GTPase which functions as an upstream regulator'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The KRAS G13D mutation is known to be oncogenic.'  API='The KRAS G13D mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Avutometinib+Defactinib'  API='Avutometinib,Defactinib'  [PASS]
+  ✓ LEVEL_2                             MAF='Cobimetinib,Trametinib'  API='Cobimetinib,Trametinib'  [PASS]
+  ✓ LEVEL_3A                            MAF='Cobimetinib,Trametinib'  API='Cobimetinib,Trametinib'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='Trametinib,Cobimetinib,Binimetinib'  API='Trametinib,Cobimetinib,Binimetinib'  [PASS]
+  ✓ LEVEL_R1                            MAF='Cetuximab,Tucatinib+Trastuzumab,Panitumumab'  API='Cetuximab,Tucatinib,Trastuzumab,Panitumumab'  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF='LEVEL_R1'  API='LEVEL_R1'  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx2'  API='LEVEL_Dx2'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[14/22]  TUMOR  |  KRAS  |  KRAS_G12D  |  p.G12D
+  → Mutation query: KRAS G12D
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='KRAS, a GTPase which functions as an upstream regulator'  API='KRAS, a GTPase which functions as an upstream regulator'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The KRAS G12D mutation is known to be oncogenic.'  API='The KRAS G12D mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Avutometinib+Defactinib'  API='Avutometinib,Defactinib'  [PASS]
+  ✓ LEVEL_2                             MAF='Cobimetinib,Trametinib'  API='Cobimetinib,Trametinib'  [PASS]
+  ✓ LEVEL_3A                            MAF='Cobimetinib,Daraxonrasib,Setidegrasib,Trametinib'  API='Cobimetinib,Daraxonrasib,Setidegrasib,Trametinib'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='Daraxonrasib,MRTX1133,Setidegrasib,Trametinib,Cobimetin'  API='Daraxonrasib,MRTX1133,Setidegrasib,Trametinib,Cobimetin'  [PASS]
+  ✓ LEVEL_R1                            MAF='Cetuximab,Tucatinib+Trastuzumab,Panitumumab'  API='Cetuximab,Tucatinib,Trastuzumab,Panitumumab'  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF='LEVEL_R1'  API='LEVEL_R1'  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx2'  API='LEVEL_Dx2'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[15/22]  TUMOR  |  KRAS  |  KRAS_G12C  |  p.G12C
+  → Mutation query: KRAS G12C
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='KRAS, a GTPase which functions as an upstream regulator'  API='KRAS, a GTPase which functions as an upstream regulator'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The KRAS G12C mutation is known to be oncogenic.'  API='The KRAS G12C mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Adagrasib,Adagrasib+Cetuximab,Avutometinib+Defactinib,S'  API='Adagrasib,Cetuximab,Avutometinib,Defactinib,Sotorasib,P'  [PASS]
+  ✓ LEVEL_2                             MAF='Adagrasib,Adagrasib+Panitumumab,Cobimetinib,Sotorasib,S'  API='Adagrasib,Panitumumab,Cobimetinib,Sotorasib,Cetuximab,T'  [PASS]
+  ✓ LEVEL_3A                            MAF='Adagrasib,Cobimetinib,Trametinib'  API='Adagrasib,Cobimetinib,Trametinib'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='Trametinib,Cobimetinib,Binimetinib'  API='Trametinib,Cobimetinib,Binimetinib'  [PASS]
+  ✓ LEVEL_R1                            MAF='Cetuximab,Tucatinib+Trastuzumab,Panitumumab'  API='Cetuximab,Tucatinib,Trastuzumab,Panitumumab'  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF='LEVEL_R1'  API='LEVEL_R1'  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF='LEVEL_Dx2'  API='LEVEL_Dx2'  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[16/22]  TUMOR  |  CDK4  |  MantaDUP:CDK4_AMP  |  
+  → CNA query: CDK4 AMPLIFICATION
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='CDK4, an intracellular kinase, is altered by amplificat'  API='CDK4, an intracellular kinase, is altered by amplificat'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda3'  API='LEVEL_Fda3'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='CDK4 amplification is known to be oncogenic.'  API='CDK4 amplification is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='Palbociclib,Abemaciclib'  API='Palbociclib,Abemaciclib'  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_4'  API='LEVEL_4'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[17/22]  TUMOR  |  BRCA2  |  BRCA2_L3101R  |  p.L3101R
+  → Mutation query: BRCA2 L3101R
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='BRCA2, a tumor suppressor involved in the DNA damage re'  API='BRCA2, a tumor suppressor involved in the DNA damage re'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The BRCA2 L3101R mutation is likely oncogenic.'  API='The BRCA2 L3101R mutation is likely oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Likely Loss-of-function'  API='Likely Loss-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Likely Oncogenic'  API='Likely Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Niraparib,Niraparib+Abiraterone Acetate+Prednisone,Olap'  API='Niraparib,Abiraterone Acetate,Prednisone,Olaparib,Abira'  [PASS]
+  ✓ LEVEL_2                             MAF='Olaparib,Rucaparib,Niraparib'  API='Olaparib,Rucaparib,Niraparib'  [PASS]
+  ✓ LEVEL_3A                            MAF='Olaparib,Talazoparib'  API='Olaparib,Talazoparib'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[18/22]  TUMOR  |  DICER1  |  DICER1_E1705K  |  p.E1705*
+  → Mutation query: DICER1 E1705*
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='DICER1, an endoribonuclease, is altered in various canc'  API='DICER1, an endoribonuclease, is altered in various canc'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The DICER1 E1705* is a truncating mutation in a tumor s'  API='The DICER1 E1705* is a truncating mutation in a tumor s'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='False'  API='False'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Likely Loss-of-function'  API='Likely Loss-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Likely Oncogenic'  API='Likely Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF=''  API=''  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[19/22]  TUMOR  |  TP53  |  TP53_R248W  |  p.R248W
+  → Mutation query: TP53 R248W
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='TP53, a tumor suppressor in the DNA damage pathway, is '  API='TP53, a tumor suppressor in the DNA damage pathway, is '  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The TP53 R248W mutation is likely oncogenic.'  API='The TP53 R248W mutation is likely oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Loss-of-function'  API='Loss-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Likely Oncogenic'  API='Likely Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF=''  API=''  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF='LEVEL_Px1'  API='LEVEL_Px1'  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[20/22]  TUMOR  |  TP53  |  TP53_R175H  |  p.R175H
+  → Mutation query: TP53 R175H
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='TP53, a tumor suppressor in the DNA damage pathway, is '  API='TP53, a tumor suppressor in the DNA damage pathway, is '  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The TP53 R175H mutation is known to be oncogenic.'  API='The TP53 R175H mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Loss-of-function'  API='Loss-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_2                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_3A                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF=''  API=''  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF='LEVEL_Px1'  API='LEVEL_Px1'  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[21/22]  TUMOR  |  ERBB2  |  MantaDUP:ERBB2_AMP  |  
+  → CNA query: ERBB2 AMPLIFICATION
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='ERBB2, a receptor tyrosine kinase, is altered by mutati'  API='ERBB2, a receptor tyrosine kinase, is altered by mutati'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='ERBB2 amplification is known to be oncogenic.'  API='ERBB2 amplification is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Ado-Trastuzumab Emtansine,Lapatinib,Capecitabine,Marget'  API='Ado-Trastuzumab Emtansine,Lapatinib,Capecitabine,Marget'  [PASS]
+  ✓ LEVEL_2                             MAF='Ado-Trastuzumab Emtansine,Lapatinib,Trastuzumab,Trastuz'  API='Ado-Trastuzumab Emtansine,Lapatinib,Trastuzumab,Trastuz'  [PASS]
+  ✓ LEVEL_3A                            MAF='Trastuzumab Deruxtecan,Zanidatamab'  API='Trastuzumab Deruxtecan,Zanidatamab'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF=''  API=''  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[22/22]  TUMOR  |  ERBB2  |  ERBB2_S310F  |  p.S310F
+  → Mutation query: ERBB2 S310F
+  ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_GENE_SUMMARY                 MAF='ERBB2, a receptor tyrosine kinase, is altered by mutati'  API='ERBB2, a receptor tyrosine kinase, is altered by mutati'  [PASS]
+  ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
+  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
+  ✓ ONCOKB_VARIANT_SUMMARY              MAF='The ERBB2 S310F mutation is known to be oncogenic.'  API='The ERBB2 S310F mutation is known to be oncogenic.'  [PASS]
+  ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
+  ✓ VARIANT_IN_ONCOKB                   MAF='True'  API='True'  [PASS]
+  ✓ MUTATION_EFFECT                     MAF='Gain-of-function'  API='Gain-of-function'  [PASS]
+  ✓ ONCOGENIC                           MAF='Oncogenic'  API='Oncogenic'  [PASS]
+  ✓ LEVEL_1                             MAF='Trastuzumab Deruxtecan'  API='Trastuzumab Deruxtecan'  [PASS]
+  ✓ LEVEL_2                             MAF='Ado-Trastuzumab Emtansine,Neratinib,Neratinib+Trastuzum'  API='Ado-Trastuzumab Emtansine,Neratinib,Trastuzumab,Fulvest'  [PASS]
+  ✓ LEVEL_3A                            MAF='Neratinib,Sevabertinib,Trastuzumab+Pertuzumab+Docetaxel'  API='Neratinib,Sevabertinib,Trastuzumab,Pertuzumab,Docetaxel'  [PASS]
+  ✓ LEVEL_3B                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_4                             MAF='Neratinib,Pertuzumab+Trastuzumab,Trastuzumab Deruxtecan'  API='Neratinib,Pertuzumab,Trastuzumab,Trastuzumab Deruxtecan'  [PASS]
+  ✓ LEVEL_R1                            MAF=''  API=''  [PASS]
+  ✓ LEVEL_R2                            MAF=''  API=''  [PASS]
+  ✓ HIGHEST_SENSITIVE_LEVEL             MAF='LEVEL_1'  API='LEVEL_1'  [PASS]
+  ✓ HIGHEST_RESISTANCE_LEVEL            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_DIAG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_PROG_LVL                     MAF=''  API=''  [PASS]
+  ✓ ONCOKB_diagnosticSummary            MAF=''  API=''  [PASS]
+  ✓ ONCOKB_prognosticSummary            MAF=''  API=''  [PASS]
+
+============================================================
+OncoKB SUMMARY
+============================================================
+  Variants checked:  22
+  Field checks:      506
+  PASS:              506
+  MISMATCH:          0
+  ERROR:             0
+============================================================
+
+────────────────────────────────────────────────────────────
+FIELD COVERAGE REPORT
+────────────────────────────────────────────────────────────
+  Tested (≥1 variant had data):  20
+    ✓ ONCOKB_ALLELE_EXIST
+    ✓ ONCOKB_GENE_SUMMARY
+    ✓ ONCOKB_HOTSPOT
+    ✓ ONCOKB_VUS
+    ✓ ONCOKB_highestFdaLevel
+    ✓ ONCOKB_VARIANT_SUMMARY
+    ✓ GENE_IN_ONCOKB
+    ✓ VARIANT_IN_ONCOKB
+    ✓ MUTATION_EFFECT
+    ✓ ONCOGENIC
+    ✓ LEVEL_1
+    ✓ LEVEL_2
+    ✓ LEVEL_3A
+    ✓ LEVEL_4
+    ✓ LEVEL_R1
+    ✓ LEVEL_R2
+    ✓ HIGHEST_SENSITIVE_LEVEL
+    ✓ HIGHEST_RESISTANCE_LEVEL
+    ✓ ONCOKB_DIAG_LVL
+    ✓ ONCOKB_PROG_LVL
+
+  UNTESTABLE (always empty in MAF + API): 3
+    ○ LEVEL_3B
+        → No hint available.
+    ○ ONCOKB_diagnosticSummary
+        → Always empty when querying without a tumorType. The API returns highestDiagnosticImplicationLevel (ONCOKB_DIAG_LVL) pan-cancer, but diagnosticSummary text is only populated for a specific tumor type. Variants in this dataset that HAVE a DIAG level: IDH1 R132H (Dx2), BRAF V600E (Dx2), NRAS Q61R (Dx2), KRAS G12D/G13D (Dx2), CDKN2A_DEL (Dx2), PTEN R130* (Dx3). To test, re-query with e.g. tumorType=Glioma for IDH1 R132H.
+    ○ ONCOKB_prognosticSummary
+        → Always empty when querying without a tumorType. Same reason as diagnosticSummary. Variants with PROG level: IDH1 R132H (Px2), NRAS Q61R (Px1), TP53 R175H (Px1). To test, re-query with a specific tumor type.
+────────────────────────────────────────────────────────────
+
+############################################################
+MODULE: VEP
+############################################################
+
+────────────────────────────────────────────────────────────
+[1/22]  TUMOR  |  NRAS  |  NRAS_Q61R  |  p.Q61R
+  → VEP query: ENST00000369535:c.182A>G  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='3/7'  API='3/7'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.182A>G'  API='c.182A>G'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000358548.4:p.Gln61Arg'  API='ENSP00000358548:p.Gln61Arg'  [PASS]
+  ✓ Protein_position     MAF='61'  API='61'  [PASS]
+  ✓ Amino_acids          MAF='Q/R'  API='Q/R'  [PASS]
+  ✓ Codons               MAF='cAa/cGa'  API='cAa/cGa'  [PASS]
+  ✓ SIFT                 MAF='deleterious_low_confidence(0.02)'  API='deleterious_low_confidence(0.02)'  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[2/22]  TUMOR  |  IDH1  |  IDH1_R132H  |  p.R132H
+  → VEP query: ENST00000345146:c.395G>A  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='4/10'  API='4/10'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.395G>A'  API='c.395G>A'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000260985.2:p.Arg132His'  API='ENSP00000260985:p.Arg132His'  [PASS]
+  ✓ Protein_position     MAF='132'  API='132'  [PASS]
+  ✓ Amino_acids          MAF='R/H'  API='R/H'  [PASS]
+  ✓ Codons               MAF='cGt/cAt'  API='cGt/cAt'  [PASS]
+  ✓ SIFT                 MAF='tolerated_low_confidence(0.07)'  API='tolerated_low_confidence(0.07)'  [PASS]
+  ✓ PolyPhen             MAF='benign(0.009)'  API='benign(0.009)'  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[3/22]  TUMOR  |  PIK3CA  |  PIK3CA_E545K  |  p.E545K
+  → VEP query: ENST00000263967:c.1633G>A  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='10/21'  API='10/21'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.1633G>A'  API='c.1633G>A'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000263967.3:p.Glu545Lys'  API='ENSP00000263967:p.Glu545Lys'  [PASS]
+  ✓ Protein_position     MAF='545'  API='545'  [PASS]
+  ✓ Amino_acids          MAF='E/K'  API='E/K'  [PASS]
+  ✓ Codons               MAF='Gag/Aag'  API='Gag/Aag'  [PASS]
+  ✓ SIFT                 MAF='deleterious(0)'  API='deleterious(0)'  [PASS]
+  ✓ PolyPhen             MAF='probably_damaging(0.912)'  API='probably_damaging(0.912)'  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[4/22]  TUMOR  |  PIK3CA  |  PIK3CA_H1047R  |  p.H1047R
+  → VEP query: ENST00000263967:c.3140A>G  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='21/21'  API='21/21'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.3140A>G'  API='c.3140A>G'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000263967.3:p.His1047Arg'  API='ENSP00000263967:p.His1047Arg'  [PASS]
+  ✓ Protein_position     MAF='1047'  API='1047'  [PASS]
+  ✓ Amino_acids          MAF='H/R'  API='H/R'  [PASS]
+  ✓ Codons               MAF='cAt/cGt'  API='cAt/cGt'  [PASS]
+  ✓ SIFT                 MAF='deleterious(0)'  API='deleterious(0)'  [PASS]
+  ✓ PolyPhen             MAF='benign(0.088)'  API='benign(0.088)'  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[5/22]  TUMOR  |  EGFR  |  EGFR_del19  |  p.Glu746_Ala750del
+  → VEP query: ENST00000275493:c.2236_2250del  (refseq=False)
+  ✓ Consequence          MAF='inframe_deletion'  API='inframe_deletion'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='19/28'  API='19/28'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.2236_2250del'  API='c.2236_2250del'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000275493.2:p.Glu746_Ala750del'  API='ENSP00000275493:p.Glu746_Ala750del'  [PASS]
+  ✓ Protein_position     MAF='746-750'  API='746-750'  [PASS]
+  ✓ Amino_acids          MAF='ELREA/-'  API='ELREA/-'  [PASS]
+  ✓ Codons               MAF='GAATTAAGAGAAGCA/-'  API='GAATTAAGAGAAGCA/-'  [PASS]
+  ✓ SIFT                 MAF=''  API=''  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[6/22]  TUMOR  |  EGFR  |  EGFR_T790M  |  p.T790M
+  → VEP query: ENST00000275493:c.2369C>T  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='20/28'  API='20/28'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.2369C>T'  API='c.2369C>T'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000275493.2:p.Thr790Met'  API='ENSP00000275493:p.Thr790Met'  [PASS]
+  ✓ Protein_position     MAF='790'  API='790'  [PASS]
+  ✓ Amino_acids          MAF='T/M'  API='T/M'  [PASS]
+  ✓ Codons               MAF='aCg/aTg'  API='aCg/aTg'  [PASS]
+  ✓ SIFT                 MAF='deleterious_low_confidence(0)'  API='deleterious_low_confidence(0)'  [PASS]
+  ✓ PolyPhen             MAF='probably_damaging(1)'  API='probably_damaging(1)'  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[7/22]  TUMOR  |  EGFR  |  EGFR_L858R  |  p.L858R
+  → VEP query: ENST00000275493:c.2573T>G  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='21/28'  API='21/28'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.2573T>G'  API='c.2573T>G'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000275493.2:p.Leu858Arg'  API='ENSP00000275493:p.Leu858Arg'  [PASS]
+  ✓ Protein_position     MAF='858'  API='858'  [PASS]
+  ✓ Amino_acids          MAF='L/R'  API='L/R'  [PASS]
+  ✓ Codons               MAF='cTg/cGg'  API='cTg/cGg'  [PASS]
+  ✓ SIFT                 MAF='deleterious_low_confidence(0)'  API='deleterious_low_confidence(0)'  [PASS]
+  ✓ PolyPhen             MAF='probably_damaging(0.997)'  API='probably_damaging(0.997)'  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[8/22]  TUMOR  |  MET  |  MantaDUP:MET_AMP  |  
+  SKIP: CNA — VEP REST API does not annotate structural variants
+
+────────────────────────────────────────────────────────────
+[9/22]  TUMOR  |  BRAF  |  BRAF_V600E  |  p.V600E
+  → VEP query: ENST00000646891:c.1799T>A  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='15/18'  API='15/18'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.1799T>A'  API='c.1799T>A'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000493543.1:p.Val600Glu'  API='ENSP00000493543:p.Val600Glu'  [PASS]
+  ✓ Protein_position     MAF='600'  API='600'  [PASS]
+  ✓ Amino_acids          MAF='V/E'  API='V/E'  [PASS]
+  ✓ Codons               MAF='gTg/gAg'  API='gTg/gAg'  [PASS]
+  ✓ SIFT                 MAF='deleterious_low_confidence(0)'  API='deleterious_low_confidence(0)'  [PASS]
+  ✓ PolyPhen             MAF='probably_damaging(0.935)'  API='probably_damaging(0.935)'  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[10/22]  TUMOR  |  CDKN2A  |  MantaDEL:CDKN2A_DEL  |  
+  SKIP: CNA — VEP REST API does not annotate structural variants
+
+────────────────────────────────────────────────────────────
+[11/22]  TUMOR  |  GNAQ  |  GNAQ_Q209L  |  p.Gln209=
+  SKIP: missing HGVSc ('') or Feature ('ENST00000286548')
+
+────────────────────────────────────────────────────────────
+[12/22]  TUMOR  |  PTEN  |  PTEN_R130stop  |  p.R130*
+  → VEP query: ENST00000371953:c.388C>T  (refseq=False)
+  ✓ Consequence          MAF='stop_gained'  API='stop_gained'  [PASS]
+  ✓ IMPACT               MAF='HIGH'  API='HIGH'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='5/9'  API='5/9'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.388C>T'  API='c.388C>T'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000361021.3:p.Arg130Ter'  API='ENSP00000361021:p.Arg130Ter'  [PASS]
+  ✓ Protein_position     MAF='130'  API='130'  [PASS]
+  ✓ Amino_acids          MAF='R/*'  API='R/*'  [PASS]
+  ✓ Codons               MAF='Cga/Tga'  API='Cga/Tga'  [PASS]
+  ✓ SIFT                 MAF=''  API=''  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[13/22]  TUMOR  |  KRAS  |  KRAS_G13D  |  p.G13D
+  → VEP query: ENST00000311936:c.38G>A  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='2/5'  API='2/5'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.38G>A'  API='c.38G>A'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000308495.3:p.Gly13Asp'  API='ENSP00000308495:p.Gly13Asp'  [PASS]
+  ✓ Protein_position     MAF='13'  API='13'  [PASS]
+  ✓ Amino_acids          MAF='G/D'  API='G/D'  [PASS]
+  ✓ Codons               MAF='gGc/gAc'  API='gGc/gAc'  [PASS]
+  ✓ SIFT                 MAF='deleterious_low_confidence(0.04)'  API='deleterious_low_confidence(0.04)'  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[14/22]  TUMOR  |  KRAS  |  KRAS_G12D  |  p.G12D
+  → VEP query: ENST00000311936:c.35G>A  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='2/5'  API='2/5'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.35G>A'  API='c.35G>A'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000308495.3:p.Gly12Asp'  API='ENSP00000308495:p.Gly12Asp'  [PASS]
+  ✓ Protein_position     MAF='12'  API='12'  [PASS]
+  ✓ Amino_acids          MAF='G/D'  API='G/D'  [PASS]
+  ✓ Codons               MAF='gGt/gAt'  API='gGt/gAt'  [PASS]
+  ✓ SIFT                 MAF='deleterious_low_confidence(0.04)'  API='deleterious_low_confidence(0.04)'  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[15/22]  TUMOR  |  KRAS  |  KRAS_G12C  |  p.G12C
+  → VEP query: ENST00000311936:c.34G>T  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='2/5'  API='2/5'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.34G>T'  API='c.34G>T'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000308495.3:p.Gly12Cys'  API='ENSP00000308495:p.Gly12Cys'  [PASS]
+  ✓ Protein_position     MAF='12'  API='12'  [PASS]
+  ✓ Amino_acids          MAF='G/C'  API='G/C'  [PASS]
+  ✓ Codons               MAF='Ggt/Tgt'  API='Ggt/Tgt'  [PASS]
+  ✓ SIFT                 MAF='deleterious_low_confidence(0)'  API='deleterious_low_confidence(0)'  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[16/22]  TUMOR  |  CDK4  |  MantaDUP:CDK4_AMP  |  
+  SKIP: CNA — VEP REST API does not annotate structural variants
+
+────────────────────────────────────────────────────────────
+[17/22]  TUMOR  |  BRCA2  |  BRCA2_L3101R  |  p.L3101R
+  → VEP query: ENST00000380152:c.9302T>G  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='25/27'  API='25/27'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.9302T>G'  API='c.9302T>G'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000369497.3:p.Leu3101Arg'  API='ENSP00000369497:p.Leu3101Arg'  [PASS]
+  ✓ Protein_position     MAF='3101'  API='3101'  [PASS]
+  ✓ Amino_acids          MAF='L/R'  API='L/R'  [PASS]
+  ✓ Codons               MAF='cTg/cGg'  API='cTg/cGg'  [PASS]
+  ✓ SIFT                 MAF='deleterious(0)'  API='deleterious(0)'  [PASS]
+  ✓ PolyPhen             MAF='possibly_damaging(0.888)'  API='possibly_damaging(0.888)'  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[18/22]  TUMOR  |  DICER1  |  DICER1_E1705K  |  p.E1705*
+  → VEP query: NM_030621.4:c.5113G>T  (refseq=True)
+  ✓ Consequence          MAF='stop_gained'  API='stop_gained'  [PASS]
+  ✓ IMPACT               MAF='HIGH'  API='HIGH'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='26/29'  API='26/29'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.5113G>T'  API='c.5113G>T'  [PASS]
+  ✓ HGVSp                MAF='NP_085124.2:p.Glu1705Ter'  API='NP_085124:p.Glu1705Ter'  [PASS]
+  ✓ Protein_position     MAF='1705'  API='1705'  [PASS]
+  ✓ Amino_acids          MAF='E/*'  API='E/*'  [PASS]
+  ✓ Codons               MAF='Gaa/Taa'  API='Gaa/Taa'  [PASS]
+  ✓ SIFT                 MAF=''  API=''  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF=''  API=''  [PASS]
+
+────────────────────────────────────────────────────────────
+[19/22]  TUMOR  |  TP53  |  TP53_R248W  |  p.R248W
+  → VEP query: ENST00000269305:c.742C>T  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='7/11'  API='7/11'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.742C>T'  API='c.742C>T'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000269305.4:p.Arg248Trp'  API='ENSP00000269305:p.Arg248Trp'  [PASS]
+  ✓ Protein_position     MAF='248'  API='248'  [PASS]
+  ✓ Amino_acids          MAF='R/W'  API='R/W'  [PASS]
+  ✓ Codons               MAF='Cgg/Tgg'  API='Cgg/Tgg'  [PASS]
+  ✓ SIFT                 MAF='deleterious(0)'  API='deleterious(0)'  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[20/22]  TUMOR  |  TP53  |  TP53_R175H  |  p.R175H
+  → VEP query: ENST00000269305:c.524G>A  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='5/11'  API='5/11'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.524G>A'  API='c.524G>A'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000269305.4:p.Arg175His'  API='ENSP00000269305:p.Arg175His'  [PASS]
+  ✓ Protein_position     MAF='175'  API='175'  [PASS]
+  ✓ Amino_acids          MAF='R/H'  API='R/H'  [PASS]
+  ✓ Codons               MAF='cGc/cAc'  API='cGc/cAc'  [PASS]
+  ✓ SIFT                 MAF='tolerated(0.08)'  API='tolerated(0.08)'  [PASS]
+  ✓ PolyPhen             MAF=''  API=''  [PASS]
+  ✓ STRAND               MAF='-1'  API='-1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+────────────────────────────────────────────────────────────
+[21/22]  TUMOR  |  ERBB2  |  MantaDUP:ERBB2_AMP  |  
+  SKIP: CNA — VEP REST API does not annotate structural variants
+
+────────────────────────────────────────────────────────────
+[22/22]  TUMOR  |  ERBB2  |  ERBB2_S310F  |  p.S310F
+  → VEP query: ENST00000269571:c.929C>T  (refseq=False)
+  ✓ Consequence          MAF='missense_variant'  API='missense_variant'  [PASS]
+  ✓ IMPACT               MAF='MODERATE'  API='MODERATE'  [PASS]
+  ✓ BIOTYPE              MAF='protein_coding'  API='protein_coding'  [PASS]
+  ✓ EXON                 MAF='8/27'  API='8/27'  [PASS]
+  ✓ INTRON               MAF=''  API=''  [PASS]
+  ✓ HGVSc                MAF='c.929C>T'  API='c.929C>T'  [PASS]
+  ✓ HGVSp                MAF='ENSP00000269571.4:p.Ser310Phe'  API='ENSP00000269571:p.Ser310Phe'  [PASS]
+  ✓ Protein_position     MAF='310'  API='310'  [PASS]
+  ✓ Amino_acids          MAF='S/F'  API='S/F'  [PASS]
+  ✓ Codons               MAF='tCc/tTc'  API='tCc/tTc'  [PASS]
+  ✓ SIFT                 MAF='deleterious(0)'  API='deleterious(0)'  [PASS]
+  ✓ PolyPhen             MAF='probably_damaging(0.984)'  API='probably_damaging(0.984)'  [PASS]
+  ✓ STRAND               MAF='1'  API='1'  [PASS]
+  ✓ CANONICAL            MAF='YES'  API='YES'  [PASS]
+
+============================================================
+VEP SUMMARY
+============================================================
+  Rows in MAF:       22
+  Skipped (CNA/etc): 5
+  Variants checked:  17
+  Field checks:      238
+  PASS:              238
+  MISMATCH:          0
+  ERROR:             0
+============================================================
+
+────────────────────────────────────────────────────────────
+FIELD COVERAGE REPORT
+────────────────────────────────────────────────────────────
+  Tested (≥1 variant had data):  13
+    ✓ Consequence
+    ✓ IMPACT
+    ✓ BIOTYPE
+    ✓ EXON
+    ✓ HGVSc
+    ✓ HGVSp
+    ✓ Protein_position
+    ✓ Amino_acids
+    ✓ Codons
+    ✓ SIFT
+    ✓ PolyPhen
+    ✓ STRAND
+    ✓ CANONICAL
+
+  UNTESTABLE (always empty in MAF + API): 1
+    ○ INTRON
+        → Only populated for intronic variants; no intronic variants in this dataset.
+────────────────────────────────────────────────────────────
+
+############################################################
+MODULE: CIViC
+############################################################
+NOTE: COVERAGE_GAP means the live CIViC API has a record for this
+      variant but the MAF is empty. This may indicate a stale VCF
+      snapshot in the pipeline rather than a processing error.
+
+────────────────────────────────────────────────────────────
+[1/22]  TUMOR  |  NRAS  |  NRAS_Q61R  |  p.Q61R
+  → CIViC query: NRAS Q61R
+  Found CIViC record: id=96  name='Q61R'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='Q61R'  API='Q61R'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='NRAS'  API='NRAS'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='96'  API='96'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='NRAS_Q61R'  API='NRAS Q61R'  [PASS]
+
+────────────────────────────────────────────────────────────
+[2/22]  TUMOR  |  IDH1  |  IDH1_R132H  |  p.R132H
+  → CIViC query: IDH1 R132H
+  Found CIViC record: id=420  name='R132H'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='R132H'  API='R132H'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='IDH1'  API='IDH1'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='420'  API='420'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='IDH1_R132H'  API='IDH1 R132H'  [PASS]
+
+────────────────────────────────────────────────────────────
+[3/22]  TUMOR  |  PIK3CA  |  PIK3CA_E545K  |  p.E545K
+  → CIViC query: PIK3CA E545K
+  Found CIViC record: id=104  name='E545K'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='E545K'  API='E545K'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='PIK3CA'  API='PIK3CA'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='104'  API='104'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='PIK3CA_E545K'  API='PIK3CA E545K'  [PASS]
+
+────────────────────────────────────────────────────────────
+[4/22]  TUMOR  |  PIK3CA  |  PIK3CA_H1047R  |  p.H1047R
+  → CIViC query: PIK3CA H1047R
+  Found CIViC record: id=107  name='H1047R'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='H1047R'  API='H1047R'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='PIK3CA'  API='PIK3CA'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='107'  API='107'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='PIK3CA_H1047R'  API='PIK3CA H1047R'  [PASS]
+
+────────────────────────────────────────────────────────────
+[5/22]  TUMOR  |  EGFR  |  EGFR_del19  |  p.Glu746_Ala750del
+  → CIViC query: EGFR Glu746_Ala750del
+  ✓ No CIViC entry found via API — MAF also empty  [PASS]
+
+────────────────────────────────────────────────────────────
+[6/22]  TUMOR  |  EGFR  |  EGFR_T790M  |  p.T790M
+  → CIViC query: EGFR T790M
+  Found CIViC record: id=34  name='T790M'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='T790M'  API='T790M'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='EGFR'  API='EGFR'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='34'  API='34'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='EGFR_T790M'  API='EGFR T790M'  [PASS]
+
+────────────────────────────────────────────────────────────
+[7/22]  TUMOR  |  EGFR  |  EGFR_L858R  |  p.L858R
+  → CIViC query: EGFR L858R
+  Found CIViC record: id=33  name='L858R'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='L858R'  API='L858R'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='EGFR'  API='EGFR'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='33'  API='33'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='EGFR_L858R'  API='EGFR L858R'  [PASS]
+
+────────────────────────────────────────────────────────────
+[8/22]  TUMOR  |  MET  |  MantaDUP:MET_AMP  |  
+  SKIP: CNA — CIViC REST API variant search is by protein change
+
+────────────────────────────────────────────────────────────
+[9/22]  TUMOR  |  BRAF  |  BRAF_V600E  |  p.V600E
+  → CIViC query: BRAF V600E
+  Found CIViC record: id=12  name='V600E'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='V600E'  API='V600E'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='BRAF'  API='BRAF'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='12'  API='12'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='BRAF_V600E'  API='BRAF V600E'  [PASS]
+
+────────────────────────────────────────────────────────────
+[10/22]  TUMOR  |  CDKN2A  |  MantaDEL:CDKN2A_DEL  |  
+  SKIP: CNA — CIViC REST API variant search is by protein change
+
+────────────────────────────────────────────────────────────
+[11/22]  TUMOR  |  GNAQ  |  GNAQ_Q209L  |  p.Gln209=
+  → CIViC query: GNAQ Gln209=
+  ✓ No CIViC entry found via API — MAF also empty  [PASS]
+
+────────────────────────────────────────────────────────────
+[12/22]  TUMOR  |  PTEN  |  PTEN_R130stop  |  p.R130*
+  → CIViC query: PTEN R130*
+  Found CIViC record: id=636  name='R130*'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='R130*'  API='R130*'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='PTEN'  API='PTEN'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='636'  API='636'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='PTEN_R130*'  API='PTEN R130*'  [PASS]
+
+────────────────────────────────────────────────────────────
+[13/22]  TUMOR  |  KRAS  |  KRAS_G13D  |  p.G13D
+  → CIViC query: KRAS G13D
+  Found CIViC record: id=81  name='G13D'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='G13D'  API='G13D'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='KRAS'  API='KRAS'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='81'  API='81'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='KRAS_G13D'  API='KRAS G13D'  [PASS]
+
+────────────────────────────────────────────────────────────
+[14/22]  TUMOR  |  KRAS  |  KRAS_G12D  |  p.G12D
+  → CIViC query: KRAS G12D
+  Found CIViC record: id=79  name='G12D'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='G12D'  API='G12D'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='KRAS'  API='KRAS'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='79'  API='79'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='KRAS_G12D'  API='KRAS G12D'  [PASS]
+
+────────────────────────────────────────────────────────────
+[15/22]  TUMOR  |  KRAS  |  KRAS_G12C  |  p.G12C
+  → CIViC query: KRAS G12C
+  Found CIViC record: id=78  name='G12C'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='G12C'  API='G12C'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='KRAS'  API='KRAS'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='78'  API='78'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='KRAS_G12C'  API='KRAS G12C'  [PASS]
+
+────────────────────────────────────────────────────────────
+[16/22]  TUMOR  |  CDK4  |  MantaDUP:CDK4_AMP  |  
+  SKIP: CNA — CIViC REST API variant search is by protein change
+
+────────────────────────────────────────────────────────────
+[17/22]  TUMOR  |  BRCA2  |  BRCA2_L3101R  |  p.L3101R
+  → CIViC query: BRCA2 L3101R
+  ✓ No CIViC entry found via API — MAF also empty  [PASS]
+
+────────────────────────────────────────────────────────────
+[18/22]  TUMOR  |  DICER1  |  DICER1_E1705K  |  p.E1705*
+  → CIViC query: DICER1 E1705*
+  ✓ No CIViC entry found via API — MAF also empty  [PASS]
+
+────────────────────────────────────────────────────────────
+[19/22]  TUMOR  |  TP53  |  TP53_R248W  |  p.R248W
+  → CIViC query: TP53 R248W
+  Found CIViC record: id=118  name='R248W'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='R248W'  API='R248W'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='TP53'  API='TP53'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='118'  API='118'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='TP53_R248W'  API='TP53 R248W'  [PASS]
+
+────────────────────────────────────────────────────────────
+[20/22]  TUMOR  |  TP53  |  TP53_R175H  |  p.R175H
+  → CIViC query: TP53 R175H
+  Found CIViC record: id=116  name='R175H'
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='R175H'  API='R175H'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='TP53'  API='TP53'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='116'  API='116'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='TP53_R175H'  API='TP53 R175H'  [PASS]
+
+────────────────────────────────────────────────────────────
+[21/22]  TUMOR  |  ERBB2  |  MantaDUP:ERBB2_AMP  |  
+  SKIP: CNA — CIViC REST API variant search is by protein change
+
+────────────────────────────────────────────────────────────
+[22/22]  TUMOR  |  ERBB2  |  ERBB2_S310F  |  p.S310F
+  → CIViC query: ERBB2 S310F
+  Found CIViC record: id=4492  name='S310F'
+  MAF has id=497 ('S310F/Y'); API name-search returned id=4492 ('S310F'). Using MAF variant id for field comparison.
+  ✓ CIViC_CSQ_CIViC Variant Name                  MAF='S310F/Y'  API='S310F/Y'  [PASS]
+  ✓ CIViC_CSQ_SYMBOL                              MAF='ERBB2'  API='ERBB2'  [PASS]
+  ✓ CIViC_CSQ_CIViC Variant ID                    MAF='497'  API='497'  [PASS]
+  ✓ CIViC_CSQ_CIViC Molecular Profile Name        MAF='ERBB2_S310F/Y'  API='ERBB2 S310F/Y'  [PASS]
+
+============================================================
+CIViC SUMMARY
+============================================================
+  Rows in MAF:         22
+  Skipped (CNA/etc):   4
+  Variants checked:    18
+  Field checks:        60
+  PASS:                60
+  MISMATCH:            0
+  COVERAGE_GAP:        0  (API has data, MAF empty — see note above)
+  ERROR:               0
+============================================================
+
+────────────────────────────────────────────────────────────
+FIELD COVERAGE REPORT
+────────────────────────────────────────────────────────────
+  Tested (≥1 variant had data):  4
+    ✓ CIViC_CSQ_CIViC Variant Name
+    ✓ CIViC_CSQ_SYMBOL
+    ✓ CIViC_CSQ_CIViC Variant ID
+    ✓ CIViC_CSQ_CIViC Molecular Profile Name
+────────────────────────────────────────────────────────────
+
+############################################################
+COMBINED SUMMARY
+############################################################
+  CIVIC     PASS=60  MISMATCH=0  ERROR=0
+  ONCOKB    PASS=506  MISMATCH=0  ERROR=0
+  VEP       PASS=238  MISMATCH=0  ERROR=0
+  TOTAL     PASS=804  MISMATCH=0  ERROR=0
+############################################################
+
+Results written to: /Users/monkiky/Desktop/tso500_project/tests/verification_combined/results.tsv
+
+RESULT: ALL CHECKS PASSED
+
+Results saved to: /Users/monkiky/Desktop/tso500_project/tests/verification_combined/results.tsv

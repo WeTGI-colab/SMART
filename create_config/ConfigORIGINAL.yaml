@@ -1,0 +1,1526 @@
+fields:
+
+  Tumor_Sample_Barcode:
+    description: Tumour sample identifier
+    source: VCF
+    version: vcf_v2.4
+
+  Chromosome:
+    description: Chromosome name
+    source: VCF
+    version: vcf_v2.4
+
+  Start_Position:
+    description: Variant start position
+    source: VCF
+    version: vcf_v2.4
+
+  End_Position:
+    description: Variant end position
+    source: Computed
+    version: internal_v1
+
+  Reference_Allele:
+    description: Reference allele
+    source: VCF
+    version: vcf_v2.4
+
+  POS:
+    description: Genomic position of the variant in the VCF record
+    source: VCF
+    version: vcf_v2.4
+
+  ID:
+    description: Variant identifier from the VCF record
+    source: VCF
+    version: vcf_v2.4
+
+  REF:
+    description: Reference allele from the VCF record
+    source: VCF
+    version: vcf_v2.4
+
+  ALT:
+    description: Alternate allele from the VCF record
+    source: VCF
+    version: vcf_v2.4
+
+  QUAL:
+    description: Variant quality score from the VCF record
+    source: VCF
+    version: vcf_v2.4
+
+  FILTER:
+    description: Filter status from the VCF record
+    source: VCF
+    version: vcf_v2.4
+
+  Tumor_Seq_Allele1:
+    description: Tumour allele 1
+    source: VCF
+    version: vcf_v2.4
+
+  Tumor_Seq_Allele2:
+    description: Tumour allele 2
+    source: VCF
+    version: vcf_v2.4
+
+  VAF:
+    description: Variant allele frequency
+    source: VCF
+    version: vcf_v2.4
+
+  HGVSp_Short:
+    description: Short HGVS protein notation
+    source: VEP
+    version: 114.2
+
+  HGVSp:
+    description: HGVS protein notation
+    source: VEP
+    version: 114.2
+
+  NM_Transcript:
+    description: RefSeq NM transcript identifier
+    source: VEP
+    version: 114.2
+
+  Allele:
+    description: Alternate allele used in annotation
+    source: VEP
+    version: 114.2
+
+  Consequence:
+    description: Predicted variant consequence
+    source: VEP
+    version: 114.2
+
+  IMPACT:
+    description: Predicted functional impact
+    source: VEP
+    version: 114.2
+
+  SYMBOL:
+    description: Gene symbol
+    source: VEP
+    version: 114.2
+
+  Gene:
+    description: Ensembl gene ID
+    source: VEP
+    version: 114.2
+
+  Feature_type:
+    description: Feature type (Transcript, Regulatory, etc.)
+    source: VEP
+    version: 114.2
+
+  Feature:
+    description: Ensembl feature identifier
+    source: VEP
+    version: 114.2
+
+  BIOTYPE:
+    description: Transcript biotype
+    source: VEP
+    version: 114.2
+
+  EXON:
+    description: Exon number within transcript
+    source: VEP
+    version: 114.2
+
+  INTRON:
+    description: Intron number within transcript
+    source: VEP
+    version: 114.2
+
+  HGVSc:
+    description: HGVS coding DNA notation
+    source: VEP
+    version: 114.2
+
+  cDNA_position:
+    description: Position within cDNA
+    source: VEP
+    version: 114.2
+
+  CDS_position:
+    description: Position within CDS
+    source: VEP
+    version: 114.2
+
+  Protein_position:
+    description: Position within protein sequence
+    source: VEP
+    version: 114.2
+
+  Amino_acids:
+    description: Reference and alternate amino acids
+    source: VEP
+    version: 114.2
+
+  Codons:
+    description: Reference and alternate codons
+    source: VEP
+    version: 114.2
+
+  Existing_variation:
+    description: Known variant identifiers
+    source: VEP
+    version: 114.2
+
+  DISTANCE:
+    description: Distance to nearest gene or feature
+    source: VEP
+    version: 114.2
+
+  STRAND:
+    description: Genomic strand of feature
+    source: VEP
+    version: 114.2
+
+  FLAGS:
+    description: Annotation flags
+    source: VEP
+    version: 114.2
+
+  VARIANT_CLASS:
+    description: Variant classification
+    source: VEP
+    version: 114.2
+
+  SYMBOL_SOURCE:
+    description: Source of gene symbol
+    source: VEP
+    version: 114.2
+
+  HGNC_ID:
+    description: HGNC gene identifier
+    source: VEP
+    version: 114.2
+
+  CANONICAL:
+    description: Indicates canonical transcript
+    source: VEP
+    version: 114.2
+
+  MANE:
+    description: Matched Annotation from NCBI and EMBL-EBI flag
+    source: VEP
+    version: 114.2
+
+  MANE_SELECT:
+    description: MANE Select transcript
+    source: VEP
+    version: 114.2
+
+  MANE_PLUS_CLINICAL:
+    description: MANE Plus Clinical transcript
+    source: VEP
+    version: 114.2
+
+  TSL:
+    description: Transcript support level
+    source: VEP
+    version: 114.2
+
+  APPRIS:
+    description: APPRIS annotation indicating whether the transcript is a principal or alternative isoform https://appris.bioinfo.cnio.es/#/
+    source: VEP
+    version: 114.2
+
+  CCDS:
+    description: CCDS transcript identifier
+    source: VEP
+    version: 114.2
+
+  ENSP:
+    description: Ensembl protein identifier
+    source: VEP
+    version: 114.2
+
+  SWISSPROT:
+    description: UniProt Swiss-Prot identifier
+    source: VEP
+    version: 114.2
+
+  TREMBL:
+    description: UniProt TrEMBL identifier
+    source: VEP
+    version: 114.2
+
+  UNIPARC:
+    description: UniParc identifier
+    source: VEP
+    version: 114.2
+
+  UNIPROT_ISOFORM:
+    description: UniProt isoform identifier
+    source: VEP
+    version: 114.2
+
+  SOURCE:
+    description: Annotation source
+    source: VEP
+    version: 114.2
+
+  GENE_PHENO:
+    description: Gene phenotype association
+    source: VEP
+    version: 114.2
+
+  SIFT:
+    description: SIFT prediction score
+    source: VEP
+    version: 114.2
+
+  PolyPhen:
+    description: PolyPhen prediction score
+    source: VEP
+    version: 114.2
+
+  DOMAINS:
+    description: Protein domains overlapping variant
+    source: VEP
+    version: 114.2
+
+  miRNA:
+    description: microRNA annotation
+    source: VEP
+    version: 114.2
+
+  HGVS_OFFSET:
+    description: Offset applied to HGVS notation
+    source: VEP
+    version: 114.2
+
+  MOTIF_POS:
+    description: Position of the variant within the regulatory motif
+    source: VEP
+    version: 114.2
+
+  HIGH_INF_POS:
+    description: Indicates whether the variant falls at a highly informative position in the motif
+    source: VEP
+    version: 114.2
+
+  MOTIF_SCORE_CHANGE:
+    description: Change in motif binding score caused by the variant
+    source: VEP
+    version: 114.2
+
+  MAX_AF:
+    description: Maximum allele frequency observed across all population datasets
+    source: VEP
+    version: 114.2
+
+  MAX_AF_POPS:
+    description: Population in which the maximum allele frequency was observed
+    source: VEP
+    version: 114.2
+
+  TRANSCRIPTION_FACTORS:
+    description: Transcription factors associated with the regulatory motif
+    source: VEP
+    version: 114.2
+
+  MOTIF_NAME:
+    description: Regulatory motif affected
+    source: VEP
+    version: 114.2
+
+  OriginalContig:
+    description: Original contig reported by Manta
+    source: VCF_Manta
+    version: manta_vcf
+
+  OriginalStart:
+    description: Original start coordinate reported by Manta
+    source: VCF_Manta
+    version: manta_vcf
+
+  SpliceAI_cutoff:
+    description: SpliceAI decision cutoff used to classify splice-altering variants
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DS_AG:
+    description: SpliceAI delta score for acceptor gain
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DS_AL:
+    description: SpliceAI delta score for acceptor loss
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DS_DG:
+    description: SpliceAI delta score for donor gain
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DS_DL:
+    description: SpliceAI delta score for donor loss
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DP_AG:
+    description: SpliceAI delta position for acceptor gain
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DP_AL:
+    description: SpliceAI delta position for acceptor loss
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DP_DG:
+    description: SpliceAI delta position for donor gain
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_DP_DL:
+    description: SpliceAI delta position for donor loss
+    source: SpliceAI
+    version: 1.3
+
+  SpliceAI_pred_SYMBOL:
+    description: Gene symbol associated with SpliceAI prediction
+    source: SpliceAI
+    version: 1.3
+
+  REVEL:
+    description: Rare Exome Variant Ensemble Learner score predicting pathogenicity of missense variants
+    source: REVEL
+    version: 1.3
+
+  LOEUF:
+    description: Loss-of-function observed/expected upper bound fraction indicating gene intolerance
+    source: Karczewski et al., Nature 2020 The mutational constraint spectrum quantified from variation in 141,456 humans
+    version: gnomAD_v4.0
+
+  AF:
+    description: Global allele frequency from population datasets
+    source: VEP
+    version: 114.2
+
+  AFR_AF:
+    description: Allele frequency in African populations (1000G/gnomAD)
+    source: gnomAD/1000G
+    version: VEP_114.2
+
+  AMR_AF:
+    description: Allele frequency in Admixed American populations
+    source: gnomAD/1000G
+    version: VEP_114.2
+
+  EAS_AF:
+    description: Allele frequency in East Asian populations
+    source: gnomAD/1000G
+    version: VEP_114.2
+
+  EUR_AF:
+    description: Allele frequency in European populations
+    source: gnomAD/1000G
+    version: VEP_114.2
+
+  SAS_AF:
+    description: Allele frequency in South Asian populations
+    source: gnomAD/1000G
+    version: VEP_114.2
+
+  gnomADe_AF:
+    description: Allele frequency in gnomAD exomes
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_AFR_AF:
+    description: Allele frequency in African/African-American populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_AMR_AF:
+    description: Allele frequency in Admixed American populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_ASJ_AF:
+    description: Allele frequency in Ashkenazi Jewish population (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_EAS_AF:
+    description: Allele frequency in East Asian populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_FIN_AF:
+    description: Allele frequency in Finnish populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_MID_AF:
+    description: Allele frequency in Middle Eastern populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_NFE_AF:
+    description: Allele frequency in Non-Finnish European populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_REMAINING_AF:
+    description: Allele frequency in remaining populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADe_SAS_AF:
+    description: Allele frequency in South Asian populations (gnomAD exomes)
+    source: gnomAD Exomes
+    version: gnomAD_v4.0
+
+  gnomADg_AF:
+    description: Allele frequency in gnomAD genomes
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_AFR_AF:
+    description: Allele frequency in African populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_AMI_AF:
+    description: Allele frequency in Amish population (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_AMR_AF:
+    description: Allele frequency in Admixed American populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_ASJ_AF:
+    description: Allele frequency in Ashkenazi Jewish populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_EAS_AF:
+    description: Allele frequency in East Asian populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_FIN_AF:
+    description: Allele frequency in Finnish populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_MID_AF:
+    description: Allele frequency in Middle Eastern populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_NFE_AF:
+    description: Allele frequency in Non-Finnish European populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_REMAINING_AF:
+    description: Allele frequency in remaining populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  gnomADg_SAS_AF:
+    description: Allele frequency in South Asian populations (gnomAD genomes)
+    source: gnomAD Genomes
+    version: gnomAD_v4.0
+
+  CLIN_SIG:
+    description: Clinical significance assigned in ClinVar
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  SOMATIC:
+    description: Indicates whether the variant has a somatic clinical interpretation
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  PHENO:
+    description: Phenotype or disease associated with the variant
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  PUBMED:
+    description: PubMed identifiers supporting the ClinVar submission
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar:
+    description: ClinVar variant identifier
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_AF_ESP:
+    description: Allele frequency in ESP dataset reported in ClinVar
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_AF_EXAC:
+    description: Allele frequency in ExAC dataset reported in ClinVar
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_AF_TGP:
+    description: Allele frequency in 1000 Genomes dataset reported in ClinVar
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ALLELEID:
+    description: ClinVar allele identifier
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNDN:
+    description: ClinVar disease name
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNDNINCL:
+    description: Included disease names in ClinVar annotation
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNDISDB:
+    description: Disease database identifiers associated with ClinVar disease
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNDISDBINCL:
+    description: Additional disease database identifiers included in ClinVar annotation
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNHGVS:
+    description: HGVS expression reported in ClinVar
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNREVSTAT:
+    description: ClinVar review status
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNSIG:
+    description: Clinical significance classification
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNSIGCONF:
+    description: Conflicting clinical significance annotations
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNSIGINCL:
+    description: Included clinical significance annotations
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNSIGSCV:
+    description: Clinical significance per submission (SCV)
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNVC:
+    description: Variant classification in ClinVar
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNVCSO:
+    description: Sequence Ontology term for variant classification
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_CLNVI:
+    description: ClinVar variation identifiers
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_DBVARID:
+    description: dbVar identifier associated with the variant
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_GENEINFO:
+    description: Gene information associated with the ClinVar variant
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_MC:
+    description: Molecular consequence annotations from ClinVar
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCDN:
+    description: Oncogenic disease name
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCDNINCL:
+    description: Included oncogenic disease names
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCDISDB:
+    description: Oncogenic disease database identifiers
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCDISDBINCL:
+    description: Included oncogenic disease database identifiers
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONC:
+    description: Oncogenic classification
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCINCL:
+    description: Included oncogenic classifications
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCREVSTAT:
+    description: Review status for oncogenic classification
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCSCV:
+    description: Oncogenic classification per submission (SCV)
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ONCCONF:
+    description: Conflicting oncogenic classifications
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_ORIGIN:
+    description: Origin of the variant (germline, somatic, etc.)
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_RS:
+    description: dbSNP rs identifier
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCIDN:
+    description: Somatic clinical impact disease name
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCIDNINCL:
+    description: Included somatic clinical impact disease names
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCIDISDB:
+    description: Somatic clinical impact disease database identifiers
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCIDISDBINCL:
+    description: Included somatic clinical impact disease database identifiers
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCIREVSTAT:
+    description: Review status for somatic clinical impact
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCI:
+    description: Somatic clinical impact classification
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCIINCL:
+    description: Included somatic clinical impact classifications
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  ClinVar_SCISCV:
+    description: Somatic clinical impact classification per submission
+    source: ClinVar
+    version: ClinVar_2024-12
+
+  CIViC:
+    description: CIViC variant identifier linking the variant to CIViC knowledgebase entries
+    source: CIViC
+    version: CIViC_v3.6
+
+  CIViC_GN:
+    description: Gene name associated with the CIViC variant record
+    source: CIViC
+    version: CIViC_v3.6
+
+  CIViC_VT:
+    description: CIViC variant type classification
+    source: CIViC
+    version: CIViC_v3.6
+
+  CIViC_CSQ:
+    description: Consequence annotation associated with the CIViC variant entry
+    source: CIViC
+    version: CIViC_v3.6
+
+  CancerHotspots:
+    description: Indicates whether the variant overlaps a curated cancer hotspot
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOT:
+    description: Protein-level hotspot annotation from Cancer Hotspots database
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOT_GENE:
+    description: Gene associated with the Cancer Hotspots protein-level hotspot
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOT_HGVSp:
+    description: HGVS protein change defining the Cancer Hotspots protein hotspot
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOT3D:
+    description: Indicates whether the variant lies within a 3D structural hotspot cluster
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOT3D_GENE:
+    description: Gene associated with the 3D structural hotspot cluster
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOT3D_HGVSp:
+    description: HGVS protein change associated with the 3D hotspot cluster
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOTNC:
+    description: Non-coding hotspot annotation from Cancer Hotspots dataset
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOTNC_GENE:
+    description: Gene associated with the non-coding hotspot
+    source: Cancer Hotspots
+    version: changv2
+
+  CancerHotspots_HOTSPOTNC_HGVSc:
+    description: HGVS coding notation associated with the non-coding hotspot
+    source: Cancer Hotspots
+    version: changv2
+
+  hotspot:
+    description: Binary flag indicating presence in any Cancer Hotspots annotation
+    source: Cancer Hotspots
+    version: changv2
+
+  NCBI_Build:
+    description: Genome build used in the OncoKB annotation
+    source: OncoKB
+    version: OncoKB_v4
+
+  Hugo_Symbol:
+    description: HGNC gene symbol used in OncoKB annotation
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_genefx:
+    description: Functional classification of the gene in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_variant:
+    description: Variant name recognized by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_allelef:
+    description: Allele frequency or allele annotation used by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_oncog:
+    description: Oncogenic classification assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_highes:
+    description: Highest level of evidence associated with the variant
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_others:
+    description: Other significant levels of evidence reported by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_hotspot:
+    description: Indicates whether the variant is considered a hotspot in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+    ONCOKB_DIAGNOSTIC_IMPLICATIONS:
+    description: Detailed diagnostic implications reported by OncoKB for the queried variant
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_ALLELE_EXIST:
+    description: Indicates whether the queried allele exists in the OncoKB knowledgebase
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_QUERY_ALTERATION:
+    description: Variant alteration string submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_QUERY_ENTREZ_GENE_ID:
+    description: Entrez gene identifier used in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_QUERY_HUGO_SYMBOL:
+    description: HGNC gene symbol used in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_QUERY_REF_GENOME:
+    description: Reference genome build used for the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_QUERY_TUMOR_TYPE:
+    description: Tumor type used in the OncoKB query context
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_exon:
+    description: Exon associated with the OncoKB variant annotation
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_geneS:
+    description: Gene summary provided by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_variantf:
+    description: Functional description of the variant from OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_tumor1:
+    description: Tumor type associated with the OncoKB evidence
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_progno:
+    description: Prognostic implications described in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_diagno:
+    description: Diagnostic implications described in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_treatm:
+    description: Treatment implications described in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_dataVe:
+    description: Version of the OncoKB dataset used for annotation
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_lastUp:
+    description: Date of the last update in the OncoKB dataset
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_highestSensitiveLevel:
+    description: Highest therapeutic sensitivity level defined by OncoKB https://www.oncokb.org/therapeutic-levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_highestResistanceLevel:
+    description: Highest therapeutic resistance level defined by OncoKB https://www.oncokb.org/therapeutic-levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_highestDiagnosticImplicationLevel:
+    description: Highest diagnostic implication level defined by OncoKB https://www.oncokb.org/diagnostic-levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_highestPrognosticImplicationLevel:
+    description: Highest prognostic implication level defined by OncoKB https://www.oncokb.org/prognostic-levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_highestFdaLevel:
+    description: Highest FDA-recognized level of evidence for the variant https://www.oncokb.org/fda-levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_prognosticSummary:
+    description: Text summary of prognostic implications from OncoKB https://www.oncokb.org/prognostic-levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_diagnosticSummary:
+    description: Text summary of diagnostic implications from OncoKB https://www.oncokb.org/diagnostic-levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_geneExist:
+    description: Indicates whether the gene exists in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_variantExist:
+    description: Indicates whether the variant exists in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_alleleExist:
+    description: Indicates whether the allele exists in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_oncogenic:
+    description: Oncogenic classification according to OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_otherSignificantSensitiveLevels:
+    description: Other significant therapeutic sensitivity levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_otherSignificantResistanceLevels:
+    description: Other significant therapeutic resistance levels
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_VUS:
+    description: Indicates whether the variant is classified as a Variant of Uncertain Significance
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_geneSummary:
+    description: Gene-level summary provided by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_tumorTypeSummary:
+    description: Tumor-type specific summary provided by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_diagnosticImplications:
+    description: Detailed diagnostic implications described by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_prognosticImplications:
+    description: Detailed prognostic implications described by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_dataVersion:
+    description: Version of the OncoKB dataset used for annotation
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_lastUpdate:
+    description: Date of the most recent update to the OncoKB record
+    source: OncoKB
+    version: OncoKB_v4
+
+  BND_DEPTH:
+    description: Read depth supporting the breakend reported by Manta
+    source: Manta
+    version: Manta_v1.6
+
+  CIEND:
+    description: Confidence interval around the END coordinate
+    source: Manta
+    version: Manta_v1.6
+
+  CIGAR:
+    description: Alignment CIGAR string describing the structural variant event
+    source: Manta
+    version: Manta_v1.6
+
+  CIPOS:
+    description: Confidence interval around the POS coordinate
+    source: Manta
+    version: Manta_v1.6
+
+  DP:
+    description: Approximate read depth at the variant position
+    source: VCF Standard
+    version: VCF_v4.2
+
+  DUPSVLEN:
+    description: Length of the duplication structural variant
+    source: Manta
+    version: Manta_v1.6
+
+  END:
+    description: End position of the structural variant
+    source: Manta
+    version: Manta_v1.6
+
+  FractionInformativeReads:
+    description: Fraction of reads informative for the structural variant
+    source: Manta
+    version: Manta_v1.6
+
+  HOMLEN:
+    description: Length of homologous sequence at the breakpoint
+    source: Manta
+    version: Manta_v1.6
+
+  HOMSEQ:
+    description: Homologous sequence observed at the breakpoint
+    source: Manta
+    version: Manta_v1.6
+
+  IMPRECISE:
+    description: Flag indicating that the structural variant breakpoints are imprecisely determined
+    source: Manta
+    version: Manta_v1.6
+
+  LEFT_SVINSSEQ:
+    description: Left inserted sequence at the structural variant breakpoint
+    source: Manta
+    version: Manta_v1.6
+
+  MATEID:
+    description: Identifier of the mate breakend record
+    source: Manta
+    version: Manta_v1.6
+
+  MATE_BND_DEPTH:
+    description: Read depth supporting the mate breakend
+    source: Manta
+    version: Manta_v1.6
+
+  MQ:
+    description: Root mean square mapping quality of reads covering the variant
+    source: VCF Standard
+    version: VCF_v4.2
+
+  RIGHT_SVINSSEQ:
+    description: Right inserted sequence at the structural variant breakpoint
+    source: Manta
+    version: Manta_v1.6
+
+  ReverseComplementedAlleles:
+    description: Indicates whether alleles were reverse complemented during representation
+    source: Manta
+    version: Manta_v1.6
+
+  SVLEN:
+    description: Length of the structural variant event
+    source: Manta
+    version: Manta_v1.6
+
+  SVTYPE:
+    description: Structural variant type (DEL, DUP, INV, BND, INS)
+    source: Manta
+    version: Manta_v1.6
+
+  ONCOKB_DATA_VERSION:
+    description: Version of the OncoKB dataset used for annotation
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_EFFECT:
+    description: Functional effect of the variant according to OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_GENE_EXIST:
+    description: Indicates whether the queried gene exists in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_GENE_SUMMARY:
+    description: Gene-level summary provided by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_HOTSPOT:
+    description: Indicates whether the variant is considered a hotspot by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_LAST_UPDATE:
+    description: Date of the most recent update to the OncoKB record
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_ONCOGENIC:
+    description: Oncogenic classification assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_QUERY_TYPE:
+    description: Query type used for the OncoKB annotation request
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_TUMOR_TYPE_SUMMARY:
+    description: Tumour-type specific summary provided by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_VARIANT_EXIST:
+    description: Indicates whether the queried variant exists in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_VARIANT_SUMMARY:
+    description: Variant-level summary provided by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_treatments:
+    description: Treatment implications and associated therapies from OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_JSON:
+    description: Raw JSON response returned by OncoKB for the queried variant
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.id:
+    description: Internal identifier used in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.referenceGenome:
+    description: Reference genome used in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.hugoSymbol:
+    description: HGNC gene symbol submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.entrezGeneId:
+    description: Entrez gene identifier submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.alteration:
+    description: Alteration string submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.alterationType:
+    description: Alteration type submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.svType:
+    description: Structural variant type submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.tumorType:
+    description: Tumour type submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.consequence:
+    description: Functional consequence submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.proteinStart:
+    description: Protein start position submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.proteinEnd:
+    description: Protein end position submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.hgvs:
+    description: HGVS expression submitted in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.hgvsInfo:
+    description: Parsed HGVS information used in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_query.canonicalTranscript:
+    description: Canonical transcript used in the OncoKB query
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_mutationEffect.knownEffect:
+    description: Known mutation effect classification reported by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_mutationEffect.description:
+    description: Description of the mutation effect reported by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_mutationEffect.citations.pmids:
+    description: PubMed identifiers supporting the mutation effect in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOKB_mutationEffect.citations.abstracts:
+    description: Abstract-based citations supporting the mutation effect in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ANNOTATED:
+    description: Indicates whether the variant was successfully annotated by the pipeline
+    source: OncoKB
+    version: OncoKB_v4
+
+  GENE_IN_ONCOKB:
+    description: Indicates whether the gene is present in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  VARIANT_IN_ONCOKB:
+    description: Indicates whether the variant is present in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  MUTATION_EFFECT:
+    description: Mutation effect summary reported by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  MUTATION_EFFECT_CITATIONS:
+    description: Citations supporting the mutation effect annotation from OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  ONCOGENIC:
+    description: Oncogenic classification assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_1:
+    description: Presence of Level 1 therapeutic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_2:
+    description: Presence of Level 2 therapeutic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_3A:
+    description: Presence of Level 3A therapeutic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_3B:
+    description: Presence of Level 3B therapeutic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_4:
+    description: Presence of Level 4 therapeutic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_R1:
+    description: Presence of Level R1 resistance evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_R2:
+    description: Presence of Level R2 resistance evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  HIGHEST_LEVEL:
+    description: Highest therapeutic evidence level assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  HIGHEST_SENSITIVE_LEVEL:
+    description: Highest therapeutic sensitivity level assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  HIGHEST_RESISTANCE_LEVEL:
+    description: Highest therapeutic resistance level assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  TX_CITATIONS:
+    description: Citations supporting therapeutic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_Dx1:
+    description: Presence of Level Dx1 diagnostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_Dx2:
+    description: Presence of Level Dx2 diagnostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_Dx3:
+    description: Presence of Level Dx3 diagnostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  HIGHEST_DX_LEVEL:
+    description: Highest diagnostic evidence level assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  DX_CITATIONS:
+    description: Citations supporting diagnostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_Px1:
+    description: Presence of Level Px1 prognostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_Px2:
+    description: Presence of Level Px2 prognostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  LEVEL_Px3:
+    description: Presence of Level Px3 prognostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  HIGHEST_PX_LEVEL:
+    description: Highest prognostic evidence level assigned by OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  PX_CITATIONS:
+    description: Citations supporting prognostic evidence in OncoKB
+    source: OncoKB
+    version: OncoKB_v4
+
+  FORMAT:
+    description: FORMAT column describing the genotype fields available for each sample
+    source: VCF
+    version: VCF_v4.2
+
+  FORMAT_DATA:
+    description: Raw sample-level data extracted from the FORMAT column
+    source: VCF
+    version: VCF_v4.2
+
+  AD:
+    description: Allelic depths for reference and alternate alleles
+    source: VCF
+    version: VCF_v4.2
+
+  F1R2:
+    description: Count of reads supporting the allele in the F1R2 orientation
+    source: VCF
+    version: VCF_v4.2
+
+  F2R1:
+    description: Count of reads supporting the allele in the F2R1 orientation
+    source: VCF
+    version: VCF_v4.2
+
+  GT:
+    description: Genotype call for the sample
+    source: VCF
+    version: VCF_v4.2
+
+  MB:
+    description: Strand bias metric used by the variant caller
+    source: VCF
+    version: VCF_v4.2
+
+  OBC:
+    description: Observed base counts used for variant calling
+    source: VCF
+    version: VCF_v4.2
+
+  OBPa:
+    description: Observed base probabilities for alternate alleles
+    source: VCF
+    version: VCF_v4.2
+
+  OBParc:
+    description: Observed base probabilities for reference and complement alleles
+    source: VCF
+    version: VCF_v4.2
+
+  OBPsnp:
+    description: Observed base probabilities for SNP detection
+    source: VCF
+    version: VCF_v4.2
+
+  PR:
+    description: Paired-read support for structural variant breakpoints
+    source: VCF
+    version: VCF_v4.2
+
+  PS:
+    description: Phase set identifier used to group phased variants
+    source: VCF
+    version: VCF_v4.2
+
+  SB:
+    description: Strand bias counts for reference and alternate alleles
+    source: VCF
+    version: VCF_v4.2
+
+  SQ:
+    description: Structural variant quality score
+    source: VCF
+    version: VCF_v4.2
+
+  SR:
+    description: Split-read support for structural variant breakpoints
+    source: VCF
+    version: VCF_v4.2
+
+  VAF:
+    description: Variant allele frequency calculated from read counts
+    source: VCF
+    version: VCF_v4.2

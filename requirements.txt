@@ -1,0 +1,17 @@
+# SMART — Somatic Mutation Annotation and Reporting Tool
+# Python Dependencies (derived from TSO500_environment.yml)
+
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+seaborn>=0.13
+plotly>=5.0
+cyvcf2>=0.31
+requests>=2.31
+simplejson>=3.19
+click>=8.1
+coloredlogs>=15.0
+kaleido>=0.2
+orjson>=3.9
+pygments>=2.17
+pyyaml>=6.0

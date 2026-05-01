@@ -1,0 +1,94 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+
+        // ─────────────────────────────────────────────────────────────────────
+        // BUILD
+        // ─────────────────────────────────────────────────────────────────────
+        {
+            "label": "SMART: Build Docker image",
+            "type": "shell",
+            "command": "docker build -t smart:latest .",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+
+        // ─────────────────────────────────────────────────────────────────────
+        // RUN — Option 1: docker compose
+        // ─────────────────────────────────────────────────────────────────────
+        {
+            "label": "SMART: Run (docker compose)",
+            "type": "shell",
+            "command": "docker compose run --rm smart",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+
+        // ─────────────────────────────────────────────────────────────────────
+        // RUN — Option 2: docker run directly
+        // ─────────────────────────────────────────────────────────────────────
+        {
+            "label": "SMART: Run (docker run)",
+            "type": "shell",
+            "command": "docker run --rm -v \"$(pwd)/data:/data\" -v \"/Volumes/ExternalSSD/refs:/refs:ro\" smart:latest \"${ONCOKB_TOKEN}\" --transcripts-file /data/TSO500_transcripts_list.txt --ref-dir /refs --config /data/Config.yaml --keep-tmp",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+
+        // ─────────────────────────────────────────────────────────────────────
+        // RUN — background (logs saved to smart.log)
+        // ─────────────────────────────────────────────────────────────────────
+        {
+            "label": "SMART: Run in background (save log)",
+            "type": "shell",
+            "command": "docker run --rm -v \"$(pwd)/data:/data\" -v \"/Volumes/ExternalSSD/refs:/refs:ro\" smart:latest \"${ONCOKB_TOKEN}\" --transcripts-file /data/TSO500_transcripts_list.txt --ref-dir /refs --config /data/Config.yaml > smart.log 2>&1 & echo \"Running in background — tail -f smart.log to follow progress\"",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+
+        // ─────────────────────────────────────────────────────────────────────
+        // UTILS
+        // ─────────────────────────────────────────────────────────────────────
+        {
+            "label": "SMART: Follow log (tail -f smart.log)",
+            "type": "shell",
+            "command": "tail -f smart.log",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "SMART: Download reference files",
+            "type": "shell",
+            "command": "bash get_ref/get_ref_files.sh",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

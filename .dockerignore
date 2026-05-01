@@ -1,0 +1,28 @@
+# Ignore data directories (they'll be mounted as volumes)
+data/
+OriginalVcf/
+FilteredVcf/
+LiftOverVcf/
+AnnotatedVcf/
+OncoKB_VCF/
+Table/
+FINAL_Table/
+Output_Results/
+
+# Git
+.git
+.gitignore
+
+# Misc
+*.log
+*.gz
+*.vcf
+*.bam
+*.bai
+*.fa
+*.fasta
+*.chain
+__pycache__/
+*.pyc
+.env
+README.md

@@ -1,0 +1,170 @@
+###################### Processing: verification3 ##########################################
+>>> PASS filtering: verification3
+>>> LiftOver DISABLED: verification3
+>>> VEP annotation: verification3
+2026-04-28 09:59:43 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: verification3
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 4 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr7:55191822 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: L858R
+  [Variant chr17:7675088 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R175H
+  [Variant chr9:21990000 N><DEL>] Selected: Preferred List Match (NM/MANE Plus Clinical). Gene: CDKN2A. Tx: ENST00000579755. Protein: None
+  [Variant chr8:38417331 G>T] Selected: Preferred List Match (NM/MANE Select). Gene: FGFR1. Tx: ENST00000447712. Protein: N546K
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 4
+  Mutations annotated:      3
+  CNVs annotated:           1
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/verification3.oncoKB.vcf
+>>> VCF2TABLE: verification3
+>>> MafAnnotator: verification3
+INFO:MafAnnotator:annotating /output/Table/verification3.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:MafAnnotator:done!
+--- verification3 complete ---
+###################### Processing: verification3 ##########################################
+>>> PASS filtering: verification3
+>>> LiftOver DISABLED: verification3
+>>> VEP annotation: verification3
+2026-04-28 13:47:46 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: verification3
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 4 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr7:55191822 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: L858R
+  [Variant chr17:7675088 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R175H
+  [Variant chr9:21990000 N><DEL>] Selected: Preferred List Match (NM/MANE Plus Clinical). Gene: CDKN2A. Tx: ENST00000579755. Protein: None
+  [Variant chr8:38417331 G>T] Selected: Preferred List Match (NM/MANE Select). Gene: FGFR1. Tx: ENST00000447712. Protein: N546K
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 4
+  Mutations annotated:      3
+  CNVs annotated:           1
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/verification3.oncoKB.vcf
+>>> VCF2TABLE: verification3
+>>> MafAnnotator: verification3
+INFO:MafAnnotator:annotating /output/Table/verification3.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:MafAnnotator:done!
+--- verification3 complete ---
+###################### Processing: verification3 ##########################################
+>>> PASS filtering: verification3
+>>> LiftOver DISABLED: verification3
+>>> VEP annotation: verification3
+2026-04-28 19:43:15 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: verification3
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 4 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr7:55191822 T>G] Preferred match: NM_005228. Gene: EGFR. Protein: L858R
+  [Variant chr17:7675088 C>T] Preferred match: NM_000546. Gene: TP53. Protein: R175H
+  [Variant chr9:21990000 N><DEL>] Preferred match: NM_058195. Gene: CDKN2A. Protein: None
+  [Variant chr8:38417331 G>T] Preferred match: NM_023110. Gene: FGFR1. Protein: N546K
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 4
+  Mutations annotated:      3
+  CNVs annotated:           1
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/verification3.oncoKB.vcf
+>>> VCF2TABLE: verification3
+>>> MafAnnotator: verification3
+INFO:MafAnnotator:annotating /output/Table/verification3.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:MafAnnotator:done!
+--- verification3 complete ---
+###################### Processing: verification3 ##########################################
+>>> PASS filtering: verification3
+>>> LiftOver DISABLED: verification3
+>>> VEP annotation: verification3
+2026-04-30 13:41:24 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: verification3
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 4 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr7:55191822 T>G] Preferred match: NM_005228. Gene: EGFR. Protein: L858R
+  [Variant chr17:7675088 C>T] Preferred match: NM_000546. Gene: TP53. Protein: R175H
+  [Variant chr9:21990000 N><DEL>] Preferred match: NM_058195. Gene: CDKN2A. Protein: None
+  [Variant chr8:38417331 G>T] Preferred match: NM_023110. Gene: FGFR1. Protein: N546K
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 4
+  Mutations annotated:      3
+  CNVs annotated:           1
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/verification3.oncoKB.vcf
+>>> VCF2TABLE: verification3
+>>> MafAnnotator: verification3
+INFO:MafAnnotator:annotating /output/Table/verification3.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:MafAnnotator:done!
+--- verification3 complete ---
+###################### Processing: verification3 ##########################################
+>>> PASS filtering: verification3
+>>> LiftOver DISABLED: verification3
+>>> VEP annotation: verification3
+2026-04-30 13:44:50 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: verification3
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 4 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr7:55191822 T>G] Preferred match: NM_005228. Gene: EGFR. Protein: L858R
+  [Variant chr17:7675088 C>T] Preferred match: NM_000546. Gene: TP53. Protein: R175H
+  [Variant chr9:21990000 N><DEL>] Preferred match: NM_058195. Gene: CDKN2A. Protein: None
+  [Variant chr8:38417331 G>T] Preferred match: NM_023110. Gene: FGFR1. Protein: N546K
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 4
+  Mutations annotated:      3
+  CNVs annotated:           1
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/verification3.oncoKB.vcf
+>>> VCF2TABLE: verification3
+>>> MafAnnotator: verification3
+INFO:MafAnnotator:annotating /output/Table/verification3.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:MafAnnotator:done!
+--- verification3 complete ---

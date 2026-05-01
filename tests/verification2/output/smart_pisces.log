@@ -1,0 +1,102 @@
+============================================================
+SMART — Somatic Mutation Annotation and Reporting Tool
+============================================================
+Tool versions:
+  VEP:               114.0
+  GATK:              4.6.0.0
+  bcftools:          bcftools 1.13
+  Python:            Python 3.10.12
+  OncoKB API:        v1.5.0
+
+Reference versions:
+  ClinVar:           clinvar.vcf.gz
+  CIViC:             civic_grch38.vcf.gz
+  CancerHotSpots:    hg38.hotspots_changv2_gao_nc.vcf.gz
+  SpliceAI SNV:      spliceai_scores.raw.snv.hg38.vcf.gz
+  SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
+  REVEL:             new_tabbed_revel_grch38.tsv.gz
+  LOEUF:             loeuf_dataset_grch38.tsv.gz
+  OncoKB data:       v7.0 (03/30/2026)
+
+
+Config:
+  PASS filter:      ENABLED
+  Liftover:         DISABLED
+  Clean tmp:        DISABLED
+  Clean tables:     ENABLED
+  Transcript file:  /data/transcripts.txt
+  Config file:      /data/Config.yaml
+  Reference dir:    /refs
+  Input dir:        /data
+============================================================
+
+Cleaning previous results...
+Cleanup complete.
+------------------------------------------------------------
+Input VCF directory: /data
+Number of VCF files found: 1
+VCF files:
+/data/To_test_PISCIS.vcf.gz
+------------------------------------------------------------
+###################### Processing: To_test_PISCIS ##########################################
+>>> PASS filtering: To_test_PISCIS
+>>> LiftOver DISABLED: To_test_PISCIS
+>>> VEP annotation: To_test_PISCIS
+2026-04-02 10:46:13 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+>>> OncoKB annotation: To_test_PISCIS
+
+✔ Annotation Mode: Generic Query
+✔ Detected tumor type used for OncoKB: UNKNOWN
+✔ Using 520 preferred NM transcripts (version agnostic).
+✔ Parsed 152 CSQ fields from VCF header
+  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
+  [Variant chr6:26092913 G>A] Selected: MANE Select. Gene: HFE. Tx: ENST00000357618. Protein: C282Y
+  [Variant chr15:90088660 CA>C] Selected: Preferred List Match (NM/MANE Select). Gene: IDH2. Tx: ENST00000330062. Protein: C154A
+  [Variant chr17:7670634 G>T] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: P359T
+  [Variant chr17:7676154 G>C] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: P72R
+
+📊 OncoKB Annotation Summary:
+  Total variants processed: 4
+  Mutations annotated:      4
+  CNVs annotated:           0
+  Overall annotation rate:  100.00%
+
+✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/To_test_PISCIS.oncoKB.vcf
+>>> VCF2TABLE: To_test_PISCIS
+>>> MafAnnotator: To_test_PISCIS
+INFO:MafAnnotator:annotating /output/Table/To_test_PISCIS.oncoKB.csv ...
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3
+INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 4
+INFO:MafAnnotator:done!
+--- To_test_PISCIS complete ---
+###################### Post Analysis ##########################################
+/opt/smart/scripts/post_analysis.py:428: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  df = df.replace({"[]": "", "%3D": "="}, regex=False).infer_objects(copy=False)
+Reading: ./FINAL_Table/To_test_PISCIS.oncoKB.maf
+
+=== WARNING: Undocumented columns found ===
+Undocumented column: BAM_EDIT
+Undocumented column: GIVEN_REF
+Undocumented column: GQ
+Undocumented column: NL
+Undocumented column: REFSEQ_MATCH
+Undocumented column: REFSEQ_OFFSET
+Undocumented column: USED_REF
+Undocumented column: VF
+Undocumented column: Variant_Classification
+Undocumented column: Variant_Type
+
+Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
+
+Tier2 columns: 258
+Tier3 columns: 72
+Dropped columns: 0
+Writing Tier2 TSV (bioinformaticians, two-row header): ./output/Final_result_tier2.tsv
+Writing Tier3 TSV (clinical scientists, two-row header): ./output/Final_result_tier3.tsv
+>>> Cleaning table files after post_analysis
+============================================================
+SMART PIPELINE COMPLETE
+============================================================

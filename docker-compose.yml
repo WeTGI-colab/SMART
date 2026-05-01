@@ -1,0 +1,50 @@
+# ==============================================================================
+# SMART — Somatic Mutation Annotation and Reporting Tool — Docker Compose
+# ==============================================================================
+# Usage:
+#   1. Set your OncoKB token:  export ONCOKB_TOKEN=your_token_here
+#   2. Adjust volume paths below to match your system
+#   3. Run:  docker compose run --rm smart
+# ==============================================================================
+
+services:
+  smart:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: smart:latest
+    container_name: smart-run
+
+    # --- Volumes ---
+    # Left side = your host paths (EDIT THESE)
+    # Right side = container mount points (leave as-is)
+    volumes:
+      # Your working directory with OriginalVcf/, transcripts list, etc.
+      - ./data:/data
+
+      # Reference files directory on ExternalSSD
+      - /Volumes/ExternalSSD/refs:/refs:ro
+
+    # --- Command ---
+    command: >
+      ${ONCOKB_TOKEN}
+      --transcripts-file /data/TSO500_transcripts_list.txt
+      --ref-dir /refs
+      --config /data/Config.yaml
+      --keep-tmp
+
+    # --- Resources (optional, adjust as needed) ---
+    deploy:
+      resources:
+        limits:
+          memory: 32G
+        reservations:
+          memory: 8G
+
+    # --- Environment ---
+    environment:
+      - ONCOKB_TOKEN=${ONCOKB_TOKEN}
+
+    # --- Networking ---
+    # Pipeline needs internet access for OncoKB API calls
+    network_mode: bridge

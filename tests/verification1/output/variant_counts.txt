@@ -1,0 +1,2 @@
+Sample	Original_Variants	PASS_Variants	Lifted_Variants	VEP_Annotated_Variants	OncoKB_Annotated_Variants	VariantsInTable
+verification1	22	22	22	22	22	22
