@@ -7,7 +7,6 @@
 
   <!-- DataTables 2.x (no jQuery) -->
   <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/5.0.0/css/fixedColumns.dataTables.min.css">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -144,9 +143,6 @@
     table.dataTable tbody tr { background: #fff; }
     table.dataTable tbody tr:nth-child(even) { background: #f8f9fa; }
     table.dataTable tbody tr:hover td { background: #ebf3fb !important; }
-    /* FixedColumns: keep left-pinned cells from turning grey */
-    .dtfc-fixed-left td  { background: inherit !important; }
-    .dtfc-fixed-left th  { background: #2c3e50 !important; color: #fff !important; }
 
     /* ── Colour badges ── */
     .lvl {
@@ -310,7 +306,6 @@ var T1_VIS = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 15, 16, 18, 21, 23,
 
 <!-- ── DataTables (vanilla JS, no jQuery) ────────────────────────────────────── -->
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/fixedcolumns/5.0.0/js/dataTables.fixedColumns.min.js"></script>
 
 <script>
 // ── Level / oncogenicity badge renderer ─────────────────────────────────────────
@@ -376,35 +371,34 @@ var extOn = { t2: false, t1: false };
 
 function initTable(tblId, headers, data, visSet) {
   var render = makeRenderer(headers);
-  // Always initialise with all columns visible — FixedColumns and width
-  // calculations break when many columns are hidden at construction time,
-  // especially inside a display:none panel.
   var cols = headers.map(function(h) {
     return { title: h, defaultContent: '', render: render };
   });
-  var opts = {
-    data: data,
-    columns: cols,
-    scrollX: true,
-    scrollY: '62vh',
-    scrollCollapse: true,
-    paging: false,
-    order: [],
-    layout: { topStart: 'search', topEnd: null, bottomStart: null, bottomEnd: null }
-  };
-  // FixedColumns only for T3: it is always visible on load so widths are correct.
-  // T2/T1 are lazy-init inside a hidden panel; skip FixedColumns to avoid the
-  // zero-width glitch.
-  if (!visSet) opts.fixedColumns = { start: 2 };
-  var dt = new DataTable('#' + tblId, opts);
-  // Hide extended columns after init using the batch API (much faster than
-  // looping with .column(i).visible() and avoids intermediate redraws).
+  var dt;
+  try {
+    dt = new DataTable('#' + tblId, {
+      data: data,
+      columns: cols,
+      scrollX: true,
+      paging: false,
+      order: [],
+      searching: true,
+      info: false
+    });
+  } catch(e) {
+    document.getElementById(tblId).insertAdjacentHTML(
+      'afterend',
+      '<p style="color:red;padding:8px">Table error: ' + e.message + '</p>'
+    );
+    return null;
+  }
+  // Hide extended columns after init using the batch API.
   if (visSet) {
     var extIdx = [];
     for (var i = 0; i < headers.length; i++) {
       if (!visSet.has(i)) extIdx.push(i);
     }
-    dt.columns(extIdx).visible(false, false);
+    if (extIdx.length) dt.columns(extIdx).visible(false, false);
     dt.columns.adjust().draw(false);
   }
   return dt;
@@ -418,11 +412,12 @@ function showTab(id, btn) {
   btn.classList.add('active');
 
   if (!DT[id]) {
-    // Wait one frame so the panel is visible before DataTables measures widths.
+    // Small delay so the panel is painted before DataTables measures widths.
     setTimeout(function() {
       if (id === 't2') DT.t2 = initTable('tbl-t2', T2H, T2D, T2_VIS);
       if (id === 't1') DT.t1 = initTable('tbl-t1', T1H, T1D, T1_VIS);
-    }, 50);
+      if (DT[id]) DT[id].columns.adjust().draw(false);
+    }, 60);
   } else {
     DT[id].columns.adjust().draw(false);
   }
@@ -430,7 +425,7 @@ function showTab(id, btn) {
 
 // ── Column visibility toggle for T2 / T1 ─────────────────────────────────────
 function toggleExt(tier) {
-  if (!DT[tier]) return;   // guard: table not yet initialised (clicked too fast)
+  if (!DT[tier]) return;
   extOn[tier] = !extOn[tier];
   var vis     = (tier === 't2') ? T2_VIS : T1_VIS;
   var headers = (tier === 't2') ? T2H    : T1H;
@@ -438,7 +433,7 @@ function toggleExt(tier) {
   for (var i = 0; i < headers.length; i++) {
     if (!vis.has(i)) extIdx.push(i);
   }
-  DT[tier].columns(extIdx).visible(extOn[tier], false);
+  if (extIdx.length) DT[tier].columns(extIdx).visible(extOn[tier], false);
   DT[tier].columns.adjust().draw(false);
   var btn = document.getElementById('btn-' + tier);
   btn.classList.toggle('on', extOn[tier]);
