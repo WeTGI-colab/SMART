@@ -4,9 +4,6 @@ set -euo pipefail
 # ==============================================================================
 # SMART — Somatic Mutation Annotation and Reporting Tool
 # ==============================================================================
-# Dockerised entrypoint — replaces the original main.sh, removing all
-# apptainer/singularity calls since tools are installed in the container.
-# ==============================================================================
 
 usage() {
 cat <<EOF
@@ -199,10 +196,12 @@ REQUIRED_PATHS=(
     "$SPLICEAI_SNV" "$SPLICEAI_INDEL" "$REVEL_FILE"
     "$CLINVAR_VCF" "$CIVIC_VCF" "$LOEUF_FILE" "$CANCER_HOTSPOTS_VCF"
 )
+# Next loop checks all neccesary files such as ClinVar VCF
 for path in "${REQUIRED_PATHS[@]}"; do
     [[ ! -e "$path" ]] && { echo "ERROR: Required resource not found: $path"; exit 2; }
 done
 
+# I get oncoKB versions dinamically, I hope they dont change this frecuently
 ONCOKB_INFO=$(curl -s https://www.oncokb.org/api/v1/info || echo "")
 ONCOKB_DATA_VERSION=$(echo "$ONCOKB_INFO" | grep -oP '"dataVersion":\{"version":"\K[^"]+' || echo "unknown")
 ONCOKB_DATA_DATE=$(echo "$ONCOKB_INFO" | grep -oP '"dataVersion":\{"version":"[^"]+","date":"\K[^"]+' || echo "unknown")
@@ -259,6 +258,7 @@ TABLE_DIR="${OUTPUT_DIR_BASE}/Table"
 FINAL_TABLE_DIR="${OUTPUT_DIR_BASE}/FINAL_Table"
 LOGS_DIR="${OUTPUT_DIR_BASE}/logs"
 
+# We create directories where all tmp files are saved
 mkdir -p "$OUTPUT_DIR_BASE" "$FILTERED_DIR" "$OUTPUT_DIR" "$REJECT_DIR" "$ANNOTATED_DIR" "$ONCOKB_DIR" "$TABLE_DIR" "$FINAL_TABLE_DIR" "$LOGS_DIR"
 
 echo "Cleaning previous results..."
