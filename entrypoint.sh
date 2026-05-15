@@ -14,10 +14,13 @@ Usage:
     <ONCOKB_TOKEN> --transcripts-file FILE --ref-dir /refs --config FILE [OPTIONS]
 
 Required:
-  <ONCOKB_TOKEN>           OncoKB API token
-  --transcripts-file FILE  Transcript list for prioritisation
   --ref-dir DIR            Reference resources directory (mounted at /refs)
-  --config FILE            YAML config file for post_analysis (Config.yaml)
+
+Optional (full pipeline):
+  <ONCOKB_TOKEN>           OncoKB API token. If omitted, the pipeline stops
+                           automatically after VEP annotation (VEP-only mode).
+  --transcripts-file FILE  Transcript list for prioritisation (required when token given)
+  --config FILE            YAML config file for post_analysis (required when token given)
 
   The ref-dir should contain:
     DIR/liftover/hg19ToHg38.over.chain
@@ -42,7 +45,7 @@ Options:
   --vep-only                       Stop after VEP annotation. Skips OncoKB,
                                    vcf2table, MafAnnotator, and post-analysis.
                                    Annotated VCFs are written to AnnotatedVcf/.
-                                   OncoKB token is still required but not used.
+                                   Also triggered automatically when no token is given.
   --help                           Show this help
 
 Volumes:
@@ -67,9 +70,6 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     exit 0
 fi
 
-ONCOKB_TOKEN="$1"
-shift
-
 # Defaults
 DO_PASS_FILTER=1
 DO_LIFTOVER=1
@@ -77,6 +77,21 @@ CLEAN_TMP=1
 CLEAN_TABLES=1
 JOBS=1
 VEP_ONLY=0
+
+# The OncoKB token is the first positional argument.
+# If it is absent (first arg is a flag) or an empty string, automatically
+# activate VEP-only mode — the pipeline stops after VEP annotation and
+# skips OncoKB, vcf2table, MafAnnotator, and post-analysis.
+if [[ -z "$1" || "$1" == --* ]]; then
+    ONCOKB_TOKEN=""
+    VEP_ONLY=1
+    echo "INFO: No OncoKB token provided — running in VEP-only mode."
+    echo "      To run the full pipeline supply a token as the first argument."
+    echo ""
+else
+    ONCOKB_TOKEN="$1"
+    shift
+fi
 TRANSCRIPTS_FILE=""
 REF_DIR=""
 CONFIG_FILE=""
@@ -201,11 +216,17 @@ for path in "${REQUIRED_PATHS[@]}"; do
     [[ ! -e "$path" ]] && { echo "ERROR: Required resource not found: $path"; exit 2; }
 done
 
-# I get oncoKB versions dinamically, I hope they dont change this frecuently
-ONCOKB_INFO=$(curl -s https://www.oncokb.org/api/v1/info || echo "")
-ONCOKB_DATA_VERSION=$(echo "$ONCOKB_INFO" | grep -oP '"dataVersion":\{"version":"\K[^"]+' || echo "unknown")
-ONCOKB_DATA_DATE=$(echo "$ONCOKB_INFO" | grep -oP '"dataVersion":\{"version":"[^"]+","date":"\K[^"]+' || echo "unknown")
-ONCOKB_API_VERSION=$(echo "$ONCOKB_INFO" | grep -oP '"apiVersion":\{"version":"\K[^"]+' || echo "unknown")
+# Fetch OncoKB version info only when a token is available
+if [[ $VEP_ONLY -eq 0 ]]; then
+    ONCOKB_INFO=$(curl -s https://www.oncokb.org/api/v1/info || echo "")
+    ONCOKB_DATA_VERSION=$(echo "$ONCOKB_INFO" | grep -oP '"dataVersion":\{"version":"\K[^"]+' || echo "unknown")
+    ONCOKB_DATA_DATE=$(echo "$ONCOKB_INFO" | grep -oP '"dataVersion":\{"version":"[^"]+","date":"\K[^"]+' || echo "unknown")
+    ONCOKB_API_VERSION=$(echo "$ONCOKB_INFO" | grep -oP '"apiVersion":\{"version":"\K[^"]+' || echo "unknown")
+else
+    ONCOKB_DATA_VERSION="N/A (VEP-only mode)"
+    ONCOKB_DATA_DATE=""
+    ONCOKB_API_VERSION="N/A (VEP-only mode)"
+fi
 
 echo "============================================================"
 echo "SMART — Somatic Mutation Annotation and Reporting Tool  v${SMART_VERSION}"
@@ -234,7 +255,7 @@ echo ""
 echo "Config:"
 echo "  PASS filter:      $([[ $DO_PASS_FILTER -eq 1 ]] && echo ENABLED || echo DISABLED)"
 echo "  Liftover:         $([[ $DO_LIFTOVER -eq 1 ]] && echo ENABLED || echo DISABLED)"
-echo "  VEP only:         $([[ $VEP_ONLY -eq 1 ]] && echo YES — stopping after VEP || echo NO)"
+echo "  VEP only:         $([[ $VEP_ONLY -eq 1 ]] && echo "YES — stopping after VEP $( [[ -z "$ONCOKB_TOKEN" ]] && echo '(no token provided)' || echo '(--vep-only flag)' )" || echo NO)"
 echo "  Clean tmp:        $([[ $CLEAN_TMP -eq 1 ]] && echo ENABLED || echo DISABLED)"
 echo "  Clean tables:     $([[ $CLEAN_TABLES -eq 1 ]] && echo ENABLED || echo DISABLED)"
 echo "  Parallel jobs:    $JOBS"
