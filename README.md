@@ -2,9 +2,8 @@
 
 <p align="center"><em>A Dockerised pipeline for somatic variant annotation, filtration, and clinical reporting.</em></p>
 
-<p align="center">
-  <a href="https://doi.org/10.5281/zenodo.20206503"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20206503.svg" alt="DOI"></a>
-</p>
+<a href="https://doi.org/10.5281/zenodo.20206503"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20206503.svg" alt="DOI"></a>
+<a href="https://github.com/Manuel-DominguezCBG/SMART/tree/main/tests"><img src="https://img.shields.io/badge/tests-passing-brightgreen" alt="Tests passing"></a>
 
 ---
 
