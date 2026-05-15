@@ -2,7 +2,7 @@ Module	Sample	Variant_ID	Gene	HGVSp	MAF_Field	API_Field	MAF_Value	API_Value	Resu
 OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_GENE_SUMMARY	geneSummary	NRAS, a GTPase, is mutated in a diverse range of cancers, most frequently in melanoma and thyroid cancer.	NRAS, a GTPase, is mutated in a diverse range of cancers, most frequently in melanoma and thyroid cancer.	PASS	
 OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_VARIANT_SUMMARY	variantSummary	The NRAS Q61R mutation is known to be oncogenic.	The NRAS Q61R mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -25,7 +25,7 @@ OncoKB	TUMOR	NRAS_Q61R	NRAS	p.Q61R	ONCOKB_prognosticSummary	prognosticSummary			
 OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_GENE_SUMMARY	geneSummary	IDH1, a cell metabolism enzyme, is recurrently mutated in various cancer types including acute myeloid leukemia and gliomas.	IDH1, a cell metabolism enzyme, is recurrently mutated in various cancer types including acute myeloid leukemia and gliomas.	PASS	
 OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_VARIANT_SUMMARY	variantSummary	The IDH1 R132H mutation is known to be oncogenic.	The IDH1 R132H mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -48,7 +48,7 @@ OncoKB	TUMOR	IDH1_R132H	IDH1	p.R132H	ONCOKB_prognosticSummary	prognosticSummary	
 OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_GENE_SUMMARY	geneSummary	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PASS	
 OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_VARIANT_SUMMARY	variantSummary	The PIK3CA E545K mutation is known to be oncogenic.	The PIK3CA E545K mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -71,7 +71,7 @@ OncoKB	TUMOR	PIK3CA_E545K	PIK3CA	p.E545K	ONCOKB_prognosticSummary	prognosticSumm
 OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_GENE_SUMMARY	geneSummary	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PIK3CA, the catalytic subunit of PI3-kinase, is frequently mutated in a diverse range of cancers including breast, endometrial and cervical cancers.	PASS	
 OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_VARIANT_SUMMARY	variantSummary	The PIK3CA H1047R mutation is known to be oncogenic.	The PIK3CA H1047R mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -94,7 +94,7 @@ OncoKB	TUMOR	PIK3CA_H1047R	PIK3CA	p.H1047R	ONCOKB_prognosticSummary	prognosticSu
 OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_GENE_SUMMARY	geneSummary	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	PASS	
 OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_VARIANT_SUMMARY	variantSummary	The EGFR E746_A750del alteration is known to be oncogenic.	The EGFR E746_A750del alteration is known to be oncogenic.	PASS	
 OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -117,7 +117,7 @@ OncoKB	TUMOR	EGFR_del19	EGFR	p.Glu746_Ala750del	ONCOKB_prognosticSummary	prognos
 OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_GENE_SUMMARY	geneSummary	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	PASS	
 OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_VARIANT_SUMMARY	variantSummary	The EGFR T790M mutation is known to be oncogenic.	The EGFR T790M mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -140,7 +140,7 @@ OncoKB	TUMOR	EGFR_T790M	EGFR	p.T790M	ONCOKB_prognosticSummary	prognosticSummary	
 OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_GENE_SUMMARY	geneSummary	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	EGFR, a receptor tyrosine kinase, is altered by amplification and/or mutation in lung and brain cancers among others.	PASS	
 OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_VARIANT_SUMMARY	variantSummary	The EGFR L858R mutation is known to be oncogenic.	The EGFR L858R mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -163,7 +163,7 @@ OncoKB	TUMOR	EGFR_L858R	EGFR	p.L858R	ONCOKB_prognosticSummary	prognosticSummary	
 OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_GENE_SUMMARY	geneSummary	MET, a receptor tyrosine kinase, is recurrently altered by mutation or amplification in various cancer types.	MET, a receptor tyrosine kinase, is recurrently altered by mutation or amplification in various cancer types.	PASS	
 OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_VARIANT_SUMMARY	variantSummary	MET amplification is known to be oncogenic.	MET amplification is known to be oncogenic.	PASS	
 OncoKB	TUMOR	MantaDUP:MET_AMP	MET		GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -186,7 +186,7 @@ OncoKB	TUMOR	MantaDUP:MET_AMP	MET		ONCOKB_prognosticSummary	prognosticSummary			
 OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_GENE_SUMMARY	geneSummary	BRAF, an intracellular kinase, is frequently mutated in melanoma, thyroid and lung cancers among others.	BRAF, an intracellular kinase, is frequently mutated in melanoma, thyroid and lung cancers among others.	PASS	
 OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_VARIANT_SUMMARY	variantSummary	The BRAF V600E mutation is known to be oncogenic.	The BRAF V600E mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -209,7 +209,7 @@ OncoKB	TUMOR	BRAF_V600E	BRAF	p.V600E	ONCOKB_prognosticSummary	prognosticSummary	
 OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_GENE_SUMMARY	geneSummary	CDKN2A, which encodes both a cyclin-dependent kinase inhibitor and an MDM2 inhibitor, is altered by mutation and deletion in various cancers.	CDKN2A, which encodes both a cyclin-dependent kinase inhibitor and an MDM2 inhibitor, is altered by mutation and deletion in various cancers.	PASS	
 OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda3	LEVEL_Fda3	PASS	
 OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_VARIANT_SUMMARY	variantSummary	CDKN2A deletion is known to be oncogenic.	CDKN2A deletion is known to be oncogenic.	PASS	
 OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -232,7 +232,7 @@ OncoKB	TUMOR	MantaDEL:CDKN2A_DEL	CDKN2A		ONCOKB_prognosticSummary	prognosticSumm
 OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_GENE_SUMMARY	geneSummary	GNAQ, a G protein subunit, is recurrently mutated in uveal melanoma.	GNAQ, a G protein subunit, is recurrently mutated in uveal melanoma.	PASS	
 OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
 OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_VARIANT_SUMMARY	variantSummary	This is a synonymous mutation and is not annotated by OncoKB.	This is a synonymous mutation and is not annotated by OncoKB.	PASS	
 OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -255,7 +255,7 @@ OncoKB	TUMOR	GNAQ_Q209L	GNAQ	p.Gln209=	ONCOKB_prognosticSummary	prognosticSummar
 OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_GENE_SUMMARY	geneSummary	PTEN, a lipid and protein phosphatase, is one of the most frequently mutated genes in cancer.	PTEN, a lipid and protein phosphatase, is one of the most frequently mutated genes in cancer.	PASS	
 OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_VARIANT_SUMMARY	variantSummary	The PTEN R130* mutation is known to be oncogenic.	The PTEN R130* mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -278,7 +278,7 @@ OncoKB	TUMOR	PTEN_R130stop	PTEN	p.R130*	ONCOKB_prognosticSummary	prognosticSumma
 OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_GENE_SUMMARY	geneSummary	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	PASS	
 OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_VARIANT_SUMMARY	variantSummary	The KRAS G13D mutation is known to be oncogenic.	The KRAS G13D mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -301,7 +301,7 @@ OncoKB	TUMOR	KRAS_G13D	KRAS	p.G13D	ONCOKB_prognosticSummary	prognosticSummary			
 OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_GENE_SUMMARY	geneSummary	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	PASS	
 OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_VARIANT_SUMMARY	variantSummary	The KRAS G12D mutation is known to be oncogenic.	The KRAS G12D mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -324,7 +324,7 @@ OncoKB	TUMOR	KRAS_G12D	KRAS	p.G12D	ONCOKB_prognosticSummary	prognosticSummary			
 OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_GENE_SUMMARY	geneSummary	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	KRAS, a GTPase which functions as an upstream regulator of the MAPK pathway, is frequently mutated in various cancer types including lung, colorectal and pancreatic cancers.	PASS	
 OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_VARIANT_SUMMARY	variantSummary	The KRAS G12C mutation is known to be oncogenic.	The KRAS G12C mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -347,7 +347,7 @@ OncoKB	TUMOR	KRAS_G12C	KRAS	p.G12C	ONCOKB_prognosticSummary	prognosticSummary			
 OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_GENE_SUMMARY	geneSummary	CDK4, an intracellular kinase, is altered by amplification or mutation in various cancer types including soft tissue sarcomas and gliomas.	CDK4, an intracellular kinase, is altered by amplification or mutation in various cancer types including soft tissue sarcomas and gliomas.	PASS	
 OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda3	LEVEL_Fda3	PASS	
 OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_VARIANT_SUMMARY	variantSummary	CDK4 amplification is known to be oncogenic.	CDK4 amplification is known to be oncogenic.	PASS	
 OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -370,7 +370,7 @@ OncoKB	TUMOR	MantaDUP:CDK4_AMP	CDK4		ONCOKB_prognosticSummary	prognosticSummary	
 OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_GENE_SUMMARY	geneSummary	BRCA2, a tumor suppressor involved in the DNA damage response, is mutated in various cancer types.	BRCA2, a tumor suppressor involved in the DNA damage response, is mutated in various cancer types.	PASS	
 OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_VARIANT_SUMMARY	variantSummary	The BRCA2 L3101R mutation is likely oncogenic.	The BRCA2 L3101R mutation is likely oncogenic.	PASS	
 OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -393,7 +393,7 @@ OncoKB	TUMOR	BRCA2_L3101R	BRCA2	p.L3101R	ONCOKB_prognosticSummary	prognosticSumm
 OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_GENE_SUMMARY	geneSummary	DICER1, an endoribonuclease, is altered in various cancer types.	DICER1, an endoribonuclease, is altered in various cancer types.	PASS	
 OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
 OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_VARIANT_SUMMARY	variantSummary	The DICER1 E1705* is a truncating mutation in a tumor suppressor gene, and therefore is likely oncogenic.	The DICER1 E1705* is a truncating mutation in a tumor suppressor gene, and therefore is likely oncogenic.	PASS	
 OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -416,7 +416,7 @@ OncoKB	TUMOR	DICER1_E1705K	DICER1	p.E1705*	ONCOKB_prognosticSummary	prognosticSu
 OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_GENE_SUMMARY	geneSummary	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	PASS	
 OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
 OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_VARIANT_SUMMARY	variantSummary	The TP53 R248W mutation is likely oncogenic.	The TP53 R248W mutation is likely oncogenic.	PASS	
 OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -439,7 +439,7 @@ OncoKB	TUMOR	TP53_R248W	TP53	p.R248W	ONCOKB_prognosticSummary	prognosticSummary	
 OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_GENE_SUMMARY	geneSummary	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	TP53, a tumor suppressor in the DNA damage pathway, is the most frequently mutated gene in cancer.	PASS	
 OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_highestFdaLevel	highestFdaLevel			PASS	
 OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_VARIANT_SUMMARY	variantSummary	The TP53 R175H mutation is known to be oncogenic.	The TP53 R175H mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -462,7 +462,7 @@ OncoKB	TUMOR	TP53_R175H	TP53	p.R175H	ONCOKB_prognosticSummary	prognosticSummary	
 OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_ALLELE_EXIST	alleleExist	False	False	PASS	
 OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_GENE_SUMMARY	geneSummary	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	PASS	
 OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_HOTSPOT	hotspot	False	False	PASS	
-OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_VARIANT_SUMMARY	variantSummary	ERBB2 amplification is known to be oncogenic.	ERBB2 amplification is known to be oncogenic.	PASS	
 OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		GENE_IN_ONCOKB	geneExist	True	True	PASS	
@@ -485,7 +485,7 @@ OncoKB	TUMOR	MantaDUP:ERBB2_AMP	ERBB2		ONCOKB_prognosticSummary	prognosticSummar
 OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_ALLELE_EXIST	alleleExist	True	True	PASS	
 OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_GENE_SUMMARY	geneSummary	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	ERBB2, a receptor tyrosine kinase, is altered by mutation, amplification and/or overexpression in various cancer types, most frequently in breast, esophagogastric and endometrial cancers.	PASS	
 OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_HOTSPOT	hotspot	True	True	PASS	
-OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_VUS	VUS	False	False	PASS	
+OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_VUS	VUS			PASS	
 OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_highestFdaLevel	highestFdaLevel	LEVEL_Fda2	LEVEL_Fda2	PASS	
 OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	ONCOKB_VARIANT_SUMMARY	variantSummary	The ERBB2 S310F mutation is known to be oncogenic.	The ERBB2 S310F mutation is known to be oncogenic.	PASS	
 OncoKB	TUMOR	ERBB2_S310F	ERBB2	p.S310F	GENE_IN_ONCOKB	geneExist	True	True	PASS	

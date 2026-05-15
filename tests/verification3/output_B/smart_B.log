@@ -7,7 +7,7 @@ Tool versions:
   GATK:              4.6.0.0
   bcftools:          bcftools 1.13
   Python:            Python 3.10.12
-  OncoKB API:        v1.5.0
+  OncoKB API:        v1.6.0
 
 Reference versions:
   ClinVar:           clinvar.vcf.gz
@@ -17,7 +17,7 @@ Reference versions:
   SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
   REVEL:             new_tabbed_revel_grch38.tsv.gz
   LOEUF:             loeuf_dataset_grch38.tsv.gz
-  OncoKB data:       v7.0 (03/30/2026)
+  OncoKB data:       v7.1 (04/30/2026)
 
 
 Config:
@@ -69,13 +69,15 @@ Undocumented column: ONCOKB_OTHER_SENS_LVLS
 Undocumented column: ONCOKB_PROG_LVL
 Undocumented column: ONCOKB_PROG_SUMMARY
 Undocumented column: ONCOKB_RESIST_LVL
+Undocumented column: ONCOKB_query.germline
+Undocumented column: ONCOKB_vus
 Undocumented column: REFSEQ_MATCH
 Undocumented column: REFSEQ_OFFSET
 Undocumented column: USED_REF
 Undocumented column: Variant_Classification
 Undocumented column: Variant_Type
 
-Dropped columns (tier=drop): 40
+Dropped columns (tier=drop): 39
   - CHROM
   - ONCOKB_EFFECT
   - ONCOKB_GENE_EXIST
@@ -84,15 +86,10 @@ Dropped columns (tier=drop): 40
   - ONCOKB_VARIANT_EXIST
   - ONCOKB_geneExist
   - ONCOKB_variantExist
-  - ONCOKB_alleleExist
-  - ONCOKB_oncogenic
   - ONCOKB_highestSensitiveLevel
   - ONCOKB_highestResistanceLevel
   - ONCOKB_highestDiagnosticImplicationLevel
   - ONCOKB_highestPrognosticImplicationLevel
-  - ONCOKB_VUS.1
-  - ONCOKB_hotspot
-  - ONCOKB_exon
   - ONCOKB_geneSummary
   - ONCOKB_variantSummary
   - ONCOKB_tumorTypeSummary
@@ -101,6 +98,10 @@ Dropped columns (tier=drop): 40
   - ONCOKB_treatments
   - ONCOKB_dataVersion
   - ONCOKB_lastUpdate
+  - ONCOKB_alleleExist
+  - ONCOKB_oncogenic
+  - ONCOKB_hotspot
+  - ONCOKB_exon
   - ONCOKB_query.id
   - ONCOKB_query.referenceGenome
   - ONCOKB_query.hugoSymbol
@@ -117,7 +118,7 @@ Dropped columns (tier=drop): 40
   - ONCOKB_query.canonicalTranscript
   - ONCOKB_mutationEffect.knownEffect
 
-Tier1 columns: 318
+Tier1 columns: 320
 Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
 
 Tier2 columns: 284
