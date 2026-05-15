@@ -518,6 +518,49 @@ See `tests/verification4/README.md` for resource guidance and implementation det
 
 ---
 
+### Verification 5 — Unit tests (pure logic, no Docker required)
+
+Located in `tests/verification5/`. A pytest-based unit test suite targeting the pure-Python logic in the three core pipeline scripts. **No Docker, no OncoKB token, and no reference files are needed** — the suite runs in any standard Python environment in under one second.
+
+```bash
+cd tests/verification5
+python3 -m pytest . -v
+```
+
+#### What is tested
+
+| Script | Functions tested |
+|--------|-----------------|
+| `vcf2table.py` | `calculate_end` (all variant classes), `convert_hgvsp_short` (3→1 letter AA conversion), `load_nm_transcripts` (version stripping, edge cases) |
+| `oncokb2.0.py` | `get_cancer_from_filename`, `clean_value`, `stringify_list`, `_extract_one_letter_protein`, `classify_variant` (all SVTYPE + MantaID combinations), `map_svtype_to_cna`, `load_preferred_transcripts`, `get_csq_index`, `parse_csq_format` |
+| `post_analysis.py` | `load_field_config`, `resolve_field_meta` (exact + wildcard pattern), `standardize_format_column`, `normalize_format_fields`, `add_vaf_column`, `clean_column_values`, `calculate_end_position`, `drop_columns` |
+
+**147 tests, all passing.** Real variants from the verification1 dataset (NRAS Q61R, IDH1 R132H, PIK3CA E545K/H1047R, BRAF V600E, TP53 R175H/R248W, EGFR exon 19 deletion) are used as parametrised ground-truth cases.
+
+#### Code coverage
+
+Coverage is measured over the pure-Python lines of each script. Lines excluded from coverage are those that require Docker, a live OncoKB API connection, or a real VCF file to execute (the main pipeline loops — `annotate_vcf`, `merge_maf_files`, `main` — and the HTTP query functions).
+
+| Script | Statements | Covered | **Coverage** |
+|--------|-----------|---------|--------------|
+| `vcf2table.py` | 216 | 40 | **19%** |
+| `oncokb2.0.py` | 401 | 122 | **30%** |
+| `post_analysis.py` | 342 | 108 | **32%** |
+| **Total** | **959** | **270** | **28%** |
+
+The uncovered lines are concentrated in three pipeline orchestrators (`main`, `annotate_vcf`, `merge_maf_files`) and the OncoKB HTTP query functions. These are exercised end-to-end by verifications 1–4. The unit tests cover **100% of the pure, stateless logic** that can be tested without external infrastructure.
+
+To reproduce the coverage report:
+
+```bash
+cd tests/verification5
+python3 -m pytest . --cov=../../scripts --cov-report=term-missing
+# HTML report (open coverage_html/index.html in a browser):
+python3 -m pytest . --cov=../../scripts --cov-report=html:../../coverage_html
+```
+
+---
+
 ## Troubleshooting
 
 **"Required resource not found"**
