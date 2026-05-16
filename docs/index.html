@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART — Somatic Mutation Annotation and Reporting Tool</title>
+  <meta name="description"
+        content="A Dockerised pipeline for somatic variant annotation, filtration, and clinical reporting using VEP and OncoKB.">
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      color: #2d3748;
+      background: #fff;
+    }
+    a { color: #2b6cb0; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.875em;
+    }
+    code { background: #edf2f7; padding: 0.15em 0.4em; border-radius: 3px; }
+
+    /* ── Navigation ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: #2c3e50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 54px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .nav-brand {
+      color: #fff; font-weight: 700; font-size: 1.1em; letter-spacing: 0.01em;
+      text-decoration: none;
+    }
+    .nav-brand:hover { text-decoration: none; color: #bee3f8; }
+    .nav-links { display: flex; gap: 0; }
+    .nav-links a {
+      color: #a0c4d8; font-size: 0.9em; padding: 0 1rem; line-height: 54px;
+      display: block; transition: color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+      color: #fff;
+      text-align: center;
+      padding: 4rem 2rem 3.5rem;
+    }
+    .hero img.logo {
+      height: 100px; margin-bottom: 1.4rem;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+    }
+    .hero h1 {
+      font-size: 2.1em; font-weight: 700; margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .hero .acronym {
+      color: #90cdf4; font-size: 0.92em; margin-bottom: 1.1rem;
+    }
+    .hero .tagline {
+      max-width: 600px; margin: 0 auto 1.8rem;
+      font-size: 1.05em; color: #cbd5e0; line-height: 1.7;
+    }
+    .hero-badges { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .hero-badges img { height: 22px; }
+    .hero-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; }
+    .btn-primary {
+      background: #3498db; color: #fff; border: none; border-radius: 5px;
+      padding: 0.6rem 1.4rem; font-size: 0.95em; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #2980b9; text-decoration: none; color: #fff; }
+    .btn-outline {
+      background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 5px; padding: 0.6rem 1.4rem; font-size: 0.95em; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: border-color 0.15s, background 0.15s;
+    }
+    .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; color: #fff; }
+
+    /* ── Sections ── */
+    section { padding: 3.5rem 2rem; }
+    section:nth-child(odd) { background: #f7fafc; }
+    section:nth-child(even) { background: #fff; }
+    .section-inner { max-width: 900px; margin: 0 auto; }
+    h2 {
+      font-size: 1.5em; font-weight: 700; margin-bottom: 1.2rem;
+      color: #1a202c; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;
+    }
+    h3 { font-size: 1.1em; font-weight: 600; margin-bottom: 0.5rem; color: #2d3748; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.35rem; }
+
+    /* ── Feature cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1.5rem;
+    }
+    .card {
+      background: #fff; border: 1px solid #e2e8f0;
+      border-radius: 8px; padding: 1.4rem 1.2rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); }
+    .card .icon { font-size: 1.8em; margin-bottom: 0.6rem; }
+    .card h3 { color: #2c3e50; margin-bottom: 0.4rem; }
+    .card p { font-size: 0.9em; color: #4a5568; margin: 0; }
+
+    /* ── Steps ── */
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+    .steps li {
+      counter-increment: step;
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 0.9rem 0; border-bottom: 1px solid #e2e8f0;
+    }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before {
+      content: counter(step);
+      flex-shrink: 0;
+      width: 30px; height: 30px;
+      background: #2c3e50; color: #fff;
+      border-radius: 50%; font-weight: 700; font-size: 0.85em;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 0.1rem;
+    }
+
+    /* ── Tiers ── */
+    .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+    .tier-card { border-radius: 7px; padding: 1.2rem; }
+    .tier-card.t3 { background: #f0fff4; border: 1px solid #9ae6b4; }
+    .tier-card.t2 { background: #ebf8ff; border: 1px solid #90cdf4; }
+    .tier-card.t1 { background: #fffff0; border: 1px solid #faf089; }
+    .tier-card h3 { margin-bottom: 0.3rem; }
+    .tier-card.t3 h3 { color: #276749; }
+    .tier-card.t2 h3 { color: #2a69ac; }
+    .tier-card.t1 h3 { color: #7b6914; }
+    .tier-card .filename { font-family: monospace; font-size: 0.82em; color: #555; margin-bottom: 0.5rem; display: block; }
+    .tier-card p { font-size: 0.88em; margin: 0; }
+
+    /* ── News ── */
+    .news-item { display: flex; gap: 1rem; padding: 0.9rem 0; border-bottom: 1px solid #e2e8f0; }
+    .news-item:last-child { border-bottom: none; }
+    .news-date { flex-shrink: 0; font-size: 0.82em; color: #718096; white-space: nowrap; padding-top: 0.15rem; min-width: 90px; }
+    .news-content strong { color: #2c3e50; }
+    .news-content p { font-size: 0.9em; color: #4a5568; margin: 0.2rem 0 0; }
+
+    /* ── CTA box ── */
+    .cta-box {
+      background: linear-gradient(135deg, #2c3e50, #3d5368);
+      border-radius: 10px; padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; color: #fff;
+    }
+    .cta-box h3 { color: #fff; font-size: 1.2em; margin-bottom: 0.3rem; }
+    .cta-box p { color: #a0c4d8; margin: 0; font-size: 0.92em; }
+
+    /* ── Citation ── */
+    .citation-box {
+      background: #f7fafc; border: 1px solid #e2e8f0;
+      border-left: 4px solid #3498db;
+      border-radius: 0 6px 6px 0;
+      padding: 1.2rem 1.5rem;
+      font-size: 0.9em; color: #4a5568;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #1a202c; color: #718096;
+      padding: 2.5rem 2rem; text-align: center;
+      font-size: 0.85em; line-height: 1.8;
+    }
+    footer a { color: #90cdf4; }
+    footer a:hover { color: #bee3f8; }
+    footer .footer-inner { max-width: 700px; margin: 0 auto; }
+    footer .divider { margin: 0 0.5rem; color: #4a5568; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ───────────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-brand" href="./">SMART</a>
+  <div class="nav-links">
+    <a href="fields/">Field reference</a>
+    <a href="example-output.html">Example output</a>
+    <a href="https://github.com/Manuel-DominguezCBG/SMART/blob/main/README.md">Documentation</a>
+    <a href="https://github.com/Manuel-DominguezCBG/SMART">GitHub &#8599;</a>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <img class="logo"
+       src="https://raw.githubusercontent.com/Manuel-DominguezCBG/SMART/main/Files4ThisProject/SMART_logo_docker.png"
+       alt="SMART logo">
+
+  <h1>SMART</h1>
+  <p class="acronym">Somatic Mutation Annotation and Reporting Tool</p>
+
+  <p class="tagline">
+    A Dockerised pipeline for somatic variant annotation, filtration, and
+    clinical reporting — from raw VCF to audience-targeted output in a
+    single command.
+  </p>
+
+  <div class="hero-badges">
+    <a href="https://doi.org/10.5281/zenodo.20206503">
+      <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20206503.svg" alt="DOI">
+    </a>
+    <a href="https://github.com/Manuel-DominguezCBG/SMART/tree/main/tests">
+      <img src="https://img.shields.io/badge/tests-passing-brightgreen" alt="Tests passing">
+    </a>
+    <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version 0.2.0">
+    <img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT licence">
+  </div>
+
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://github.com/Manuel-DominguezCBG/SMART#quick-start">
+      Get started
+    </a>
+    <a class="btn-outline" href="example-output.html">
+      Browse example output
+    </a>
+    <a class="btn-outline" href="https://github.com/Manuel-DominguezCBG/SMART">
+      View on GitHub
+    </a>
+  </div>
+</div>
+
+<!-- ── What is SMART? ────────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="section-inner">
+    <h2>What is SMART?</h2>
+    <p>
+      SMART automates the end-to-end processing of somatic VCF files generated
+      by cancer sequencing panels (e.g. TSO500). Starting from raw VCFs in
+      hg19/GRCh37 or GRCh38 coordinates, it performs PASS filtering, optional
+      coordinate liftover, comprehensive functional annotation via
+      <strong>Ensembl VEP 114</strong>, and clinical annotation via the
+      <strong>OncoKB REST API</strong>. Results are delivered in three
+      audience-targeted output files.
+    </p>
+    <p>
+      Everything runs inside a single Docker container — no local installation
+      of VEP, GATK, or OncoKB is required. A single <code>docker run</code>
+      command takes you from raw VCF to clinical report.
+    </p>
+  </div>
+</section>
+
+<!-- ── Features ─────────────────────────────────────────────────────────── -->
+<section id="features">
+  <div class="section-inner">
+    <h2>Key features</h2>
+    <div class="cards">
+
+      <div class="card">
+        <div class="icon">🐳</div>
+        <h3>Fully Dockerised</h3>
+        <p>VEP, GATK, bcftools, Python, and the OncoKB annotator all run inside a single container. No local installs, reproducible across machines.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>Three output tiers</h3>
+        <p>Clinical TSV (77 fields), bioinformatics TSV (670 fields), and full MAF (1,000+ fields). Each audience gets exactly what they need.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🧬</div>
+        <h3>Transcript prioritisation</h3>
+        <p>A curated NM whitelist ensures VEP annotation and OncoKB queries use the same clinically relevant transcript. MANE Select used as fallback.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔀</div>
+        <h3>Multi-transcript output</h3>
+        <p>Variants overlapping multiple preferred isoforms (e.g. CDKN2A p16/INK4a &amp; p14ARF) produce one row per transcript with independent OncoKB evidence.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💊</div>
+        <h3>OncoKB clinical evidence</h3>
+        <p>Therapeutic (LEVEL_1–4, R1–R2), diagnostic (Dx1–3), prognostic (Px1–2), and FDA levels. Drug names and tumour types structured as indexed columns.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">✅</div>
+        <h3>Extensive verification</h3>
+        <p>Four integration suites (field-level API check, caller compatibility, transcript prioritisation impact, parallel processing) plus 161 unit tests.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Output tiers ──────────────────────────────────────────────────────── -->
+<section id="outputs">
+  <div class="section-inner">
+    <h2>Output tiers</h2>
+    <p>
+      Every pipeline run produces three files from a single post-analysis step.
+      Column counts scale with OncoKB evidence — runs with more variants across
+      more tumour types produce more expanded JSON columns.
+    </p>
+    <div class="tiers">
+      <div class="tier-card t3">
+        <h3>Tier 3 — Clinical</h3>
+        <span class="filename">Final_result_tier3.tsv</span>
+        <p>77 curated fields for clinical scientists. Variant identity, consequence, top-line OncoKB actionability, ClinVar, CancerHotspots, and pathogenicity scores. Two-row header (field names + source metadata).</p>
+      </div>
+      <div class="tier-card t2">
+        <h3>Tier 2 — Bioinformatics</h3>
+        <span class="filename">Final_result_tier2.tsv</span>
+        <p>670 fields for bioinformaticians. Extends Tier 3 with full gnomAD stratification, all SpliceAI delta scores, complete CIViC annotation, and every OncoKB JSON expansion (<code>ONCOKB_TX_*</code>, <code>ONCOKB_DIAG_*</code>).</p>
+      </div>
+      <div class="tier-card t1">
+        <h3>Tier 1 — Full MAF</h3>
+        <span class="filename">Final_result_tier1.maf</span>
+        <p>1,000+ fields in standard MAF format. All non-dropped fields for downstream tools: cBioPortal, oncoPrint generators, R/Python analysis pipelines.</p>
+      </div>
+    </div>
+    <p style="margin-top:1.2rem; font-size:0.9em;">
+      &#8594; <a href="example-output.html">Browse the full output from the Verification&nbsp;1 test run
+      (22&nbsp;variants, 3&nbsp;tiers) as interactive tables</a>
+    </p>
+  </div>
+</section>
+
+<!-- ── Getting started ───────────────────────────────────────────────────── -->
+<section id="getting-started">
+  <div class="section-inner">
+    <h2>Getting started</h2>
+    <ol class="steps">
+      <li>
+        <div>
+          <strong>Obtain an OncoKB API token</strong><br>
+          Register at <a href="https://www.oncokb.org" target="_blank">oncokb.org</a> to receive a free academic token.
+          Without a token the pipeline runs in <em>VEP-only mode</em> — full annotation resumes once a token is added.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Download reference files</strong><br>
+          Run <code>bash utils/get_ref_files.sh</code> to download the VEP cache, SpliceAI scores,
+          REVEL, ClinVar, CIViC, gnomAD constraints, CancerHotSpots, and the GRCh38 reference genome
+          (~200 GB total).
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Build the Docker image</strong><br>
+          <code>git clone https://github.com/Manuel-DominguezCBG/SMART.git &amp;&amp; cd SMART</code><br>
+          <code>docker build -t smart:latest .</code>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Prepare your data</strong><br>
+          Place VCF files in <code>data/OriginalVcf/</code> and copy your transcript whitelist
+          (e.g. <code>TSO500_transcript_MANE.txt</code>) into <code>data/</code>.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Run the pipeline</strong><br>
+          <code>export ONCOKB_TOKEN=your_token_here</code><br>
+          <code>docker run --rm -v $(pwd):/data -v /path/to/refs:/refs monkiky/smart:latest "$ONCOKB_TOKEN" --transcripts-file /data/transcripts.txt --config /data/Config.yaml --ref-dir /refs</code>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Find your results</strong><br>
+          Output files are written to the mounted <code>/data</code> directory under
+          <code>Output_Results/</code>. See the <a href="https://github.com/Manuel-DominguezCBG/SMART/blob/main/README.md">full documentation</a>
+          for all command-line options.
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ── What's new ───────────────────────────────────────────────────────── -->
+<section id="news">
+  <div class="section-inner">
+    <h2>What&#8217;s new</h2>
+
+    <div class="news-item">
+      <span class="news-date">v0.2.0</span>
+      <div class="news-content">
+        <strong>Multi-transcript output</strong>
+        <p>When a variant overlaps more than one preferred transcript (e.g. CDKN2A p16/INK4a <em>and</em> p14ARF), the pipeline now produces one output row per matching transcript, each with independent VEP annotation and OncoKB evidence level.</p>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <span class="news-date">v0.2.0</span>
+      <div class="news-content">
+        <strong>VEP-only mode — no token required</strong>
+        <p>Omitting the OncoKB token now automatically activates VEP-only mode. The pipeline runs through VEP annotation and stops, producing annotated VCFs without requiring an OncoKB account.</p>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <span class="news-date">v0.2.0</span>
+      <div class="news-content">
+        <strong>Parallel sample processing</strong>
+        <p>The <code>--jobs N</code> flag runs up to N samples concurrently on a single machine, reducing wall-clock time for multi-sample runs.</p>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <span class="news-date">v0.2.0</span>
+      <div class="news-content">
+        <strong>CNA annotation fix</strong>
+        <p>MafAnnotator incorrectly overwrote CNA oncogenicity with Unknown. Post-analysis now overrides MafAnnotator output for CNA rows using values from the OncoKB API directly.</p>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <span class="news-date">v0.1.0</span>
+      <div class="news-content">
+        <strong>Initial release</strong>
+        <p>End-to-end Dockerised pipeline: PASS filter → LiftOver → VEP → OncoKB → vcf2table → MafAnnotator → post-analysis with three output tiers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Example output CTA ────────────────────────────────────────────────── -->
+<section id="demo">
+  <div class="section-inner">
+    <div class="cta-box">
+      <div>
+        <h3>Browse live example output</h3>
+        <p>22 variants &middot; 3 output tiers &middot; colour-coded OncoKB levels &middot; searchable &amp; sortable</p>
+      </div>
+      <a class="btn-primary" href="example-output.html">Open interactive tables &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Citation ──────────────────────────────────────────────────────────── -->
+<section id="citation">
+  <div class="section-inner">
+    <h2>Citation</h2>
+    <p>If you use SMART in your research, please cite:</p>
+    <div class="citation-box">
+      Manuel Dominguez (2026). <em>SMART — Somatic Mutation Annotation and Reporting Tool</em>
+      (v0.2.0). Zenodo.
+      <a href="https://doi.org/10.5281/zenodo.20206503">https://doi.org/10.5281/zenodo.20206503</a>
+    </div>
+    <p style="margin-top:1rem; font-size:0.9em;">
+      SMART integrates annotations from
+      <a href="https://www.ensembl.org/info/docs/tools/vep/index.html" target="_blank">Ensembl VEP</a>,
+      <a href="https://www.oncokb.org" target="_blank">OncoKB</a>,
+      <a href="https://civicdb.org" target="_blank">CIViC</a>,
+      <a href="https://www.ncbi.nlm.nih.gov/clinvar/" target="_blank">ClinVar</a>,
+      <a href="https://gnomad.broadinstitute.org" target="_blank">gnomAD</a>,
+      <a href="https://spliceailookup.broadinstitute.org" target="_blank">SpliceAI</a>,
+      <a href="https://sites.google.com/site/revelgenomics/" target="_blank">REVEL</a>, and
+      <a href="https://www.cancerhotspots.org" target="_blank">CancerHotspots</a>.
+      Please also cite those resources as appropriate.
+    </p>
+  </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <p>
+      <strong style="color:#e2e8f0;">SMART</strong> &mdash;
+      Somatic Mutation Annotation and Reporting Tool &mdash; v0.2.0
+    </p>
+    <p style="margin-top:0.4rem;">
+      Developed by <a href="https://github.com/Manuel-DominguezCBG">Manuel Dominguez</a>
+      &middot; University Hospital Southampton
+    </p>
+    <p style="margin-top:0.4rem;">
+      <a href="https://github.com/Manuel-DominguezCBG/SMART">Source code</a>
+      <span class="divider">|</span>
+      <a href="https://github.com/Manuel-DominguezCBG/SMART/issues">Report a bug</a>
+      <span class="divider">|</span>
+      <a href="https://github.com/Manuel-DominguezCBG/SMART/blob/main/LICENSE">MIT licence</a>
+      <span class="divider">|</span>
+      <a href="https://doi.org/10.5281/zenodo.20206503">DOI</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

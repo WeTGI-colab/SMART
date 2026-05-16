@@ -316,7 +316,7 @@ Designed for direct input to downstream tools such as cBioPortal, oncoPrint gene
 
 ---
 
-## Output Annotations (~300–900 columns) — [Full field reference →](https://manuel-dominguezcbg.github.io/SMART/)
+## Output Annotations (~300–900 columns) — [Full field reference →](https://manuel-dominguezcbg.github.io/SMART/fields/)
 
 The final table includes annotations from multiple sources. Key field groups:
 
