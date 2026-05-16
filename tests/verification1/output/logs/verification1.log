@@ -2,7 +2,7 @@
 >>> PASS filtering: verification1
 >>> LiftOver DISABLED: verification1
 >>> VEP annotation: verification1
-2026-05-15 13:44:53 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+2026-05-15 20:25:41 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
 >>> OncoKB annotation: verification1
 
 ✔ Annotation Mode: Generic Query
