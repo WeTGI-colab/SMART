@@ -51,7 +51,7 @@ This logic applies to both SNV/indel and CNA variants, ensuring consistent gene 
 ---
 
 > [!NOTE]
-> **v0.2.0 — multi-transcript output: one row per preferred transcript**
+> **v1.0.0 — multi-transcript output: one row per preferred transcript**
 >
 > When a variant overlaps more than one transcript in the preferred whitelist, the pipeline
 > now produces **one output row per matching transcript**, each with its own VEP annotation
