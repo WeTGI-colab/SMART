@@ -233,7 +233,7 @@ The pipeline produces three audience-targeted output files:
 
 | File | Audience | Contents |
 |------|----------|----------|
-| `Final_result_tier1.maf` | Downstream tools | All non-dropped fields in standard MAF format (~300–900 columns depending on the number of treatment, diagnostic, and prognostic implication entries returned by OncoKB for the variants in the run) |
+| `Final_result_tier1.maf` | Downstream tools | All non-dropped fields in standard MAF format (~1028 columns; exact count varies with the number of OncoKB treatment, diagnostic, and prognostic entries returned for the variants in the run) |
 | `Final_result_tier2.tsv` | Bioinformaticians | Selected fields with two-row header (field names + metadata) |
 | `Final_result_tier3.tsv` | Clinical scientists | Clinically relevant fields with two-row header |
 
@@ -316,7 +316,7 @@ Designed for direct input to downstream tools such as cBioPortal, oncoPrint gene
 
 ---
 
-## Output Annotations (~300–900 columns) — [Full field reference →](https://manuel-dominguezcbg.github.io/SMART/fields/)
+## Output Annotations (~1028 columns) — [Full field reference →](https://manuel-dominguezcbg.github.io/SMART/fields/)
 
 The final table includes annotations from multiple sources. Key field groups:
 
