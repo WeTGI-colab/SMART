@@ -698,6 +698,224 @@ def split_by_tier(df, field_config, field_patterns):
     return df[tier2_cols], df[tier3_cols]
 
 
+# === Step: SVIG-UK oncogenicity classification ===
+def _score_variant(row):
+    """
+    Apply SVIG-UK evidence codes to one variant row and return
+    (classification, codes_applied_dict, total_score).
+
+    codes_applied_dict: {code_name: (points, strength_label)}
+    """
+    codes: dict = {}
+
+    def apply(code, points, label):
+        codes[code] = (points, label)
+
+    def fval(col, default=None):
+        v = row.get(col)
+        if v is None or str(v).strip() in ("", "nan", "None"):
+            return default
+        try:
+            return float(str(v).split(",")[0])
+        except (ValueError, TypeError):
+            return default
+
+    def sval(col):
+        v = row.get(col)
+        return str(v).strip() if v is not None and str(v).strip() not in ("nan", "None") else ""
+
+    def bval(col):
+        return sval(col) in ("True", "true", "1")
+
+    role = sval("Gene_role_in_cancer")
+    csq  = sval("Consequence")
+    max_af      = fval("MAX_AF")
+    revel       = fval("REVEL")
+    spliceai_max = max(
+        fval("SpliceAI_pred_DS_AG", 0.0) or 0.0,
+        fval("SpliceAI_pred_DS_AL", 0.0) or 0.0,
+        fval("SpliceAI_pred_DS_DG", 0.0) or 0.0,
+        fval("SpliceAI_pred_DS_DL", 0.0) or 0.0,
+    )
+    oncogenic = sval("ONCOKB_ONCOGENIC")
+
+    _disruptive  = any(c in csq for c in
+                       ("frameshift", "stop_gained", "splice_donor",
+                        "splice_acceptor", "start_lost"))
+    _missense    = "missense_variant" in csq
+    _synonymous  = "synonymous_variant" in csq
+    _splice_csq  = any(c in csq for c in ("splice_donor", "splice_acceptor",
+                                           "splice_region"))
+    _inframe     = "in_frame" in csq
+
+    # ── Standalone overrides (return immediately) ─────────────────────
+    if bval("O1_canonical"):
+        return "Oncogenic", {"O1": (0, "standalone")}, 0
+
+    # B2 — variant does not fit gene mode of action → standalone VUS
+    if role == "ONCOGENE" and _disruptive:
+        return "VUS", {"B2": (0, "vus_override")}, 0
+
+    # B1 standalone benign (very high population frequency)
+    if max_af is not None and max_af > 0.05:
+        return "Benign", {"B1": (0, "standalone")}, 0
+
+    # ── Oncogenic evidence ────────────────────────────────────────────
+
+    # O2 — null variant in TSG (simplified PVS1)
+    if role in ("TSG", "ONCOGENE_AND_TSG") and _disruptive:
+        if role == "ONCOGENE_AND_TSG":
+            apply("O2", 1, "supp")
+        elif any(c in csq for c in ("frameshift", "stop_gained")):
+            apply("O2", 4, "str")
+        elif any(c in csq for c in ("splice_donor", "splice_acceptor", "start_lost")):
+            apply("O2", 2, "mod")
+
+    # O3 — absent / rare in gnomAD
+    o3_applied = False
+    if max_af is None or max_af == 0.0:
+        apply("O3", 2, "mod")
+        o3_applied = True
+    elif max_af <= 0.00001:
+        apply("O3", 1, "supp")
+        o3_applied = True
+
+    # O4 — enriched in somatic database (requires O3; blocked by B1/B2)
+    genie = fval("GENIE_count")
+    if genie is not None and o3_applied:
+        if _missense or _splice_csq:
+            if genie > 10:   apply("O4", 4, "str")
+            elif genie >= 5: apply("O4", 2, "mod")
+            elif genie >= 1: apply("O4", 1, "supp")
+        elif _disruptive or _inframe:
+            if genie > 50:    apply("O4", 4, "str")
+            elif genie >= 20: apply("O4", 2, "mod")
+            elif genie >= 10: apply("O4", 1, "supp")
+
+    # O5 — same AA position as known oncogenic variant
+    if bval("O5_same_position"):
+        strength = sval("O5_strength")
+        if strength == "Strong":   apply("O5", 4, "str")
+        elif strength == "Moderate": apply("O5", 2, "mod")
+
+    # O6 — computational deleterious (capped at +1)
+    if (revel is not None and revel >= 0.7) or spliceai_max >= 0.2:
+        apply("O6", 1, "supp")
+
+    # O7 — CancerHotspots counts
+    pos_count = fval("CancerHotspots_position_count")
+    aa_count  = fval("CancerHotspots_aa_change_count")
+    if pos_count is not None and aa_count is not None:
+        if pos_count >= 50 and aa_count >= 10:  apply("O7", 4, "str")
+        elif aa_count >= 10:                     apply("O7", 2, "mod")
+        elif aa_count >= 2:                      apply("O7", 1, "supp")
+
+    # O8 — missense constraint
+    loeuf = fval("LOEUF")
+    if loeuf is not None and loeuf <= 0.35 and _missense:
+        apply("O8", 1, "supp")
+
+    # O9 — protein length change
+    if bval("O9_candidate"):
+        apply("O9", 2, "mod")
+
+    # O10 proxy — OncoKB functional evidence
+    if oncogenic == "Oncogenic":
+        apply("O10", 1, "supp")
+
+    # ── Benign evidence ───────────────────────────────────────────────
+
+    # B1 strong (below standalone threshold)
+    if max_af is not None and 0.01 < max_af <= 0.05:
+        apply("B1", -4, "str")
+
+    # B3 — computational benign
+    revel_low    = revel is not None and revel < 0.7
+    spliceai_low = spliceai_max < 0.1
+    if revel_low and spliceai_low and _missense:
+        apply("B3", -1, "supp")
+
+    # B4 — synonymous / deep intronic (no splice impact)
+    if _synonymous and spliceai_low:
+        apply("B4", -4, "str")
+
+    # B6 proxy — functional neutral
+    if oncogenic in ("Likely Neutral", "Neutral"):
+        apply("B6", -1, "supp")
+
+    # ── Score + classify ──────────────────────────────────────────────
+    score = sum(pts for pts, _ in codes.values())
+
+    # Minimum 2 codes rule
+    n_onc = sum(1 for k, (pts, _) in codes.items() if pts > 0)
+    n_ben = sum(1 for k, (pts, _) in codes.items() if pts < 0)
+
+    if score > 0 and n_onc < 2:
+        classification = "VUS"
+    elif score < 0 and n_ben < 2:
+        classification = "VUS"
+    elif score >= 10:
+        classification = "Oncogenic"
+    elif score >= 6:
+        classification = "Likely Oncogenic"
+    elif score > -1:
+        classification = "VUS"
+    elif score >= -6:
+        classification = "Likely Benign"
+    else:
+        classification = "Benign"
+
+    return classification, codes, score
+
+
+def add_svig_uk_classification(df):
+    """
+    Compute the SVIG-UK oncogenicity classification for every variant row.
+
+    Applies all implemented evidence codes (O1–O10, B1–B6 where data is
+    available) and produces three new columns:
+
+      SVIG_UK_score           — integer total (negative = benign evidence)
+      SVIG_UK_classification  — Oncogenic / Likely Oncogenic / VUS /
+                                 Likely Benign / Benign
+      SVIG_UK_codes           — pipe-separated applied codes with points,
+                                 e.g. "O3_mod(+2)|O7_str(+4)|O6_supp(+1)"
+
+    Classification thresholds (Tavtigian et al. 2018 / SVIG-UK 2025):
+      >=10 → Oncogenic
+       6-9 → Likely Oncogenic
+       0-5 → VUS
+      -1 to -6 → Likely Benign
+      <=-7 → Benign
+    Note: standalone O1=Oncogenic, B1-high=Benign, B2=VUS override.
+    Minimum 2 independent codes required for any non-standalone classification.
+    """
+    classifications, scores, codes_cols = [], [], []
+
+    for _, row in df.iterrows():
+        cls, codes, score = _score_variant(row)
+        classifications.append(cls)
+        scores.append(score)
+
+        # Format codes string: "O3_mod(+2)|O7_str(+4)"
+        parts = []
+        for code, (pts, label) in sorted(codes.items()):
+            sign = "+" if pts > 0 else ""
+            if pts == 0:
+                parts.append(f"{code}_{label}")
+            else:
+                parts.append(f"{code}_{label}({sign}{pts})")
+        codes_cols.append("|".join(parts))
+
+    df["SVIG_UK_score"]          = scores
+    df["SVIG_UK_classification"] = classifications
+    df["SVIG_UK_codes"]          = codes_cols
+
+    counts = pd.Series(classifications).value_counts().to_dict()
+    print("SVIG-UK classification summary:", counts)
+    return df
+
+
 # === Step: O5 — same amino acid position as a known oncogenic variant ===
 def add_o5_same_position(df, canonical_path=None):
     """
@@ -1143,6 +1361,7 @@ def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
     merged = clean_column_values(merged)
     merged = add_vaf_column(merged)
     merged = add_o5_same_position(merged, canonical_variants)
+    merged = add_svig_uk_classification(merged)
     merged = add_o9_candidate(merged)
     merged = add_o1_canonical(merged, canonical_variants)
     merged = add_gene_role(merged, gene_roles)

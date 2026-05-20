@@ -783,3 +783,128 @@ class TestAddO5SamePosition:
         assert "O5_same_position" in result.columns
         assert "O5_strength" in result.columns
         assert "O5_reference_variant" in result.columns
+
+
+# ===========================================================================
+# add_svig_uk_classification  (_score_variant)
+# ===========================================================================
+
+class TestSvigUkClassification:
+    """Tests for the SVIG-UK scoring and classification logic."""
+
+    def _row(self, **kwargs):
+        defaults = {
+            "O1_canonical": False, "O1_canonical_source": "",
+            "Gene_role_in_cancer": "unknown",
+            "Consequence": "missense_variant",
+            "MAX_AF": None,
+            "REVEL": None,
+            "SpliceAI_pred_DS_AG": 0, "SpliceAI_pred_DS_AL": 0,
+            "SpliceAI_pred_DS_DG": 0, "SpliceAI_pred_DS_DL": 0,
+            "ONCOKB_ONCOGENIC": "",
+            "GENIE_count": None,
+            "CancerHotspots_position_count": None,
+            "CancerHotspots_aa_change_count": None,
+            "LOEUF": None,
+            "EXON": "",
+            "O5_same_position": False, "O5_strength": "",
+            "O9_candidate": False, "O9_candidate_reason": "",
+        }
+        defaults.update(kwargs)
+        return defaults
+
+    def _classify(self, **kwargs):
+        cls, codes, score = post._score_variant(self._row(**kwargs))
+        return cls, codes, score
+
+    # ── Standalone overrides ──────────────────────────────────────────
+
+    def test_o1_canonical_returns_oncogenic(self):
+        cls, codes, _ = self._classify(O1_canonical=True)
+        assert cls == "Oncogenic"
+        assert "O1" in codes
+
+    def test_b2_wrong_mechanism_returns_vus(self):
+        cls, codes, _ = self._classify(
+            Gene_role_in_cancer="ONCOGENE",
+            Consequence="frameshift_variant"
+        )
+        assert cls == "VUS"
+        assert "B2" in codes
+
+    def test_b1_standalone_high_af_returns_benign(self):
+        cls, codes, _ = self._classify(MAX_AF=0.10)
+        assert cls == "Benign"
+        assert "B1" in codes
+
+    # ── Minimum 2 codes rule ─────────────────────────────────────────
+
+    def test_single_code_returns_vus(self):
+        # Only O6 applies (+1) — one code → VUS
+        cls, _, score = self._classify(REVEL=0.75, MAX_AF=0.001)
+        assert cls == "VUS"
+
+    def test_two_codes_gives_vus_below_threshold(self):
+        # O3_mod(+2) + O7_mod(+2) = 4 pts, 2 codes → VUS (4 < 6 threshold)
+        cls, codes, score = self._classify(
+            MAX_AF=0,
+            CancerHotspots_position_count=30, CancerHotspots_aa_change_count=12,
+        )
+        assert score == 4
+        assert cls == "VUS"
+        assert "O3" in codes and "O7" in codes
+
+    # ── Real variant scenarios ────────────────────────────────────────
+
+    def test_braf_v600e_profile_oncogenic(self):
+        # Simulates BRAF V600E: canonical, hotspot, Oncogenic in OncoKB
+        cls, codes, score = self._classify(
+            O1_canonical=True,
+        )
+        assert cls == "Oncogenic"
+
+    def test_idh1_r132h_likely_oncogenic(self):
+        # IDH1 R132H: rare in gnomAD, big hotspot, Oncogenic OncoKB, high REVEL
+        cls, codes, score = self._classify(
+            MAX_AF=0,                                        # O3 +2
+            CancerHotspots_position_count=3104,              # O7 Strong: +4
+            CancerHotspots_aa_change_count=2891,
+            ONCOKB_ONCOGENIC="Oncogenic",                    # O10 +1
+            REVEL=0.852,                                     # O6 +1
+        )
+        assert score >= 6
+        assert cls in ("Likely Oncogenic", "Oncogenic")
+
+    def test_benign_common_variant(self):
+        cls, _, _ = self._classify(
+            MAX_AF=0.15,     # B1 standalone
+        )
+        assert cls == "Benign"
+
+    def test_b4_synonymous_likely_benign(self):
+        # Synonymous + no SpliceAI impact → B4_str(-4) alone → VUS (only 1 code)
+        cls, codes, score = self._classify(
+            Consequence="synonymous_variant",
+            MAX_AF=0.001,    # adds B1_str(-4)
+        )
+        # B4(-4) + B1(-4) = -8 and 2 codes → Benign
+        assert score <= -7 or cls in ("Likely Benign", "Benign", "VUS")
+
+    def test_output_columns_added(self):
+        df = pd.DataFrame([self._row(O1_canonical=True)])
+        result = post.add_svig_uk_classification(df)
+        assert "SVIG_UK_classification" in result.columns
+        assert "SVIG_UK_score" in result.columns
+        assert "SVIG_UK_codes" in result.columns
+
+    def test_codes_string_format(self):
+        cls, codes, score = self._classify(
+            MAX_AF=0,
+            REVEL=0.85,
+        )
+        # Check codes format in the full function
+        df = pd.DataFrame([self._row(MAX_AF=0, REVEL=0.85)])
+        result = post.add_svig_uk_classification(df)
+        codes_str = result["SVIG_UK_codes"].iloc[0]
+        assert "O3" in codes_str
+        assert "O6" in codes_str

@@ -1115,6 +1115,35 @@ fields:
     source: Cancer Hotspots
     version: changv2
     tier: 2
+  SVIG_UK_classification:
+    description: Automated oncogenicity classification following the ACGS/SVIG-UK
+      2025 guidelines. Values — Oncogenic (>=10 pts); Likely Oncogenic (6-9 pts);
+      VUS (0-5 pts or <2 codes); Likely Benign (-1 to -6 pts); Benign (<=-7 pts).
+      Standalone overrides — O1 canonical=Oncogenic; B1 high AF=Benign;
+      B2 wrong mechanism=VUS. Based on automated proxies for O1-O10 and B1-B6
+      using data already in SMART output. O4 (GENIE) and O11/B7 (tumour phenotype)
+      require additional data. Intended as a decision-support aid — clinical
+      judgement must always be applied.
+    source: Computed
+    version: SVIG-UK ACGS 2025 v1.0
+    tier: 3
+  SVIG_UK_score:
+    description: Numeric SVIG-UK evidence score (Tavtigian 2018 point system).
+      Positive values support oncogenicity; negative values support benignity.
+      See SVIG_UK_classification for the final category and SVIG_UK_codes for
+      the breakdown of applied evidence codes.
+    source: Computed
+    version: SVIG-UK ACGS 2025 v1.0
+    tier: 2
+  SVIG_UK_codes:
+    description: Pipe-separated list of SVIG-UK evidence codes applied to this
+      variant, with strength and points (e.g. O3_mod(+2)|O7_str(+4)|O6_supp(+1)).
+      Codes — O1 canonical; O2 null-in-TSG; O3 gnomAD absence; O4 GENIE count;
+      O5 same-position oncogenic; O6 computational; O7 CancerHotspots; O8 LOEUF;
+      O9 protein-length-change; O10 functional-proxy; B1-B6 benign evidence.
+    source: Computed
+    version: SVIG-UK ACGS 2025 v1.0
+    tier: 2
   O5_same_position:
     description: True if a different amino acid change at the same residue has
       been classified as (likely) oncogenic in the SVIG-UK canonical variants
