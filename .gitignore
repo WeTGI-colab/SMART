@@ -189,3 +189,23 @@ cython_debug/
 *.out
 
 # local run scripts (replaced by tests/run_all_verifications.sh)
+
+# ── Patient / clinical data — NEVER commit to public repo ─────────────────
+# Any directory used for real patient variant validation
+data/jack_list_validation/
+data/*/
+# Exclude any curated mutation lists that may contain patient data
+Files4ThisProject/jack_list.txt
+Files4ThisProject/*_list.txt
+Files4ThisProject/*_curated*.tsv
+Files4ThisProject/*_curated*.txt
+# Pipeline output from real clinical runs
+**/Output_Results/
+**/output/logs/
+**/output/AnnotatedVcf/
+**/output/OncoKB_VCF/
+**/output/Table/
+**/output/FINAL_Table/
+**/output/FilteredVcf/
+# Coverage reports (may reference patient data paths)
+coverage_html/
