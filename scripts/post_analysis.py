@@ -94,6 +94,8 @@ import os
 import fnmatch
 import ast
 import json
+import re
+import sys
 import yaml
 import pandas as pd
 import argparse
@@ -696,8 +698,210 @@ def split_by_tier(df, field_config, field_patterns):
     return df[tier2_cols], df[tier3_cols]
 
 
+# === Step: Gene role annotation — TSG / oncogene (O2 + B2 support) ===
+def add_gene_role(df, gene_roles_path=None):
+    """
+    Add Gene_role_in_cancer column from the OncoKB curated gene list.
+
+    Values: TSG | ONCOGENE | ONCOGENE_AND_TSG | INSUFFICIENT_EVIDENCE | NEITHER | unknown
+
+    This column is used for two SVIG-UK evidence codes:
+
+      O2 — Null variant in a TSG:
+        Consequence IN (frameshift, stop_gained, splice_donor/acceptor, start_lost)
+        AND Gene_role_in_cancer IN (TSG, ONCOGENE_AND_TSG)
+        → O2 applies (strength depends on position in gene — simplified here)
+
+      B2 — Variant does not fit gene's mode of action:
+        Consequence IN (frameshift, stop_gained, ...) — disruptive
+        AND Gene_role_in_cancer = ONCOGENE (pure oncogene)
+        → B2 (Standalone VUS override — LOF unexpected in pure oncogene)
+
+    Source file: oncokb_gene_roles.tsv downloaded from
+    https://www.oncokb.org/api/v1/utils/allCuratedGenes (1,117 curated genes).
+    Place the file in the reference directory or pass the path explicitly.
+    If absent, the column is added as 'unknown' for all rows.
+    """
+    df["Gene_role_in_cancer"] = "unknown"
+
+    if not gene_roles_path:
+        return df
+
+    if not os.path.isfile(gene_roles_path):
+        sys.stderr.write(
+            f"WARNING: Gene roles file not found: {gene_roles_path}\n"
+            "         Gene_role_in_cancer will be 'unknown' for all rows.\n"
+            "         Copy Files4ThisProject/oncokb_gene_roles.tsv to the reference dir.\n"
+        )
+        return df
+
+    roles_df = pd.read_csv(gene_roles_path, sep="\t", dtype=str)
+    lookup = dict(zip(roles_df["hugoSymbol"], roles_df["geneType"]))
+
+    sym_col = "SYMBOL" if "SYMBOL" in df.columns else "Hugo_Symbol"
+    df["Gene_role_in_cancer"] = (
+        df[sym_col]
+        .astype(str)
+        .map(lookup)
+        .fillna("unknown")
+    )
+
+    matched = (df["Gene_role_in_cancer"] != "unknown").sum()
+    print(f"Gene roles added: {matched}/{len(df)} variants matched ({len(lookup)} genes in lookup).")
+    return df
+
+
+# === Step: GENIE somatic database counts (O4 support) ===
+def add_genie_counts(df, lookup_path=None):
+    """
+    Add GENIE_count column: deduplicated patient count from a somatic variant
+    database (AACR Project GENIE or equivalent) for the specific gene +
+    protein change in each row.
+
+    This column implements SVIG-UK evidence code O4. The threshold that applies
+    depends on variant type (see below) and is computed in the scoring step:
+
+      Missense / splice:
+        count > 10   →  O4 Strong  [+4]
+        count 5–10   →  O4 Moderate [+2]
+      Frameshift / nonsense / in-frame indel:
+        count > 50   →  O4 Strong  [+4]
+        count 20–50  →  O4 Moderate [+2]
+        count 10–19  →  O4 Supporting [+1]
+
+    The lookup file (genie_lookup.tsv.gz) is generated once from the raw MAF
+    by utils/build_genie_lookup.py and stored in the reference directory.
+
+    If the file is absent the column is added as empty — the rest of the
+    pipeline is unaffected.
+    """
+    df["GENIE_count"] = None
+
+    if not lookup_path:
+        return df
+
+    if not os.path.isfile(lookup_path):
+        sys.stderr.write(
+            f"WARNING: GENIE lookup file not found: {lookup_path}\n"
+            "         GENIE_count will be empty.\n"
+            "         Run utils/build_genie_lookup.py to generate it.\n"
+            "         See TODO_when_at_home.md for instructions.\n"
+        )
+        return df
+
+    import gzip as _gz
+    opener = _gz.open if lookup_path.endswith(".gz") else open
+    with opener(lookup_path, "rt", encoding="utf-8") as f:
+        lut = pd.read_csv(f, sep="\t", dtype={"count": int})
+
+    # Build dict: (gene, protein_change) → count
+    lookup = {
+        (row["gene"], row["protein_change"]): row["count"]
+        for _, row in lut.iterrows()
+    }
+
+    sym_col = "SYMBOL" if "SYMBOL" in df.columns else "Hugo_Symbol"
+    counts = []
+    for _, row in df.iterrows():
+        gene   = str(row.get(sym_col, "") or "")
+        hgvsp  = str(row.get("HGVSp_Short", "") or "")
+        counts.append(lookup.get((gene, hgvsp)))
+
+    df["GENIE_count"] = counts
+    matched = sum(1 for v in counts if v is not None)
+    print(f"GENIE counts added: {matched}/{len(df)} variants matched.")
+    return df
+
+
+# === Step: CancerHotspots position and AA-change counts (O7 support) ===
+def add_cancerhotspots_counts(df, counts_path=None):
+    """
+    Add two columns from the CancerHotspots v2 database:
+
+      CancerHotspots_position_count  — total tumour samples with ANY mutation
+                                       at this amino acid position
+      CancerHotspots_aa_change_count — samples with exactly this amino acid change
+
+    These counts implement SVIG-UK evidence code O7:
+      position_count ≥ 50 AND aa_change_count ≥ 10  →  O7 Strong  [+4]
+      position_count < 50 AND aa_change_count ≥ 10  →  O7 Moderate [+2]
+      aa_change_count 2–9                            →  O7 Supporting [+1]
+
+    The counts file (cancerhotspots_counts.json) is downloaded once from
+    https://www.cancerhotspots.org/api/hotspots/single and stored in the
+    reference directory alongside the CancerHotspots VCF.
+
+    If the file is absent the columns are added as empty — the rest of
+    the pipeline is unaffected.
+    """
+    df["CancerHotspots_position_count"] = None
+    df["CancerHotspots_aa_change_count"] = None
+
+    if not counts_path:
+        return df
+
+    if not os.path.isfile(counts_path):
+        sys.stderr.write(
+            f"WARNING: CancerHotspots counts file not found: {counts_path}\n"
+            "         CancerHotspots_position_count and CancerHotspots_aa_change_count "
+            "will be empty.\n"
+            "         See TODO_when_at_home.md for setup instructions.\n"
+        )
+        return df
+
+    with open(counts_path, encoding="utf-8") as f:
+        hotspots = json.load(f)
+
+    # Build lookup: (gene, aa_position_int) → (position_count, {new_aa: count})
+    lookup = {}
+    for hs in hotspots:
+        gene = hs.get("hugoSymbol", "")
+        pos_info = hs.get("aminoAcidPosition") or {}
+        pos = pos_info.get("start")
+        if not gene or pos is None:
+            continue
+        total = hs.get("tumorCount") or 0
+        variant_aas = hs.get("variantAminoAcid") or {}
+        lookup[(gene, int(pos))] = (int(total), variant_aas)
+
+    _aa_re = re.compile(r"p\.([A-Z\*])(\d+)([A-Z\*])")
+
+    def _extract(hgvsp_short):
+        """Return (position_int, new_aa_char) from e.g. p.Q61R, or (None, None)."""
+        if not isinstance(hgvsp_short, str):
+            return None, None
+        m = _aa_re.search(hgvsp_short)
+        if m:
+            return int(m.group(2)), m.group(3)
+        return None, None
+
+    pos_counts, aa_counts = [], []
+    sym_col = "SYMBOL" if "SYMBOL" in df.columns else "Hugo_Symbol"
+
+    for _, row in df.iterrows():
+        gene = str(row.get(sym_col, "") or "")
+        hgvsp = str(row.get("HGVSp_Short", "") or "")
+        pos, new_aa = _extract(hgvsp)
+
+        if gene and pos is not None and (gene, pos) in lookup:
+            p_count, aa_dict = lookup[(gene, pos)]
+            pos_counts.append(p_count)
+            aa_counts.append(int(aa_dict.get(new_aa, 0)) if new_aa else 0)
+        else:
+            pos_counts.append(None)
+            aa_counts.append(None)
+
+    df["CancerHotspots_position_count"] = pos_counts
+    df["CancerHotspots_aa_change_count"] = aa_counts
+
+    matched = sum(1 for v in pos_counts if v is not None)
+    print(f"CancerHotspots counts added: {matched}/{len(df)} variants matched.")
+    return df
+
+
 # === Main merge function ===
-def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown"):
+def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
+                    cancerhotspots_counts=None, genie_counts=None, gene_roles=None):
 
     field_config, field_patterns = load_field_config(yaml_config)
 
@@ -729,6 +933,9 @@ def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown")
     merged = expand_oncokb_json_arrays(merged)
     merged = clean_column_values(merged)
     merged = add_vaf_column(merged)
+    merged = add_gene_role(merged, gene_roles)
+    merged = add_genie_counts(merged, genie_counts)
+    merged = add_cancerhotspots_counts(merged, cancerhotspots_counts)
     # NOTE: drop_columns(merged, COLS_TO_REMOVE) is intentionally deferred until
     # AFTER the CNA fixes below, because source columns such as ONCOKB_treatments,
     # ONCOKB_FDA_LVL, ONCOKB_SENS_LVL are tier=drop and must still be present
@@ -892,6 +1099,22 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True, help="Path to Config.yaml")
     parser.add_argument("--smart-version", default="unknown", help="SMART pipeline version")
+    parser.add_argument(
+        "--cancerhotspots-counts", default=None,
+        help="Path to cancerhotspots_counts.json (downloaded from cancerhotspots.org API). "
+             "If omitted, CancerHotspots_position_count and CancerHotspots_aa_change_count "
+             "columns will be empty.",
+    )
+    parser.add_argument(
+        "--gene-roles", default=None,
+        help="Path to oncokb_gene_roles.tsv (OncoKB curated gene list with TSG/ONCOGENE roles). "
+             "Used for SVIG-UK O2 and B2 scoring. If omitted, Gene_role_in_cancer = 'unknown'.",
+    )
+    parser.add_argument(
+        "--genie-counts", default=None,
+        help="Path to genie_lookup.tsv.gz generated by utils/build_genie_lookup.py. "
+             "If omitted, GENIE_count column will be empty (O4 scoring not available).",
+    )
     args = parser.parse_args()
 
     merge_maf_files(
@@ -899,4 +1122,7 @@ if __name__ == "__main__":
         output_dir="./output/",
         yaml_config=args.config,
         smart_version=args.smart_version,
+        gene_roles=args.gene_roles,
+        cancerhotspots_counts=args.cancerhotspots_counts,
+        genie_counts=args.genie_counts,
     )

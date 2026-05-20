@@ -2,14 +2,17 @@
 Unit tests for scripts/post_analysis.py
 
 Covers:
-  - load_field_config()           — YAML loading and validation
-  - resolve_field_meta()          — exact + pattern field lookup
-  - standardize_format_column()   — FORMAT column renaming
-  - normalize_format_fields()     — GT/AD/VAF expansion
-  - add_vaf_column()              — VAF calculation from allelic depth
-  - clean_column_values()         — value sanitisation
-  - calculate_end_position()      — end-coordinate logic
-  - drop_columns()                — column removal
+  - load_field_config()              — YAML loading and validation
+  - resolve_field_meta()             — exact + pattern field lookup
+  - standardize_format_column()      — FORMAT column renaming
+  - normalize_format_fields()        — GT/AD/VAF expansion
+  - add_vaf_column()                 — VAF calculation from allelic depth
+  - clean_column_values()            — value sanitisation
+  - calculate_end_position()         — end-coordinate logic
+  - drop_columns()                   — column removal
+  - add_cancerhotspots_counts()      — O7 position and AA-change counts
+  - add_gene_role()                  — O2/B2 gene TSG/oncogene classification
+  - add_genie_counts()               — O4 somatic database patient count
 """
 import pandas as pd
 import pytest
@@ -324,3 +327,237 @@ class TestDropColumns:
         df = pd.DataFrame({"A": [1]})
         result = post.drop_columns(df, [])
         assert isinstance(result, pd.DataFrame)
+
+
+# ===========================================================================
+# add_cancerhotspots_counts
+# ===========================================================================
+
+class TestAddGeneRole:
+    """Tests for add_gene_role() using a minimal gene roles TSV fixture."""
+
+    @pytest.fixture
+    def roles_file(self, tmp_path):
+        content = (
+            "hugoSymbol\tgeneType\n"
+            "BRAF\tONCOGENE\n"
+            "TP53\tTSG\n"
+            "CDKN2A\tTSG\n"
+            "EZH2\tONCOGENE_AND_TSG\n"
+            "ALB\tNEITHER\n"
+        )
+        p = tmp_path / "oncokb_gene_roles.tsv"
+        p.write_text(content)
+        return str(p)
+
+    def _df(self, symbol):
+        return pd.DataFrame({"SYMBOL": [symbol]})
+
+    def test_oncogene_classified(self, roles_file):
+        result = post.add_gene_role(self._df("BRAF"), roles_file)
+        assert result["Gene_role_in_cancer"].iloc[0] == "ONCOGENE"
+
+    def test_tsg_classified(self, roles_file):
+        result = post.add_gene_role(self._df("TP53"), roles_file)
+        assert result["Gene_role_in_cancer"].iloc[0] == "TSG"
+
+    def test_dual_role_classified(self, roles_file):
+        result = post.add_gene_role(self._df("EZH2"), roles_file)
+        assert result["Gene_role_in_cancer"].iloc[0] == "ONCOGENE_AND_TSG"
+
+    def test_gene_not_in_lookup_returns_unknown(self, roles_file):
+        result = post.add_gene_role(self._df("UNKNOWNGENE"), roles_file)
+        assert result["Gene_role_in_cancer"].iloc[0] == "unknown"
+
+    def test_no_path_returns_unknown(self):
+        result = post.add_gene_role(self._df("BRAF"), gene_roles_path=None)
+        assert result["Gene_role_in_cancer"].iloc[0] == "unknown"
+
+    def test_missing_file_returns_unknown(self, tmp_path):
+        result = post.add_gene_role(self._df("BRAF"), str(tmp_path / "missing.tsv"))
+        assert result["Gene_role_in_cancer"].iloc[0] == "unknown"
+
+    def test_multiple_rows(self, roles_file):
+        df = pd.DataFrame({"SYMBOL": ["BRAF", "TP53", "EZH2", "UNKNOWNGENE"]})
+        result = post.add_gene_role(df, roles_file)
+        assert list(result["Gene_role_in_cancer"]) == [
+            "ONCOGENE", "TSG", "ONCOGENE_AND_TSG", "unknown"
+        ]
+
+    def test_o2_scenario_tsg_with_frameshift(self, roles_file):
+        """TSG + frameshift → O2 applies. Gene_role = TSG is the prerequisite."""
+        df = pd.DataFrame({"SYMBOL": ["TP53"], "Consequence": ["frameshift_variant"]})
+        result = post.add_gene_role(df, roles_file)
+        assert result["Gene_role_in_cancer"].iloc[0] == "TSG"  # O2 can apply
+
+    def test_b2_scenario_oncogene_with_frameshift(self, roles_file):
+        """Oncogene + frameshift → B2 applies (wrong mechanism → VUS override)."""
+        df = pd.DataFrame({"SYMBOL": ["BRAF"], "Consequence": ["frameshift_variant"]})
+        result = post.add_gene_role(df, roles_file)
+        assert result["Gene_role_in_cancer"].iloc[0] == "ONCOGENE"  # B2 can apply
+
+
+class TestAddGenieCounts:
+    """Tests for add_genie_counts() using a minimal in-memory TSV fixture."""
+
+    @pytest.fixture
+    def lookup_file(self, tmp_path):
+        """Write a minimal genie_lookup.tsv with known variant counts."""
+        content = (
+            "gene\tprotein_change\tcount\n"
+            "BRAF\tp.V600E\t7234\n"
+            "KRAS\tp.G12D\t4521\n"
+            "NRAS\tp.Q61R\t890\n"
+            "IDH1\tp.R132H\t312\n"
+            "TP53\tp.R175H\t45\n"
+        )
+        p = tmp_path / "genie_lookup.tsv"
+        p.write_text(content)
+        return str(p)
+
+    def _df(self, symbol, hgvsp):
+        return pd.DataFrame({"SYMBOL": [symbol], "HGVSp_Short": [hgvsp]})
+
+    def test_known_driver_gets_count(self, lookup_file):
+        df = self._df("BRAF", "p.V600E")
+        result = post.add_genie_counts(df, lookup_file)
+        assert result["GENIE_count"].iloc[0] == 7234
+
+    def test_kras_g12d(self, lookup_file):
+        df = self._df("KRAS", "p.G12D")
+        result = post.add_genie_counts(df, lookup_file)
+        assert result["GENIE_count"].iloc[0] == 4521
+
+    def test_variant_not_in_lookup_returns_none(self, lookup_file):
+        df = self._df("EGFR", "p.L858R")
+        result = post.add_genie_counts(df, lookup_file)
+        assert result["GENIE_count"].iloc[0] is None
+
+    def test_no_lookup_path_adds_empty_column(self):
+        df = self._df("BRAF", "p.V600E")
+        result = post.add_genie_counts(df, lookup_path=None)
+        assert "GENIE_count" in result.columns
+        assert result["GENIE_count"].iloc[0] is None
+
+    def test_missing_file_adds_empty_column(self, tmp_path):
+        df = self._df("BRAF", "p.V600E")
+        result = post.add_genie_counts(df, str(tmp_path / "missing.tsv"))
+        assert "GENIE_count" in result.columns
+        assert result["GENIE_count"].iloc[0] is None
+
+    def test_multiple_rows(self, lookup_file):
+        df = pd.DataFrame({
+            "SYMBOL":      ["BRAF",    "KRAS",    "EGFR",    "NRAS"],
+            "HGVSp_Short": ["p.V600E", "p.G12D",  "p.L858R", "p.Q61R"],
+        })
+        result = post.add_genie_counts(df, lookup_file)
+        assert result["GENIE_count"].iloc[0] == 7234   # BRAF V600E
+        assert result["GENIE_count"].iloc[1] == 4521   # KRAS G12D
+        assert pd.isna(result["GENIE_count"].iloc[2])  # EGFR L858R — not in fixture
+        assert result["GENIE_count"].iloc[3] == 890    # NRAS Q61R
+
+    def test_cna_no_hgvsp_returns_none(self, lookup_file):
+        df = pd.DataFrame({"SYMBOL": ["CDKN2A"], "HGVSp_Short": [""]})
+        result = post.add_genie_counts(df, lookup_file)
+        assert result["GENIE_count"].iloc[0] is None
+
+    def test_svig_uk_o4_strong_threshold(self, lookup_file):
+        """Verify count > 10 for missense → qualifies for O4 Strong [+4]."""
+        df = self._df("TP53", "p.R175H")
+        result = post.add_genie_counts(df, lookup_file)
+        assert result["GENIE_count"].iloc[0] == 45
+        assert result["GENIE_count"].iloc[0] > 10   # O4 Strong for missense
+
+
+class TestAddCancerhotspotsCounts:
+    """Tests for add_cancerhotspots_counts() using a minimal in-memory JSON fixture."""
+
+    @pytest.fixture
+    def counts_file(self, tmp_path):
+        """Write a minimal cancerhotspots_counts.json with 3 hotspot records."""
+        data = [
+            {
+                "hugoSymbol": "NRAS",
+                "aminoAcidPosition": {"start": 61, "end": 61},
+                "tumorCount": 422,
+                "variantAminoAcid": {"R": 204, "K": 142, "H": 27},
+            },
+            {
+                "hugoSymbol": "BRAF",
+                "aminoAcidPosition": {"start": 600, "end": 600},
+                "tumorCount": 9852,
+                "variantAminoAcid": {"E": 9710, "K": 97, "R": 45},
+            },
+            {
+                "hugoSymbol": "IDH1",
+                "aminoAcidPosition": {"start": 132, "end": 132},
+                "tumorCount": 3104,
+                "variantAminoAcid": {"H": 2891, "C": 142, "S": 71},
+            },
+        ]
+        import json
+        p = tmp_path / "cancerhotspots_counts.json"
+        p.write_text(json.dumps(data))
+        return str(p)
+
+    def _df(self, symbol, hgvsp_short):
+        return pd.DataFrame({"SYMBOL": [symbol], "HGVSp_Short": [hgvsp_short]})
+
+    def test_nras_q61r_strong(self, counts_file):
+        df = self._df("NRAS", "p.Q61R")
+        result = post.add_cancerhotspots_counts(df, counts_file)
+        assert result["CancerHotspots_position_count"].iloc[0] == 422
+        assert result["CancerHotspots_aa_change_count"].iloc[0] == 204
+
+    def test_braf_v600e_strong(self, counts_file):
+        df = self._df("BRAF", "p.V600E")
+        result = post.add_cancerhotspots_counts(df, counts_file)
+        assert result["CancerHotspots_position_count"].iloc[0] == 9852
+        assert result["CancerHotspots_aa_change_count"].iloc[0] == 9710
+
+    def test_idh1_r132h_strong(self, counts_file):
+        df = self._df("IDH1", "p.R132H")
+        result = post.add_cancerhotspots_counts(df, counts_file)
+        assert result["CancerHotspots_position_count"].iloc[0] == 3104
+        assert result["CancerHotspots_aa_change_count"].iloc[0] == 2891
+
+    def test_rare_aa_change_gives_zero_count(self, counts_file):
+        # BRAF V600D is not in variantAminoAcid — aa_change_count should be 0
+        df = self._df("BRAF", "p.V600D")
+        result = post.add_cancerhotspots_counts(df, counts_file)
+        assert result["CancerHotspots_position_count"].iloc[0] == 9852
+        assert result["CancerHotspots_aa_change_count"].iloc[0] == 0
+
+    def test_gene_not_in_hotspots_returns_none(self, counts_file):
+        df = self._df("TP53", "p.R175H")
+        result = post.add_cancerhotspots_counts(df, counts_file)
+        assert result["CancerHotspots_position_count"].iloc[0] is None
+        assert result["CancerHotspots_aa_change_count"].iloc[0] is None
+
+    def test_cna_no_hgvsp_returns_none(self, counts_file):
+        df = pd.DataFrame({"SYMBOL": ["CDKN2A"], "HGVSp_Short": [""]})
+        result = post.add_cancerhotspots_counts(df, counts_file)
+        assert result["CancerHotspots_position_count"].iloc[0] is None
+
+    def test_no_counts_file_adds_empty_columns(self):
+        df = self._df("BRAF", "p.V600E")
+        result = post.add_cancerhotspots_counts(df, counts_path=None)
+        assert "CancerHotspots_position_count" in result.columns
+        assert result["CancerHotspots_position_count"].iloc[0] is None
+
+    def test_missing_file_adds_empty_columns(self, tmp_path):
+        df = self._df("BRAF", "p.V600E")
+        result = post.add_cancerhotspots_counts(df, str(tmp_path / "missing.json"))
+        assert "CancerHotspots_position_count" in result.columns
+        assert result["CancerHotspots_position_count"].iloc[0] is None
+
+    def test_multiple_rows(self, counts_file):
+        df = pd.DataFrame({
+            "SYMBOL":      ["NRAS",   "BRAF",   "IDH1",   "TP53"],
+            "HGVSp_Short": ["p.Q61R", "p.V600E","p.R132H","p.R175H"],
+        })
+        result = post.add_cancerhotspots_counts(df, counts_file)
+        assert result["CancerHotspots_position_count"].iloc[0] == 422    # NRAS Q61
+        assert result["CancerHotspots_position_count"].iloc[1] == 9852   # BRAF V600
+        assert result["CancerHotspots_position_count"].iloc[2] == 3104   # IDH1 R132
+        assert pd.isna(result["CancerHotspots_position_count"].iloc[3])   # TP53 not in fixture
