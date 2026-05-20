@@ -561,3 +561,87 @@ class TestAddCancerhotspotsCounts:
         assert result["CancerHotspots_position_count"].iloc[1] == 9852   # BRAF V600
         assert result["CancerHotspots_position_count"].iloc[2] == 3104   # IDH1 R132
         assert pd.isna(result["CancerHotspots_position_count"].iloc[3])   # TP53 not in fixture
+
+
+# ===========================================================================
+# add_o1_canonical
+# ===========================================================================
+
+class TestAddO1Canonical:
+    """Tests for add_o1_canonical() — exact match and proxy detection."""
+
+    @pytest.fixture
+    def canon_file(self, tmp_path):
+        content = (
+            "gene\ttranscript\tHGVSp_Short\tHGVSp_long\tsvig_uk_assessment\n"
+            "BRAF\tNM_004333.6\tp.V600E\tp.Val600Glu\tOncogenic\n"
+            "KRAS\tNM_004985.5\tp.G12D\tp.Gly12Asp\tOncogenic\n"
+            "IDH1\tNM_005896.4\tp.R132H\tp.Arg132His\tOncogenic\n"
+            "NRAS\tNM_002524.5\tp.Q61R\tp.Gln61Arg\tOncogenic\n"
+        )
+        p = tmp_path / "canonical.tsv"
+        p.write_text(content)
+        return str(p)
+
+    def _df(self, symbol, hgvsp, hotspot="False", oncogenic="", clinsci="", clinonc=""):
+        return pd.DataFrame({
+            "SYMBOL":          [symbol],
+            "HGVSp_Short":     [hgvsp],
+            "ONCOKB_HOTSPOT":  [hotspot],
+            "ONCOKB_ONCOGENIC":[oncogenic],
+            "ClinVar_SCI":     [clinsci],
+            "ClinVar_ONC":     [clinonc],
+        })
+
+    def test_exact_match_canonical(self, canon_file):
+        df = self._df("BRAF", "p.V600E")
+        result = post.add_o1_canonical(df, canon_file)
+        assert result["O1_canonical"].iloc[0] == True
+        assert result["O1_canonical_source"].iloc[0] == "SVIG-UK_Table3_exact"
+
+    def test_exact_match_idh1(self, canon_file):
+        df = self._df("IDH1", "p.R132H")
+        result = post.add_o1_canonical(df, canon_file)
+        assert result["O1_canonical"].iloc[0] == True
+
+    def test_non_canonical_not_matched(self, canon_file):
+        df = self._df("EGFR", "p.L858R")
+        result = post.add_o1_canonical(df, canon_file)
+        assert result["O1_canonical"].iloc[0] == False
+
+    def test_proxy_detection(self, canon_file):
+        # Not in canonical list but meets proxy criteria
+        df = self._df("EGFR", "p.L858R",
+                      hotspot="True", oncogenic="Oncogenic",
+                      clinsci="Tier_I_-_Strong", clinonc="Oncogenic")
+        result = post.add_o1_canonical(df, canon_file)
+        assert result["O1_canonical"].iloc[0] == True
+        assert result["O1_canonical_source"].iloc[0] == "proxy_OncoKB+ClinVar"
+
+    def test_proxy_not_triggered_without_hotspot(self, canon_file):
+        df = self._df("EGFR", "p.L858R",
+                      hotspot="False", oncogenic="Oncogenic",
+                      clinsci="Tier_I_-_Strong")
+        result = post.add_o1_canonical(df, canon_file)
+        assert result["O1_canonical"].iloc[0] == False
+
+    def test_no_canonical_file_uses_proxy(self):
+        df = self._df("BRAF", "p.V600E",
+                      hotspot="True", oncogenic="Oncogenic",
+                      clinsci="Tier_I_-_Strong", clinonc="Oncogenic")
+        result = post.add_o1_canonical(df, canonical_path=None)
+        assert result["O1_canonical"].iloc[0] == True
+        assert result["O1_canonical_source"].iloc[0] == "proxy_OncoKB+ClinVar"
+
+    def test_missing_file_falls_back_to_proxy(self, tmp_path):
+        df = self._df("BRAF", "p.V600E",
+                      hotspot="True", oncogenic="Oncogenic",
+                      clinsci="Tier_I_-_Strong")
+        result = post.add_o1_canonical(df, str(tmp_path / "missing.tsv"))
+        assert result["O1_canonical"].iloc[0] == True
+
+    def test_columns_always_added(self):
+        df = pd.DataFrame({"SYMBOL": ["ALB"], "HGVSp_Short": ["p.X1Y"]})
+        result = post.add_o1_canonical(df)
+        assert "O1_canonical" in result.columns
+        assert "O1_canonical_source" in result.columns

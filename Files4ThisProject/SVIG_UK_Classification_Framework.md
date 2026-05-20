@@ -706,7 +706,7 @@ being a driver). Not derivable from VCF alone. Outside scope.
 | **B1** | ✅ Automated | None | Standalone | — |
 | **B3** | ✅ Automated | None | −1 | — |
 | **B4** | ✅ Automated | None | −4 | — |
-| **O1** | 🔶 Proxy available | Low (extract list) | Standalone | Medium |
+| **O1** | ✅ Implemented | Done | Standalone | — |
 | **O7** | ✅ Implemented | Done | **+4** | — |
 | **O8** | ✅ Automated | Done | +1 | — |
 | **B2** | ✅ Implemented | Done | VUS override | — |

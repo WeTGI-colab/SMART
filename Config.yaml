@@ -1115,6 +1115,22 @@ fields:
     source: Cancer Hotspots
     version: changv2
     tier: 2
+  O1_canonical:
+    description: True if the variant is in the SVIG-UK Canonical Variants List
+      (Supplementary Table 3, ACGS 2025, 158 variants / 38 genes) or meets the
+      proxy criteria (ONCOKB_HOTSPOT=True AND ONCOKB_ONCOGENIC=Oncogenic AND
+      ClinVar_SCI contains Tier_I). A True value qualifies for SVIG-UK O1 —
+      Standalone Oncogenic — requiring no second evidence code.
+    source: SVIG-UK ACGS 2025
+    version: Supplementary Table 3 v1.0
+    tier: 2
+  O1_canonical_source:
+    description: Source of the O1_canonical call — SVIG-UK_Table3_exact (direct
+      match against canonical list) or proxy_OncoKB+ClinVar (hotspot + oncogenic
+      + strong ClinVar evidence). Empty if O1_canonical is False.
+    source: SVIG-UK ACGS 2025
+    version: Supplementary Table 3 v1.0
+    tier: 2
   Gene_role_in_cancer:
     description: Gene role classification from OncoKB curated gene list
       (oncokb.org/api/v1/utils/allCuratedGenes). Values — TSG (tumour suppressor gene);

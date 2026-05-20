@@ -698,6 +698,55 @@ def split_by_tier(df, field_config, field_patterns):
     return df[tier2_cols], df[tier3_cols]
 
 
+# === Step: O1 canonical variants (SVIG-UK Supplementary Table 3) ===
+def add_o1_canonical(df, canonical_path=None):
+    """
+    Add O1_canonical (bool) and O1_canonical_source columns.
+
+    O1 is the strongest evidence code — Standalone Oncogenic — requiring no
+    second code. A variant qualifies if it appears in the SVIG-UK Canonical
+    Variants List (Supplementary Table 3, ACGS 2025, 158 variants / 38 genes).
+
+    Two strategies, applied in order:
+      1. Exact match on (SYMBOL, HGVSp_Short) against the canonical TSV.
+      2. Proxy: ONCOKB_HOTSPOT=True AND ONCOKB_ONCOGENIC=Oncogenic AND
+         (ClinVar_SCI contains 'Tier_I' OR ClinVar_ONC=Oncogenic).
+    """
+    df["O1_canonical"] = False
+    df["O1_canonical_source"] = ""
+
+    # Strategy 1 — exact match
+    if canonical_path and os.path.isfile(canonical_path):
+        canon = pd.read_csv(canonical_path, sep="\t", dtype=str)
+        canonical_set = set(zip(canon["gene"], canon["HGVSp_Short"]))
+        sym_col = "SYMBOL" if "SYMBOL" in df.columns else "Hugo_Symbol"
+        for idx, row in df.iterrows():
+            gene  = str(row.get(sym_col, "") or "")
+            hgvsp = str(row.get("HGVSp_Short", "") or "")
+            if (gene, hgvsp) in canonical_set:
+                df.at[idx, "O1_canonical"] = True
+                df.at[idx, "O1_canonical_source"] = "SVIG-UK_Table3_exact"
+    elif canonical_path:
+        sys.stderr.write(f"WARNING: Canonical variants file not found: {canonical_path}\n"
+                         "         Using proxy-only O1 detection.\n")
+
+    # Strategy 2 — proxy for unmatched rows
+    for idx, row in df[~df["O1_canonical"]].iterrows():
+        hotspot   = str(row.get("ONCOKB_HOTSPOT", "") or "").strip()
+        oncogenic = str(row.get("ONCOKB_ONCOGENIC", "") or "").strip()
+        clinsig   = str(row.get("ClinVar_SCI", "") or "").strip()
+        clinonc   = str(row.get("ClinVar_ONC", "") or "").strip()
+        if (hotspot in ("True", "1") and oncogenic == "Oncogenic"
+                and ("Tier_I" in clinsig or clinonc == "Oncogenic")):
+            df.at[idx, "O1_canonical"] = True
+            df.at[idx, "O1_canonical_source"] = "proxy_OncoKB+ClinVar"
+
+    exact = (df["O1_canonical_source"] == "SVIG-UK_Table3_exact").sum()
+    proxy = (df["O1_canonical_source"] == "proxy_OncoKB+ClinVar").sum()
+    print(f"O1 canonical: {exact} exact + {proxy} proxy = {exact + proxy} total.")
+    return df
+
+
 # === Step: Gene role annotation — TSG / oncogene (O2 + B2 support) ===
 def add_gene_role(df, gene_roles_path=None):
     """
@@ -901,7 +950,8 @@ def add_cancerhotspots_counts(df, counts_path=None):
 
 # === Main merge function ===
 def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
-                    cancerhotspots_counts=None, genie_counts=None, gene_roles=None):
+                    cancerhotspots_counts=None, genie_counts=None, gene_roles=None,
+                    canonical_variants=None):
 
     field_config, field_patterns = load_field_config(yaml_config)
 
@@ -933,6 +983,7 @@ def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
     merged = expand_oncokb_json_arrays(merged)
     merged = clean_column_values(merged)
     merged = add_vaf_column(merged)
+    merged = add_o1_canonical(merged, canonical_variants)
     merged = add_gene_role(merged, gene_roles)
     merged = add_genie_counts(merged, genie_counts)
     merged = add_cancerhotspots_counts(merged, cancerhotspots_counts)
@@ -1106,6 +1157,11 @@ if __name__ == "__main__":
              "columns will be empty.",
     )
     parser.add_argument(
+        "--canonical-variants", default=None,
+        help="Path to svig_uk_canonical_variants.tsv (SVIG-UK Supplementary Table 3, 158 variants). "
+             "Used for O1 exact matching. Falls back to OncoKB+ClinVar proxy if omitted.",
+    )
+    parser.add_argument(
         "--gene-roles", default=None,
         help="Path to oncokb_gene_roles.tsv (OncoKB curated gene list with TSG/ONCOGENE roles). "
              "Used for SVIG-UK O2 and B2 scoring. If omitted, Gene_role_in_cancer = 'unknown'.",
@@ -1122,6 +1178,7 @@ if __name__ == "__main__":
         output_dir="./output/",
         yaml_config=args.config,
         smart_version=args.smart_version,
+        canonical_variants=args.canonical_variants,
         gene_roles=args.gene_roles,
         cancerhotspots_counts=args.cancerhotspots_counts,
         genie_counts=args.genie_counts,
