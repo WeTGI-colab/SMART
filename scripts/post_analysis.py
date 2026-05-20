@@ -698,6 +698,97 @@ def split_by_tier(df, field_config, field_patterns):
     return df[tier2_cols], df[tier3_cols]
 
 
+# === Step: O5 — same amino acid position as a known oncogenic variant ===
+def add_o5_same_position(df, canonical_path=None):
+    """
+    Flag variants where a DIFFERENT amino acid change at the SAME residue has
+    already been classified as (likely) oncogenic (SVIG-UK O5 evidence code).
+
+    Lookup source: svig_uk_canonical_variants.tsv (158 canonical variants).
+
+    Strength is assigned using the REVEL score of the variant under assessment:
+      REVEL >= 0.773  →  O5_strength = "Strong"   [+4]
+      REVEL  0.7–0.773 →  O5_strength = "Moderate" [+2]
+      REVEL < 0.7     →  O5_strength = None  (threshold not met — O5 not scored)
+
+    Per SVIG-UK guidance the reference variant must be (likely) oncogenic by an
+    accredited lab. Using our canonical TSV satisfies this requirement.
+
+    New columns:
+      O5_same_position (bool)       — True if a canonical variant exists at same position
+      O5_strength (str)             — Strong / Moderate / None
+      O5_reference_variant (str)    — the canonical variant(s) at that position
+    """
+    df["O5_same_position"]    = False
+    df["O5_strength"]         = ""
+    df["O5_reference_variant"] = ""
+
+    if not canonical_path or not os.path.isfile(canonical_path):
+        if canonical_path:
+            sys.stderr.write(
+                f"WARNING: Canonical variants file not found: {canonical_path}\n"
+                "         O5 scoring will be skipped.\n"
+            )
+        return df
+
+    canon = pd.read_csv(canonical_path, sep="\t", dtype=str)
+
+    # Build lookup: (gene, aa_position_int) → list of canonical HGVSp_Short
+    position_lookup: dict = {}
+    _aa_re = re.compile(r"p\.([A-Z\*])(\d+)([A-Z\*\*])")
+    for _, row in canon.iterrows():
+        gene  = row["gene"]
+        short = row["HGVSp_Short"]
+        m = _aa_re.match(short)
+        if m:
+            pos = int(m.group(2))
+            position_lookup.setdefault((gene, pos), set()).add(short)
+
+    sym_col   = "SYMBOL" if "SYMBOL" in df.columns else "Hugo_Symbol"
+    revel_col = "REVEL"
+
+    for idx, row in df.iterrows():
+        gene  = str(row.get(sym_col, "") or "")
+        hgvsp = str(row.get("HGVSp_Short", "") or "")
+        revel_raw = row.get(revel_col, None)
+
+        m = _aa_re.match(hgvsp)
+        if not m or not gene:
+            continue
+
+        ref_aa, pos_str, alt_aa = m.groups()
+        pos = int(pos_str)
+        key = (gene, pos)
+
+        if key not in position_lookup:
+            continue
+
+        canonical_at_pos = position_lookup[key]
+        # O5 applies only when the VUA has a DIFFERENT amino acid change
+        if hgvsp in canonical_at_pos:
+            continue  # exact match → O1/O7 territory, not O5
+
+        # Valid O5 candidate — determine strength from REVEL
+        try:
+            revel = float(str(revel_raw).split(",")[0]) if revel_raw else None
+        except (ValueError, TypeError):
+            revel = None
+
+        if revel is None or revel < 0.7:
+            continue  # REVEL too low — O5 not applicable per SVIG-UK
+
+        strength = "Strong" if revel >= 0.773 else "Moderate"
+        refs     = ", ".join(sorted(canonical_at_pos))
+
+        df.at[idx, "O5_same_position"]    = True
+        df.at[idx, "O5_strength"]         = strength
+        df.at[idx, "O5_reference_variant"] = refs
+
+    n = df["O5_same_position"].sum()
+    print(f"O5 same-position candidates: {n}/{len(df)} variants.")
+    return df
+
+
 # === Step: O9 — protein length change (in-frame indel / stop-loss / final-exon truncation) ===
 def add_o9_candidate(df):
     """
@@ -1051,6 +1142,7 @@ def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
     merged = expand_oncokb_json_arrays(merged)
     merged = clean_column_values(merged)
     merged = add_vaf_column(merged)
+    merged = add_o5_same_position(merged, canonical_variants)
     merged = add_o9_candidate(merged)
     merged = add_o1_canonical(merged, canonical_variants)
     merged = add_gene_role(merged, gene_roles)

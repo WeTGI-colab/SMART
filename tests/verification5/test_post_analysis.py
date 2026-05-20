@@ -702,3 +702,84 @@ class TestAddO9Candidate:
         result = post.add_o9_candidate(df)
         assert "O9_candidate" in result.columns
         assert "O9_candidate_reason" in result.columns
+
+
+# ===========================================================================
+# add_o5_same_position
+# ===========================================================================
+
+class TestAddO5SamePosition:
+    """Tests for add_o5_same_position() — same residue as known oncogenic variant."""
+
+    @pytest.fixture
+    def canon_file(self, tmp_path):
+        content = (
+            "gene\ttranscript\tHGVSp_Short\tHGVSp_long\tsvig_uk_assessment\n"
+            "BRAF\tNM_004333.6\tp.V600E\tp.Val600Glu\tOncogenic\n"
+            "KRAS\tNM_004985.5\tp.G12D\tp.Gly12Asp\tOncogenic\n"
+            "KRAS\tNM_004985.5\tp.G12V\tp.Gly12Val\tOncogenic\n"
+            "IDH1\tNM_005896.4\tp.R132H\tp.Arg132His\tOncogenic\n"
+        )
+        p = tmp_path / "canonical.tsv"
+        p.write_text(content)
+        return str(p)
+
+    def _df(self, symbol, hgvsp, revel=""):
+        return pd.DataFrame({
+            "SYMBOL":      [symbol],
+            "HGVSp_Short": [hgvsp],
+            "REVEL":       [revel],
+        })
+
+    def test_same_position_different_aa_strong(self, canon_file):
+        # BRAF p.V600K — same position as canonical p.V600E, REVEL >= 0.773
+        df = self._df("BRAF", "p.V600K", revel="0.95")
+        result = post.add_o5_same_position(df, canon_file)
+        assert result["O5_same_position"].iloc[0] == True
+        assert result["O5_strength"].iloc[0] == "Strong"
+        assert "p.V600E" in result["O5_reference_variant"].iloc[0]
+
+    def test_same_position_moderate_revel(self, canon_file):
+        # REVEL in 0.7–0.773 range → Moderate
+        df = self._df("IDH1", "p.R132C", revel="0.72")
+        result = post.add_o5_same_position(df, canon_file)
+        assert result["O5_same_position"].iloc[0] == True
+        assert result["O5_strength"].iloc[0] == "Moderate"
+
+    def test_low_revel_not_flagged(self, canon_file):
+        # REVEL < 0.7 → O5 not applicable
+        df = self._df("BRAF", "p.V600K", revel="0.50")
+        result = post.add_o5_same_position(df, canon_file)
+        assert result["O5_same_position"].iloc[0] == False
+
+    def test_exact_canonical_match_not_flagged(self, canon_file):
+        # p.V600E itself is in the canonical list → O1 territory, not O5
+        df = self._df("BRAF", "p.V600E", revel="0.99")
+        result = post.add_o5_same_position(df, canon_file)
+        assert result["O5_same_position"].iloc[0] == False
+
+    def test_different_gene_not_flagged(self, canon_file):
+        # EGFR p.V600K — no canonical variant at position 600 in EGFR
+        df = self._df("EGFR", "p.V600K", revel="0.95")
+        result = post.add_o5_same_position(df, canon_file)
+        assert result["O5_same_position"].iloc[0] == False
+
+    def test_no_canonical_file_returns_false(self):
+        df = self._df("BRAF", "p.V600K", revel="0.95")
+        result = post.add_o5_same_position(df, canonical_path=None)
+        assert result["O5_same_position"].iloc[0] == False
+
+    def test_multiple_canonical_at_same_position(self, canon_file):
+        # KRAS G12 has G12D and G12V in canonical; G12C should match both
+        df = self._df("KRAS", "p.G12C", revel="0.85")
+        result = post.add_o5_same_position(df, canon_file)
+        assert result["O5_same_position"].iloc[0] == True
+        assert "p.G12D" in result["O5_reference_variant"].iloc[0]
+        assert "p.G12V" in result["O5_reference_variant"].iloc[0]
+
+    def test_columns_always_added(self):
+        df = pd.DataFrame({"SYMBOL": ["ALB"], "HGVSp_Short": ["p.X1Y"], "REVEL": [""]})
+        result = post.add_o5_same_position(df)
+        assert "O5_same_position" in result.columns
+        assert "O5_strength" in result.columns
+        assert "O5_reference_variant" in result.columns

@@ -1115,6 +1115,28 @@ fields:
     source: Cancer Hotspots
     version: changv2
     tier: 2
+  O5_same_position:
+    description: True if a different amino acid change at the same residue has
+      been classified as (likely) oncogenic in the SVIG-UK canonical variants
+      list (Supplementary Table 3, ACGS 2025). Enables O5 scoring — strength
+      determined by REVEL score of the variant under assessment (>=0.773 = Strong
+      [+4]; 0.7-0.773 = Moderate [+2]; <0.7 = not applicable). Only applies to
+      missense variants with a valid REVEL score.
+    source: Computed
+    version: internal_v1
+    tier: 2
+  O5_strength:
+    description: O5 evidence strength — Strong (REVEL>=0.773, [+4]) or Moderate
+      (REVEL 0.7-0.773, [+2]). Empty when O5_same_position is False or REVEL < 0.7.
+    source: Computed
+    version: internal_v1
+    tier: 2
+  O5_reference_variant:
+    description: The canonical variant(s) at the same amino acid position that
+      triggered O5_same_position=True (e.g. p.V600E for a p.V600K query).
+    source: Computed
+    version: internal_v1
+    tier: 2
   O9_candidate:
     description: True if the variant may qualify for SVIG-UK O9 [+2 or +1] —
       protein length change evidence. Flags three scenarios — (1) in-frame

@@ -712,7 +712,7 @@ being a driver). Not derivable from VCF alone. Outside scope.
 | **B2** | ✅ Implemented | Done | VUS override | — |
 | **B6** | ✅ Automated | Done | −4 | — |
 | **O4** | 🔶 GENIE counts missing | Medium-high | **+4** | **Highest** |
-| **O5** | 🔶 API lookup needed | Medium | +4 | Medium |
+| **O5** | ✅ Implemented | Done | +4 | — |
 | **O2** | ✅ Implemented (simplified) | Done | **+8** | — |
 | **O9** | ✅ Implemented | Done | +2 | — |
 | **O10** | ❌ Proxy only | — | +1 proxy | — |
