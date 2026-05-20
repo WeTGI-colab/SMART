@@ -611,7 +611,7 @@ fields:
     version: ClinVar_2024-12
 
   ClinVar_CLNSIG:
-    description: Clinical significance classification
+    description: Clinical significance classification. SVIG-UK B6 proxy — Benign or Likely_benign support B6 Supporting [-1] (functional studies show no damaging effect).
     source: ClinVar
     version: ClinVar_2024-12
 
@@ -1201,7 +1201,7 @@ fields:
     version: OncoKB_v4
 
   ONCOKB_ONCOGENIC:
-    description: Oncogenic classification assigned by OncoKB
+    description: Oncogenic classification assigned by OncoKB. Values — Oncogenic; Likely Oncogenic; Inconclusive; VUS; Likely Neutral; Neutral; Unknown. SVIG-UK B6 proxy — Likely Neutral or Neutral support B6 Supporting [-1]. O10 proxy — Oncogenic supports O10 Supporting [+1].
     source: OncoKB
     version: OncoKB_v4
 

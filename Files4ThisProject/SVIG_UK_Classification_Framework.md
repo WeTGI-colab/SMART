@@ -632,7 +632,7 @@ of how many oncogenic codes are present. This makes it one of the most consequen
 
 ---
 
-### B6 — Functional Studies Show No Damaging Effect 🔶 PROXY AVAILABLE
+### B6 — Functional Studies Show No Damaging Effect ✅ AUTOMATED
 
 **Current SMART columns:** `ONCOKB_ONCOGENIC`, `ClinVar_CLNSIG`, `ClinVar_ONC`
 
@@ -645,7 +645,7 @@ ClinVar_CLNSIG IN ("Benign", "Likely_benign")        →  B6 Supporting [−1] p
 These are not direct functional study evidence but represent the consensus of curated databases
 that aggregate functional studies. They are the best available automated proxy for B6.
 
-**Implementation effort:** Very low. Already available in SMART Tier 3 output.
+**Implemented:** No new columns needed. Proxies already in SMART Tier 3 output:
 
 ---
 
@@ -710,7 +710,7 @@ being a driver). Not derivable from VCF alone. Outside scope.
 | **O7** | ✅ Implemented | Done | **+4** | — |
 | **O8** | ✅ Automated | Done | +1 | — |
 | **B2** | ✅ Implemented | Done | VUS override | — |
-| **B6** | 🔶 Proxy available | Very low | −4 | Low |
+| **B6** | ✅ Automated | Done | −4 | — |
 | **O4** | 🔶 GENIE counts missing | Medium-high | **+4** | **Highest** |
 | **O5** | 🔶 API lookup needed | Medium | +4 | Medium |
 | **O2** | ✅ Implemented (simplified) | Done | **+8** | — |

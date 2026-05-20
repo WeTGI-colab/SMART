@@ -682,7 +682,9 @@ fields:
     tier: 3
   ClinVar_CLNSIG:
     description: Aggregate germline classification for this single variant; multiple
-      values are separated by a vertical bar
+      values are separated by a vertical bar. SVIG-UK B6 proxy — values Benign or
+      Likely_benign indicate well-established functional neutrality and support
+      B6 Supporting [−1] (functional studies show no damaging effect).
     source: ClinVar
     version: ClinVar_2024-12
     tier: 3
@@ -766,7 +768,8 @@ fields:
     tier: 2
   ClinVar_ONC:
     description: Aggregate oncogenicity classification for this single variant; multiple
-      values are separated by a vertical bar
+      values are separated by a vertical bar. SVIG-UK B6 proxy — value Benign supports
+      B6 Supporting [−1]. Value Oncogenic supports O10 proxy [+1].
     source: ClinVar
     version: ClinVar_2024-12
     tier: 3
@@ -1565,7 +1568,11 @@ fields:
       of the variant
     tier: 3
   ONCOKB_ONCOGENIC:
-    description: Oncogenic classification assigned by OncoKB
+    description: Oncogenic classification assigned by OncoKB. Values — Oncogenic;
+      Likely Oncogenic; Inconclusive; VUS; Likely Neutral; Neutral; Unknown.
+      SVIG-UK B6 proxy — Likely Neutral or Neutral support B6 Supporting [−1]
+      (functional studies show no damaging effect). O10 proxy — Oncogenic supports
+      O10 Supporting [+1] (functional evidence of abnormal result).
     source: OncoKB
     version: Refer to the ONCOKB_DATA_VERSION column and datetime of the last update
       of the variant
