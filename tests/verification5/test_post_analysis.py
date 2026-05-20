@@ -645,3 +645,60 @@ class TestAddO1Canonical:
         result = post.add_o1_canonical(df)
         assert "O1_canonical" in result.columns
         assert "O1_canonical_source" in result.columns
+
+
+# ===========================================================================
+# add_o9_candidate
+# ===========================================================================
+
+class TestAddO9Candidate:
+    """Tests for add_o9_candidate() — in-frame indel, stop-loss, final-exon oncogene."""
+
+    def _df(self, consequence, exon="", role=""):
+        return pd.DataFrame({
+            "Consequence":        [consequence],
+            "EXON":               [exon],
+            "Gene_role_in_cancer":[role],
+        })
+
+    def test_in_frame_insertion_flagged(self):
+        result = post.add_o9_candidate(self._df("in_frame_insertion"))
+        assert result["O9_candidate"].iloc[0] == True
+        assert result["O9_candidate_reason"].iloc[0] == "in_frame_indel"
+
+    def test_in_frame_deletion_flagged(self):
+        result = post.add_o9_candidate(self._df("in_frame_deletion"))
+        assert result["O9_candidate"].iloc[0] == True
+        assert result["O9_candidate_reason"].iloc[0] == "in_frame_indel"
+
+    def test_stop_lost_flagged(self):
+        result = post.add_o9_candidate(self._df("stop_lost"))
+        assert result["O9_candidate"].iloc[0] == True
+        assert result["O9_candidate_reason"].iloc[0] == "stop_lost"
+
+    def test_truncating_final_exon_oncogene_flagged(self):
+        df = self._df("stop_gained", exon="10/10", role="ONCOGENE")
+        result = post.add_o9_candidate(df)
+        assert result["O9_candidate"].iloc[0] == True
+        assert result["O9_candidate_reason"].iloc[0] == "truncating_final_exon_oncogene"
+
+    def test_truncating_not_final_exon_not_flagged(self):
+        df = self._df("stop_gained", exon="5/10", role="ONCOGENE")
+        result = post.add_o9_candidate(df)
+        assert result["O9_candidate"].iloc[0] == False
+
+    def test_truncating_final_exon_tsg_not_flagged(self):
+        # Final exon truncation in TSG → O2, not O9
+        df = self._df("stop_gained", exon="10/10", role="TSG")
+        result = post.add_o9_candidate(df)
+        assert result["O9_candidate"].iloc[0] == False
+
+    def test_missense_not_flagged(self):
+        result = post.add_o9_candidate(self._df("missense_variant"))
+        assert result["O9_candidate"].iloc[0] == False
+
+    def test_columns_always_added(self):
+        df = pd.DataFrame({"Consequence": ["synonymous_variant"]})
+        result = post.add_o9_candidate(df)
+        assert "O9_candidate" in result.columns
+        assert "O9_candidate_reason" in result.columns

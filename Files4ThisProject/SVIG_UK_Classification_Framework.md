@@ -714,7 +714,7 @@ being a driver). Not derivable from VCF alone. Outside scope.
 | **O4** | 🔶 GENIE counts missing | Medium-high | **+4** | **Highest** |
 | **O5** | 🔶 API lookup needed | Medium | +4 | Medium |
 | **O2** | ✅ Implemented (simplified) | Done | **+8** | — |
-| **O9** | 🔶 Repeat annotation | Low–Medium | +2 | Medium |
+| **O9** | ✅ Implemented | Done | +2 | — |
 | **O10** | ❌ Proxy only | — | +1 proxy | — |
 | **O11** | ❌ Clinical data | — | +2 | — |
 | **B7** | ❌ Clinical data | — | −2 | — |

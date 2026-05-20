@@ -698,6 +698,74 @@ def split_by_tier(df, field_config, field_patterns):
     return df[tier2_cols], df[tier3_cols]
 
 
+# === Step: O9 — protein length change (in-frame indel / stop-loss / final-exon truncation) ===
+def add_o9_candidate(df):
+    """
+    Flag variants that may qualify for SVIG-UK evidence code O9 [+2 or +1].
+
+    O9 applies to three variant types:
+      1. In-frame insertion or deletion in a NON-repetitive region.
+         (All in-frame indels are flagged; the repeat-region check — which would
+         redirect to B5 — requires RepeatMasker annotation not yet in SMART.)
+      2. Stop-loss variants (Consequence = stop_lost) where the protein is extended.
+      3. Truncating variant in the FINAL exon of a pure oncogene, predicted to
+         result in gain-of-function (rather than NMD).
+
+    New columns:
+      O9_candidate (bool)   — True if any O9 scenario applies.
+      O9_candidate_reason   — which scenario triggered the flag.
+
+    Note: repeat-region filtering (→ B5) is not yet applied. Analysts should
+    review O9_candidate=True in-frame indels for repeat context before scoring.
+    """
+    df["O9_candidate"] = False
+    df["O9_candidate_reason"] = ""
+
+    csq_col  = "Consequence"
+    exon_col = "EXON"
+    role_col = "Gene_role_in_cancer"
+
+    in_frame_csqs  = {"in_frame_insertion", "in_frame_deletion"}
+    stop_loss_csqs = {"stop_lost"}
+
+    for idx, row in df.iterrows():
+        csq  = str(row.get(csq_col, "") or "")
+        exon = str(row.get(exon_col, "") or "")
+        role = str(row.get(role_col, "") or "")
+
+        # Scenario 1 — in-frame indel (repeat check deferred)
+        if any(c in csq for c in in_frame_csqs):
+            df.at[idx, "O9_candidate"] = True
+            df.at[idx, "O9_candidate_reason"] = "in_frame_indel"
+            continue
+
+        # Scenario 2 — stop-loss (protein extension)
+        if any(c in csq for c in stop_loss_csqs):
+            df.at[idx, "O9_candidate"] = True
+            df.at[idx, "O9_candidate_reason"] = "stop_lost"
+            continue
+
+        # Scenario 3 — truncating in final exon of oncogene (GOF mechanism)
+        is_truncating = any(c in csq for c in
+                            ("frameshift", "stop_gained", "splice_donor", "splice_acceptor"))
+        is_oncogene   = role in ("ONCOGENE",)
+        is_final_exon = False
+        if exon and "/" in exon:
+            parts = exon.split("/")
+            try:
+                is_final_exon = int(parts[0]) == int(parts[1])
+            except ValueError:
+                pass
+
+        if is_truncating and is_oncogene and is_final_exon:
+            df.at[idx, "O9_candidate"] = True
+            df.at[idx, "O9_candidate_reason"] = "truncating_final_exon_oncogene"
+
+    n = df["O9_candidate"].sum()
+    print(f"O9 candidates: {n}/{len(df)} variants flagged.")
+    return df
+
+
 # === Step: O1 canonical variants (SVIG-UK Supplementary Table 3) ===
 def add_o1_canonical(df, canonical_path=None):
     """
@@ -983,6 +1051,7 @@ def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
     merged = expand_oncokb_json_arrays(merged)
     merged = clean_column_values(merged)
     merged = add_vaf_column(merged)
+    merged = add_o9_candidate(merged)
     merged = add_o1_canonical(merged, canonical_variants)
     merged = add_gene_role(merged, gene_roles)
     merged = add_genie_counts(merged, genie_counts)
