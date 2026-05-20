@@ -537,6 +537,10 @@ fi
 echo "###################### Post Analysis ##########################################"
 python3 "$SCRIPT_DIR/post_analysis.py" --config "$CONFIG_FILE" \
     --smart-version "$SMART_VERSION" \
+    --canonical-variants "$REF_DIR/svig_uk_canonical_variants.tsv" \
+    --gene-roles         "$REF_DIR/oncokb_gene_roles.tsv" \
+    --cancerhotspots-counts "$REF_DIR/CancerHotSpots/cancerhotspots_counts.json" \
+    --genie-counts       "${REF_DIR}/GENIE/genie_lookup.tsv.gz" \
     || { echo "ERROR: post_analysis.py failed — aborting"; exit 1; }
 
 if [[ $CLEAN_TABLES -eq 1 ]]; then

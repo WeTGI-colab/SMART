@@ -1360,13 +1360,15 @@ def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
     merged = expand_oncokb_json_arrays(merged)
     merged = clean_column_values(merged)
     merged = add_vaf_column(merged)
-    merged = add_o5_same_position(merged, canonical_variants)
-    merged = add_svig_uk_classification(merged)
-    merged = add_o9_candidate(merged)
-    merged = add_o1_canonical(merged, canonical_variants)
+    # Add all feature columns first, then classify
     merged = add_gene_role(merged, gene_roles)
     merged = add_genie_counts(merged, genie_counts)
     merged = add_cancerhotspots_counts(merged, cancerhotspots_counts)
+    merged = add_o1_canonical(merged, canonical_variants)
+    merged = add_o5_same_position(merged, canonical_variants)
+    merged = add_o9_candidate(merged)
+    # Classification must run last — depends on all feature columns above
+    merged = add_svig_uk_classification(merged)
     # NOTE: drop_columns(merged, COLS_TO_REMOVE) is intentionally deferred until
     # AFTER the CNA fixes below, because source columns such as ONCOKB_treatments,
     # ONCOKB_FDA_LVL, ONCOKB_SENS_LVL are tier=drop and must still be present

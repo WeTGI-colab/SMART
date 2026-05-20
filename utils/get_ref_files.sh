@@ -581,6 +581,33 @@ else
   echo "[OK] CancerHotSpots indexed: $HOTSPOT_TBI"
 fi
 
+# Download CancerHotspots count data (for SVIG-UK O7 scoring)
+HOTSPOT_COUNTS="${REF_ROOT}/CancerHotSpots/cancerhotspots_counts.json"
+if [[ -f "$HOTSPOT_COUNTS" ]]; then
+  echo "[SKIP] CancerHotspots counts already exist: $HOTSPOT_COUNTS"
+else
+  echo "[RUN] Downloading CancerHotspots counts from API"
+  curl -s https://www.cancerhotspots.org/api/hotspots/single \
+    > "$HOTSPOT_COUNTS" \
+    && echo "[OK] CancerHotspots counts downloaded" \
+    || echo "[WARN] CancerHotspots counts download failed — O7 scoring will be limited"
+fi
+
+# Copy SVIG-UK reference files (bundled with repo)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+for ref_file in oncokb_gene_roles.tsv svig_uk_canonical_variants.tsv; do
+  src="$REPO_DIR/Files4ThisProject/$ref_file"
+  dst="$REF_ROOT/$ref_file"
+  if [[ -f "$dst" ]]; then
+    echo "[SKIP] $ref_file already in refs"
+  elif [[ -f "$src" ]]; then
+    cp "$src" "$dst" && echo "[OK] Copied $ref_file to refs"
+  else
+    echo "[WARN] $ref_file not found in Files4ThisProject — SVIG-UK O1/O2/B2 scoring limited"
+  fi
+done
+
 # -------------------------
 # STEP 11: Write config file
 # -------------------------
