@@ -1,16 +1,65 @@
+
 ================================================================
- STEP 1: Running SMART pipeline on verification_combined
+ UNIT TESTS: Multi-transcript feature (test_multi_transcript.py)
 ================================================================
->>> Clearing previous output...
+test_cdkn2a_both_isoforms_in_preferred (__main__.TestFindAllPreferredCsqMatches)
+CDKN2A p16 (NM_000077) and p14ARF (NM_058195) → two rows. ... ok
+test_duplicate_nm_ids_deduplicated (__main__.TestFindAllPreferredCsqMatches)
+Same NM ID appearing in both MANE_SELECT and MANE_PLUS → one entry. ... ok
+test_empty_preferred_set_returns_empty_list (__main__.TestFindAllPreferredCsqMatches)
+No preferred transcript file provided → empty list. ... ok
+test_mane_plus_clinical_matched (__main__.TestFindAllPreferredCsqMatches)
+Transcript found via MANE_PLUS_CLINICAL field. ... ok
+test_no_preferred_match_returns_empty_list (__main__.TestFindAllPreferredCsqMatches)
+No preferred transcript in CSQ → empty list (fall through to Tier 2/3). ... ok
+test_one_preferred_transcript_returns_one_match (__main__.TestFindAllPreferredCsqMatches)
+Only one of two transcripts is preferred → single match. ... ok
+test_two_preferred_transcripts_returns_two_matches (__main__.TestFindAllPreferredCsqMatches)
+Core feature: two preferred NM IDs → two entries, preserving order. ... ok
+test_version_suffix_stripped (__main__.TestFindAllPreferredCsqMatches)
+NM_000077.5 in CSQ matches NM_000077 in preferred set. ... ok
+test_empty_csq_returns_none (__main__.TestFindFallbackCsq) ... ok
+test_falls_back_to_first_when_no_mane (__main__.TestFindFallbackCsq) ... ok
+test_picks_mane_plus_when_no_mane_select (__main__.TestFindFallbackCsq) ... ok
+test_picks_mane_select_over_first (__main__.TestFindFallbackCsq) ... ok
+test_both_rows_same_genomic_position (__main__.TestVcf2TableMultiTranscript)
+Both rows originate from the same variant — coordinates are identical. ... ok
+test_row1_oncokb_annotation_is_oncogenic (__main__.TestVcf2TableMultiTranscript) ... ok
+test_row1_uses_mane_select_transcript (__main__.TestVcf2TableMultiTranscript) ... ok
+test_row1_vep_fields_match_mane_select_csq (__main__.TestVcf2TableMultiTranscript) ... ok
+test_row2_oncokb_annotation_is_unknown (__main__.TestVcf2TableMultiTranscript) ... ok
+test_row2_uses_alternative_transcript (__main__.TestVcf2TableMultiTranscript) ... ok
+test_row2_vep_fields_match_alternative_csq (__main__.TestVcf2TableMultiTranscript) ... ok
+test_two_input_records_produce_two_output_rows (__main__.TestVcf2TableMultiTranscript) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.006s
+
+OK
+  [Variant chr7:55191822 T>G] Preferred match: NM_000077. Gene: CDKN2A. Protein: A68V
+  [Variant chr7:55191822 T>G] Preferred match: NM_058195. Gene: CDKN2A. Protein: P48G
+  [Variant chr7:55191822 T>G] Preferred match: NM_000001. Gene: GENE. Protein: None
+  [Variant chr7:55191822 T>G] Preferred match: NM_058195. Gene: CDKN2A. Protein: P48G
+  [Variant chr7:55191822 T>G] Preferred match: NM_005228. Gene: EGFR. Protein: L858R
+  [Variant chr7:55191822 T>G] Preferred match: NM_005228. Gene: EGFR. Protein: L858R
+  [Variant chr7:55191822 T>G] Preferred match: NM_001346897. Gene: EGFR. Protein: L813R
+  [Variant chr7:55191822 T>G] Preferred match: NM_000077. Gene: CDKN2A. Protein: A68V
+  [Variant chr7:55191822 T>G] Fallback (Fallback (VEP Default)). Gene: GENE_A. Tx: NM_111. Protein: None
+  [Variant chr7:55191822 T>G] Fallback (MANE Plus Clinical). Gene: EGFR. Tx: NM_058195. Protein: None
+  [Variant chr7:55191822 T>G] Fallback (MANE Select). Gene: EGFR. Tx: NM_005228. Protein: None
+
+================================================================
+ VERIFICATION 1: Running SMART pipeline
+================================================================
 ============================================================
-SMART — Somatic Mutation Annotation and Reporting Tool
+SMART — Somatic Mutation Annotation and Reporting Tool  v1.0.1
 ============================================================
 Tool versions:
   VEP:               114.0
   GATK:              4.6.0.0
   bcftools:          bcftools 1.13
   Python:            Python 3.10.12
-  OncoKB API:        v1.5.0
+  OncoKB API:        v1.6.0
 
 Reference versions:
   ClinVar:           clinvar.vcf.gz
@@ -20,15 +69,17 @@ Reference versions:
   SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
   REVEL:             new_tabbed_revel_grch38.tsv.gz
   LOEUF:             loeuf_dataset_grch38.tsv.gz
-  OncoKB data:       v7.0 (03/30/2026)
+  OncoKB data:       v7.2 (05/29/2026)
 
 
 Config:
   PASS filter:      ENABLED
   Liftover:         DISABLED
+  VEP only:         NO
   Clean tmp:        DISABLED
   Clean tables:     DISABLED
-  Transcript file:  /data/verification_combined_transcripts.txt
+  Parallel jobs:    1
+  Transcript file:  /data/verification1_transcripts.txt
   Config file:      /data/Config.yaml
   Reference dir:    /refs
   Input dir:        /data
@@ -40,55 +91,12 @@ Cleanup complete.
 Input VCF directory: /data
 Number of VCF files found: 1
 VCF files:
-/data/verification_combined.vcf.gz
+/data/verification1.vcf.gz
 ------------------------------------------------------------
-###################### Processing: verification_combined ##########################################
->>> PASS filtering: verification_combined
->>> LiftOver DISABLED: verification_combined
->>> VEP annotation: verification_combined
-2026-04-14 18:07:02 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
->>> OncoKB annotation: verification_combined
-
-✔ Annotation Mode: Generic Query
-✔ Detected tumor type used for OncoKB: UNKNOWN
-✔ Using 15 preferred NM transcripts (version agnostic).
-✔ Parsed 152 CSQ fields from VCF header
-  SYMBOL=3, Feature=6, HGVSp=11, MANE_SELECT=26, MANE_PLUS_CLINICAL=27, MANE=25
-  [Variant chr1:114713908 T>C] Selected: Preferred List Match (NM/MANE Select). Gene: NRAS. Tx: ENST00000369535. Protein: Q61R
-  [Variant chr2:208248388 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: IDH1. Tx: ENST00000345146. Protein: R132H
-  [Variant chr3:179218303 G>A] Selected: Preferred List Match (NM/MANE Select). Gene: PIK3CA. Tx: ENST00000263967. Protein: E545K
-  [Variant chr3:179234297 A>G] Selected: Preferred List Match (NM/MANE Select). Gene: PIK3CA. Tx: ENST00000263967. Protein: H1047R
-  [Variant chr7:55174772 GAATTAAGAGAAGCAT>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: Glu746_Ala750del
-  [Variant chr7:55181378 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: T790M
-  [Variant chr7:55191822 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: EGFR. Tx: ENST00000275493. Protein: L858R
-  [Variant chr7:116672196 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: MET. Tx: ENST00000397752. Protein: None
-  [Variant chr7:140753336 A>T] Selected: Preferred List Match (NM/MANE Select). Gene: BRAF. Tx: ENST00000646891. Protein: V600E
-  [Variant chr9:21967753 N><DEL>] Selected: Preferred List Match (NM/MANE Select). Gene: CDKN2A. Tx: ENST00000304494. Protein: None
-  [Variant chr9:77794572 A>T] Selected: Preferred List Match (NM/MANE Select). Gene: GNAQ. Tx: ENST00000286548. Protein: Gln209=
-  [Variant chr10:87933147 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: PTEN. Tx: ENST00000371953. Protein: Arg130*
-  [Variant chr12:25245347 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G13D
-  [Variant chr12:25245350 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G12D
-  [Variant chr12:25245351 C>A] Selected: Preferred List Match (NM/MANE Select). Gene: KRAS. Tx: ENST00000311936. Protein: G12C
-  [Variant chr12:57748512 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: CDK4. Tx: ENST00000257904. Protein: None
-  [Variant chr13:32394734 T>G] Selected: Preferred List Match (NM/MANE Select). Gene: BRCA2. Tx: ENST00000380152. Protein: L3101R
-  [Variant chr14:95094139 G>A] Selected: MANE Select. Gene: DICER1. Tx: ENST00000343455. Protein: Glu1705*
-  [Variant chr17:7674221 G>A] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R248W
-  [Variant chr17:7675088 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: TP53. Tx: ENST00000269305. Protein: R175H
-  [Variant chr17:39687914 N><DUP>] Selected: Preferred List Match (NM/MANE Select). Gene: ERBB2. Tx: ENST00000269571. Protein: None
-  [Variant chr17:39711955 C>T] Selected: Preferred List Match (NM/MANE Select). Gene: ERBB2. Tx: ENST00000269571. Protein: S310F
-
-📊 OncoKB Annotation Summary:
-  Total variants processed: 22
-  Mutations annotated:      18
-  CNVs annotated:           4
-  Overall annotation rate:  100.00%
-
-✔ OncoKB-annotated VCF written to: /output/OncoKB_VCF/verification_combined.oncoKB.vcf
->>> VCF2TABLE: verification_combined
->>> MafAnnotator: verification_combined
---- verification_combined complete ---
+>>> Launching: verification1 (log: /output/logs/verification1.log)
+>>> OK: verification1
 ###################### Post Analysis ##########################################
-Reading: ./FINAL_Table/verification_combined.oncoKB.maf
+Reading: ./FINAL_Table/verification1.oncoKB.maf
 
 === Expanding OncoKB JSON array columns ===
   ONCOKB_treatments: all rows empty — skipping expansion
@@ -103,15 +111,22 @@ Applied CNA overwrite fix for 4 CNA rows (VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION
 Undocumented column: BAM_EDIT
 Undocumented column: GIVEN_REF
 Undocumented column: ONCOKB_ABSTRACTS
+Undocumented column: ONCOKB_DIAG_SUMMARY
+Undocumented column: ONCOKB_EXON
+Undocumented column: ONCOKB_OTHER_RESIST_LVLS
+Undocumented column: ONCOKB_OTHER_SENS_LVLS
 Undocumented column: ONCOKB_PROG_LVL
+Undocumented column: ONCOKB_PROG_SUMMARY
 Undocumented column: ONCOKB_RESIST_LVL
+Undocumented column: ONCOKB_query.germline
+Undocumented column: ONCOKB_vus
 Undocumented column: REFSEQ_MATCH
 Undocumented column: REFSEQ_OFFSET
 Undocumented column: USED_REF
 Undocumented column: Variant_Classification
 Undocumented column: Variant_Type
 
-Dropped columns (tier=drop): 40
+Dropped columns (tier=drop): 39
   - CHROM
   - ONCOKB_EFFECT
   - ONCOKB_GENE_EXIST
@@ -120,15 +135,10 @@ Dropped columns (tier=drop): 40
   - ONCOKB_VARIANT_EXIST
   - ONCOKB_geneExist
   - ONCOKB_variantExist
-  - ONCOKB_alleleExist
-  - ONCOKB_oncogenic
   - ONCOKB_highestSensitiveLevel
   - ONCOKB_highestResistanceLevel
   - ONCOKB_highestDiagnosticImplicationLevel
   - ONCOKB_highestPrognosticImplicationLevel
-  - ONCOKB_VUS.1
-  - ONCOKB_hotspot
-  - ONCOKB_exon
   - ONCOKB_geneSummary
   - ONCOKB_variantSummary
   - ONCOKB_tumorTypeSummary
@@ -137,6 +147,10 @@ Dropped columns (tier=drop): 40
   - ONCOKB_treatments
   - ONCOKB_dataVersion
   - ONCOKB_lastUpdate
+  - ONCOKB_alleleExist
+  - ONCOKB_oncogenic
+  - ONCOKB_hotspot
+  - ONCOKB_exon
   - ONCOKB_query.id
   - ONCOKB_query.referenceGenome
   - ONCOKB_query.hugoSymbol
@@ -153,10 +167,10 @@ Dropped columns (tier=drop): 40
   - ONCOKB_query.canonicalTranscript
   - ONCOKB_mutationEffect.knownEffect
 
-Tier1 columns: 1021
+Tier1 columns: 1030
 Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
 
-Tier2 columns: 668
+Tier2 columns: 670
 Tier3 columns: 77
 Writing Tier2 TSV (bioinformaticians, two-row header): ./output/Final_result_tier2.tsv
 Writing Tier3 TSV (clinical scientists, two-row header): ./output/Final_result_tier3.tsv
@@ -165,9 +179,9 @@ SMART PIPELINE COMPLETE
 ============================================================
 
 ================================================================
- STEP 2: Running field-level verification
+ VERIFICATION 1: Running verify.py
 ================================================================
-Loaded MAF: Final_result_tier1.maf  (22 rows, 1021 columns)
+Loaded MAF: Final_result_tier1.maf  (22 rows, 1030 columns)
 
 ############################################################
 MODULE: OncoKB
@@ -179,7 +193,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='NRAS, a GTPase, is mutated in a diverse range of cancer'  API='NRAS, a GTPase, is mutated in a diverse range of cancer'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The NRAS Q61R mutation is known to be oncogenic.'  API='The NRAS Q61R mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -206,7 +220,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='IDH1, a cell metabolism enzyme, is recurrently mutated '  API='IDH1, a cell metabolism enzyme, is recurrently mutated '  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The IDH1 R132H mutation is known to be oncogenic.'  API='The IDH1 R132H mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -233,7 +247,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  API='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The PIK3CA E545K mutation is known to be oncogenic.'  API='The PIK3CA E545K mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -260,7 +274,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  API='PIK3CA, the catalytic subunit of PI3-kinase, is frequen'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The PIK3CA H1047R mutation is known to be oncogenic.'  API='The PIK3CA H1047R mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -287,7 +301,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='EGFR, a receptor tyrosine kinase, is altered by amplifi'  API='EGFR, a receptor tyrosine kinase, is altered by amplifi'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The EGFR E746_A750del alteration is known to be oncogen'  API='The EGFR E746_A750del alteration is known to be oncogen'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -314,7 +328,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='EGFR, a receptor tyrosine kinase, is altered by amplifi'  API='EGFR, a receptor tyrosine kinase, is altered by amplifi'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The EGFR T790M mutation is known to be oncogenic.'  API='The EGFR T790M mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -341,7 +355,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='EGFR, a receptor tyrosine kinase, is altered by amplifi'  API='EGFR, a receptor tyrosine kinase, is altered by amplifi'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The EGFR L858R mutation is known to be oncogenic.'  API='The EGFR L858R mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -368,7 +382,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='MET, a receptor tyrosine kinase, is recurrently altered'  API='MET, a receptor tyrosine kinase, is recurrently altered'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='MET amplification is known to be oncogenic.'  API='MET amplification is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -395,7 +409,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='BRAF, an intracellular kinase, is frequently mutated in'  API='BRAF, an intracellular kinase, is frequently mutated in'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The BRAF V600E mutation is known to be oncogenic.'  API='The BRAF V600E mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -422,7 +436,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='CDKN2A, which encodes both a cyclin-dependent kinase in'  API='CDKN2A, which encodes both a cyclin-dependent kinase in'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda3'  API='LEVEL_Fda3'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='CDKN2A deletion is known to be oncogenic.'  API='CDKN2A deletion is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -449,7 +463,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='GNAQ, a G protein subunit, is recurrently mutated in uv'  API='GNAQ, a G protein subunit, is recurrently mutated in uv'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='This is a synonymous mutation and is not annotated by O'  API='This is a synonymous mutation and is not annotated by O'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -476,7 +490,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='PTEN, a lipid and protein phosphatase, is one of the mo'  API='PTEN, a lipid and protein phosphatase, is one of the mo'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The PTEN R130* mutation is known to be oncogenic.'  API='The PTEN R130* mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -503,7 +517,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='KRAS, a GTPase which functions as an upstream regulator'  API='KRAS, a GTPase which functions as an upstream regulator'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The KRAS G13D mutation is known to be oncogenic.'  API='The KRAS G13D mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -530,7 +544,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='KRAS, a GTPase which functions as an upstream regulator'  API='KRAS, a GTPase which functions as an upstream regulator'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The KRAS G12D mutation is known to be oncogenic.'  API='The KRAS G12D mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -557,7 +571,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='KRAS, a GTPase which functions as an upstream regulator'  API='KRAS, a GTPase which functions as an upstream regulator'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The KRAS G12C mutation is known to be oncogenic.'  API='The KRAS G12C mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -584,7 +598,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='CDK4, an intracellular kinase, is altered by amplificat'  API='CDK4, an intracellular kinase, is altered by amplificat'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda3'  API='LEVEL_Fda3'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='CDK4 amplification is known to be oncogenic.'  API='CDK4 amplification is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -611,7 +625,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='BRCA2, a tumor suppressor involved in the DNA damage re'  API='BRCA2, a tumor suppressor involved in the DNA damage re'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The BRCA2 L3101R mutation is likely oncogenic.'  API='The BRCA2 L3101R mutation is likely oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -638,7 +652,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='DICER1, an endoribonuclease, is altered in various canc'  API='DICER1, an endoribonuclease, is altered in various canc'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The DICER1 E1705* is a truncating mutation in a tumor s'  API='The DICER1 E1705* is a truncating mutation in a tumor s'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -665,7 +679,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='TP53, a tumor suppressor in the DNA damage pathway, is '  API='TP53, a tumor suppressor in the DNA damage pathway, is '  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The TP53 R248W mutation is likely oncogenic.'  API='The TP53 R248W mutation is likely oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -692,7 +706,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='TP53, a tumor suppressor in the DNA damage pathway, is '  API='TP53, a tumor suppressor in the DNA damage pathway, is '  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF=''  API=''  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The TP53 R175H mutation is known to be oncogenic.'  API='The TP53 R175H mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -719,7 +733,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='False'  API='False'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='ERBB2, a receptor tyrosine kinase, is altered by mutati'  API='ERBB2, a receptor tyrosine kinase, is altered by mutati'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='False'  API='False'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='ERBB2 amplification is known to be oncogenic.'  API='ERBB2 amplification is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -746,7 +760,7 @@ MODULE: OncoKB
   ✓ ONCOKB_ALLELE_EXIST                 MAF='True'  API='True'  [PASS]
   ✓ ONCOKB_GENE_SUMMARY                 MAF='ERBB2, a receptor tyrosine kinase, is altered by mutati'  API='ERBB2, a receptor tyrosine kinase, is altered by mutati'  [PASS]
   ✓ ONCOKB_HOTSPOT                      MAF='True'  API='True'  [PASS]
-  ✓ ONCOKB_VUS                          MAF='False'  API='False'  [PASS]
+  ✓ ONCOKB_VUS                          MAF=''  API=''  [PASS]
   ✓ ONCOKB_highestFdaLevel              MAF='LEVEL_Fda2'  API='LEVEL_Fda2'  [PASS]
   ✓ ONCOKB_VARIANT_SUMMARY              MAF='The ERBB2 S310F mutation is known to be oncogenic.'  API='The ERBB2 S310F mutation is known to be oncogenic.'  [PASS]
   ✓ GENE_IN_ONCOKB                      MAF='True'  API='True'  [PASS]
@@ -780,11 +794,10 @@ OncoKB SUMMARY
 ────────────────────────────────────────────────────────────
 FIELD COVERAGE REPORT
 ────────────────────────────────────────────────────────────
-  Tested (≥1 variant had data):  20
+  Tested (≥1 variant had data):  19
     ✓ ONCOKB_ALLELE_EXIST
     ✓ ONCOKB_GENE_SUMMARY
     ✓ ONCOKB_HOTSPOT
-    ✓ ONCOKB_VUS
     ✓ ONCOKB_highestFdaLevel
     ✓ ONCOKB_VARIANT_SUMMARY
     ✓ GENE_IN_ONCOKB
@@ -802,7 +815,9 @@ FIELD COVERAGE REPORT
     ✓ ONCOKB_DIAG_LVL
     ✓ ONCOKB_PROG_LVL
 
-  UNTESTABLE (always empty in MAF + API): 3
+  UNTESTABLE (always empty in MAF + API): 4
+    ○ ONCOKB_VUS
+        → No hint available.
     ○ LEVEL_3B
         → No hint available.
     ○ ONCOKB_diagnosticSummary
@@ -1378,8 +1393,592 @@ COMBINED SUMMARY
   TOTAL     PASS=804  MISMATCH=0  ERROR=0
 ############################################################
 
-Results written to: /Users/monkiky/Desktop/tso500_project/tests/verification_combined/results.tsv
+Results written to: /Users/monkiky/Desktop/SMART/tests/verification1/results.tsv
 
 RESULT: ALL CHECKS PASSED
 
-Results saved to: /Users/monkiky/Desktop/tso500_project/tests/verification_combined/results.tsv
+================================================================
+ VERIFICATION 3: Transcript prioritisation impact
+================================================================
+================================================================
+RUN A — Transcript set A (clinically preferred)
+  EGFR: NM_005228.5  → p.Leu858Arg
+  TP53: NM_000546.6  → p.Arg175His
+  CNA:  NM_058195.4  → CDKN2A
+================================================================
+============================================================
+SMART — Somatic Mutation Annotation and Reporting Tool  v1.0.1
+============================================================
+Tool versions:
+  VEP:               114.0
+  GATK:              4.6.0.0
+  bcftools:          bcftools 1.13
+  Python:            Python 3.10.12
+  OncoKB API:        v1.6.0
+
+Reference versions:
+  ClinVar:           clinvar.vcf.gz
+  CIViC:             civic_grch38.vcf.gz
+  CancerHotSpots:    hg38.hotspots_changv2_gao_nc.vcf.gz
+  SpliceAI SNV:      spliceai_scores.raw.snv.hg38.vcf.gz
+  SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
+  REVEL:             new_tabbed_revel_grch38.tsv.gz
+  LOEUF:             loeuf_dataset_grch38.tsv.gz
+  OncoKB data:       v7.2 (05/29/2026)
+
+
+Config:
+  PASS filter:      ENABLED
+  Liftover:         DISABLED
+  VEP only:         NO
+  Clean tmp:        DISABLED
+  Clean tables:     ENABLED
+  Parallel jobs:    1
+  Transcript file:  /data/transcripts_A.txt
+  Config file:      /data/Config.yaml
+  Reference dir:    /refs
+  Input dir:        /data
+============================================================
+
+Cleaning previous results...
+Cleanup complete.
+------------------------------------------------------------
+Input VCF directory: /data
+Number of VCF files found: 1
+VCF files:
+/data/verification3.vcf.gz
+------------------------------------------------------------
+>>> Launching: verification3 (log: /output/logs/verification3.log)
+>>> OK: verification3
+###################### Post Analysis ##########################################
+/opt/smart/scripts/post_analysis.py:528: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  df = df.replace({"[]": "", "%3D": "="}, regex=False).infer_objects(copy=False)
+/opt/smart/scripts/post_analysis.py:808: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value 'Palbociclib,Ribociclib,Abemaciclib' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  merged.at[cna_idx, lc] = val
+/opt/smart/scripts/post_analysis.py:816: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value '['.']' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  merged.loc[hr_empty, "HIGHEST_RESISTANCE_LEVEL"] = merged.loc[hr_empty, "ONCOKB_RESIST_LVL"].fillna("")
+Reading: ./FINAL_Table/verification3.oncoKB.maf
+
+=== Expanding OncoKB JSON array columns ===
+  ONCOKB_treatments: all rows empty — skipping expansion
+  ONCOKB_diagnosticImplications: all rows empty — skipping expansion
+  ONCOKB_prognosticImplications: all rows empty — skipping expansion
+
+Filled 2 empty ONCOKB_highestFdaLevel values from ONCOKB_FDA_LVL
+
+Applied CNA overwrite fix for 1 CNA rows (VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION_EFFECT, treatment levels, highest levels)
+
+=== WARNING: Undocumented columns found ===
+Undocumented column: BAM_EDIT
+Undocumented column: GIVEN_REF
+Undocumented column: ONCOKB_ABSTRACTS
+Undocumented column: ONCOKB_DIAG_SUMMARY
+Undocumented column: ONCOKB_EXON
+Undocumented column: ONCOKB_OTHER_RESIST_LVLS
+Undocumented column: ONCOKB_OTHER_SENS_LVLS
+Undocumented column: ONCOKB_PROG_LVL
+Undocumented column: ONCOKB_PROG_SUMMARY
+Undocumented column: ONCOKB_RESIST_LVL
+Undocumented column: ONCOKB_query.germline
+Undocumented column: ONCOKB_vus
+Undocumented column: REFSEQ_MATCH
+Undocumented column: REFSEQ_OFFSET
+Undocumented column: USED_REF
+Undocumented column: Variant_Classification
+Undocumented column: Variant_Type
+
+Dropped columns (tier=drop): 39
+  - CHROM
+  - ONCOKB_EFFECT
+  - ONCOKB_GENE_EXIST
+  - ONCOKB_ONCOGENIC
+  - ONCOKB_PROGNOSTIC_IMPLICATIONS
+  - ONCOKB_VARIANT_EXIST
+  - ONCOKB_geneExist
+  - ONCOKB_variantExist
+  - ONCOKB_highestSensitiveLevel
+  - ONCOKB_highestResistanceLevel
+  - ONCOKB_highestDiagnosticImplicationLevel
+  - ONCOKB_highestPrognosticImplicationLevel
+  - ONCOKB_geneSummary
+  - ONCOKB_variantSummary
+  - ONCOKB_tumorTypeSummary
+  - ONCOKB_diagnosticImplications
+  - ONCOKB_prognosticImplications
+  - ONCOKB_treatments
+  - ONCOKB_dataVersion
+  - ONCOKB_lastUpdate
+  - ONCOKB_alleleExist
+  - ONCOKB_oncogenic
+  - ONCOKB_hotspot
+  - ONCOKB_exon
+  - ONCOKB_query.id
+  - ONCOKB_query.referenceGenome
+  - ONCOKB_query.hugoSymbol
+  - ONCOKB_query.entrezGeneId
+  - ONCOKB_query.alteration
+  - ONCOKB_query.alterationType
+  - ONCOKB_query.svType
+  - ONCOKB_query.tumorType
+  - ONCOKB_query.consequence
+  - ONCOKB_query.proteinStart
+  - ONCOKB_query.proteinEnd
+  - ONCOKB_query.hgvs
+  - ONCOKB_query.hgvsInfo
+  - ONCOKB_query.canonicalTranscript
+  - ONCOKB_mutationEffect.knownEffect
+
+Tier1 columns: 548
+Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
+
+Tier2 columns: 404
+Tier3 columns: 75
+Writing Tier2 TSV (bioinformaticians, two-row header): ./output/Final_result_tier2.tsv
+Writing Tier3 TSV (clinical scientists, two-row header): ./output/Final_result_tier3.tsv
+>>> Cleaning table files after post_analysis
+============================================================
+SMART PIPELINE COMPLETE
+============================================================
+
+================================================================
+RUN B — Transcript set B (alternative — demonstrates impact)
+  EGFR: NM_001346897.2  → p.Leu813Arg  (wrong position for OncoKB)
+  TP53: NM_001126115.2  → p.Arg43His   (completely different residue)
+  CNA:  NM_004936.4     → CDKN2B       (different gene reported)
+================================================================
+============================================================
+SMART — Somatic Mutation Annotation and Reporting Tool  v1.0.1
+============================================================
+Tool versions:
+  VEP:               114.0
+  GATK:              4.6.0.0
+  bcftools:          bcftools 1.13
+  Python:            Python 3.10.12
+  OncoKB API:        v1.6.0
+
+Reference versions:
+  ClinVar:           clinvar.vcf.gz
+  CIViC:             civic_grch38.vcf.gz
+  CancerHotSpots:    hg38.hotspots_changv2_gao_nc.vcf.gz
+  SpliceAI SNV:      spliceai_scores.raw.snv.hg38.vcf.gz
+  SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
+  REVEL:             new_tabbed_revel_grch38.tsv.gz
+  LOEUF:             loeuf_dataset_grch38.tsv.gz
+  OncoKB data:       v7.2 (05/29/2026)
+
+
+Config:
+  PASS filter:      ENABLED
+  Liftover:         DISABLED
+  VEP only:         NO
+  Clean tmp:        DISABLED
+  Clean tables:     ENABLED
+  Parallel jobs:    1
+  Transcript file:  /data/transcripts_B.txt
+  Config file:      /data/Config.yaml
+  Reference dir:    /refs
+  Input dir:        /data
+============================================================
+
+Cleaning previous results...
+Cleanup complete.
+------------------------------------------------------------
+Input VCF directory: /data
+Number of VCF files found: 1
+VCF files:
+/data/verification3.vcf.gz
+------------------------------------------------------------
+>>> Launching: verification3 (log: /output/logs/verification3.log)
+>>> OK: verification3
+###################### Post Analysis ##########################################
+/opt/smart/scripts/post_analysis.py:528: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  df = df.replace({"[]": "", "%3D": "="}, regex=False).infer_objects(copy=False)
+/opt/smart/scripts/post_analysis.py:816: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value '['.']' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  merged.loc[hr_empty, "HIGHEST_RESISTANCE_LEVEL"] = merged.loc[hr_empty, "ONCOKB_RESIST_LVL"].fillna("")
+Reading: ./FINAL_Table/verification3.oncoKB.maf
+
+=== Expanding OncoKB JSON array columns ===
+  ONCOKB_treatments: all rows empty — skipping expansion
+  ONCOKB_diagnosticImplications: all rows empty — skipping expansion
+  ONCOKB_prognosticImplications: all rows empty — skipping expansion
+
+Filled 3 empty ONCOKB_highestFdaLevel values from ONCOKB_FDA_LVL
+
+Applied CNA overwrite fix for 1 CNA rows (VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION_EFFECT, treatment levels, highest levels)
+
+=== WARNING: Undocumented columns found ===
+Undocumented column: BAM_EDIT
+Undocumented column: GIVEN_REF
+Undocumented column: ONCOKB_ABSTRACTS
+Undocumented column: ONCOKB_DIAG_SUMMARY
+Undocumented column: ONCOKB_EXON
+Undocumented column: ONCOKB_OTHER_RESIST_LVLS
+Undocumented column: ONCOKB_OTHER_SENS_LVLS
+Undocumented column: ONCOKB_PROG_LVL
+Undocumented column: ONCOKB_PROG_SUMMARY
+Undocumented column: ONCOKB_RESIST_LVL
+Undocumented column: ONCOKB_query.germline
+Undocumented column: ONCOKB_vus
+Undocumented column: REFSEQ_MATCH
+Undocumented column: REFSEQ_OFFSET
+Undocumented column: USED_REF
+Undocumented column: Variant_Classification
+Undocumented column: Variant_Type
+
+Dropped columns (tier=drop): 39
+  - CHROM
+  - ONCOKB_EFFECT
+  - ONCOKB_GENE_EXIST
+  - ONCOKB_ONCOGENIC
+  - ONCOKB_PROGNOSTIC_IMPLICATIONS
+  - ONCOKB_VARIANT_EXIST
+  - ONCOKB_geneExist
+  - ONCOKB_variantExist
+  - ONCOKB_highestSensitiveLevel
+  - ONCOKB_highestResistanceLevel
+  - ONCOKB_highestDiagnosticImplicationLevel
+  - ONCOKB_highestPrognosticImplicationLevel
+  - ONCOKB_geneSummary
+  - ONCOKB_variantSummary
+  - ONCOKB_tumorTypeSummary
+  - ONCOKB_diagnosticImplications
+  - ONCOKB_prognosticImplications
+  - ONCOKB_treatments
+  - ONCOKB_dataVersion
+  - ONCOKB_lastUpdate
+  - ONCOKB_alleleExist
+  - ONCOKB_oncogenic
+  - ONCOKB_hotspot
+  - ONCOKB_exon
+  - ONCOKB_query.id
+  - ONCOKB_query.referenceGenome
+  - ONCOKB_query.hugoSymbol
+  - ONCOKB_query.entrezGeneId
+  - ONCOKB_query.alteration
+  - ONCOKB_query.alterationType
+  - ONCOKB_query.svType
+  - ONCOKB_query.tumorType
+  - ONCOKB_query.consequence
+  - ONCOKB_query.proteinStart
+  - ONCOKB_query.proteinEnd
+  - ONCOKB_query.hgvs
+  - ONCOKB_query.hgvsInfo
+  - ONCOKB_query.canonicalTranscript
+  - ONCOKB_mutationEffect.knownEffect
+
+Tier1 columns: 320
+Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
+
+Tier2 columns: 284
+Tier3 columns: 75
+Writing Tier2 TSV (bioinformaticians, two-row header): ./output/Final_result_tier2.tsv
+Writing Tier3 TSV (clinical scientists, two-row header): ./output/Final_result_tier3.tsv
+>>> Cleaning table files after post_analysis
+============================================================
+SMART PIPELINE COMPLETE
+============================================================
+
+================================================================
+VERIFICATION — Comparing annotations between runs
+================================================================
+
+############################################################
+VERIFICATION 3 — Transcript Prioritisation Impact
+############################################################
+
+────────────────────────────────────────────────────────────
+Variant: EGFR_L858R
+  [DIFFER CHECK] Comparing MAF-A vs MAF-B annotation:
+  ✓ NM_Transcript        A='NM_005228'                    B='NM_001346897'                  [DIFFER]
+  ✓ HGVSc                A='c.2573T>G'                    B='c.2438T>G'                     [DIFFER]
+  ✓ HGVSp                A='p.Leu858Arg'                  B='p.Leu813Arg'                   [DIFFER]
+
+  [API CHECK] [NM_005228] — validating against Ensembl REST:
+  ✓ NM_Transcript        MAF='NM_005228'                    API='NM_005228'                     [PASS]
+  ✓ HGVSc                MAF='c.2573T>G'                    API='c.2573T>G'                     [PASS]
+  ✓ HGVSp                MAF='p.Leu858Arg'                  API='p.Leu858Arg'                   [PASS]
+
+  [API CHECK] [NM_001346897] — validating against Ensembl REST:
+  ✓ NM_Transcript        MAF='NM_001346897'                 API='NM_001346897'                  [PASS]
+  ✓ HGVSc                MAF='c.2438T>G'                    API='c.2438T>G'                     [PASS]
+  ✓ HGVSp                MAF='p.Leu813Arg'                  API='p.Leu813Arg'                   [PASS]
+
+────────────────────────────────────────────────────────────
+Variant: TP53_R175H
+  [DIFFER CHECK] Comparing MAF-A vs MAF-B annotation:
+  ✓ NM_Transcript        A='NM_000546'                    B='NM_001126115'                  [DIFFER]
+  ✓ HGVSc                A='c.524G>A'                     B='c.128G>A'                      [DIFFER]
+  ✓ HGVSp                A='p.Arg175His'                  B='p.Arg43His'                    [DIFFER]
+
+  [API CHECK] [NM_000546] — validating against Ensembl REST:
+  ✓ NM_Transcript        MAF='NM_000546'                    API='NM_000546'                     [PASS]
+  ✓ HGVSc                MAF='c.524G>A'                     API='c.524G>A'                      [PASS]
+  ✓ HGVSp                MAF='p.Arg175His'                  API='p.Arg175His'                   [PASS]
+
+  [API CHECK] [NM_001126115] — validating against Ensembl REST:
+  ✓ NM_Transcript        MAF='NM_001126115'                 API='NM_001126115'                  [PASS]
+  ✓ HGVSc                MAF='c.128G>A'                     API='c.128G>A'                      [PASS]
+  ✓ HGVSp                MAF='p.Arg43His'                   API='p.Arg43His'                    [PASS]
+
+────────────────────────────────────────────────────────────
+Variant: FGFR1_N546K
+  [DIFFER CHECK] Comparing MAF-A vs MAF-B annotation:
+  ✓ NM_Transcript        A='NM_023110'                    B='NM_001174067'                  [DIFFER]
+  ✓ HGVSc                A='c.1638C>A'                    B='c.1731C>A'                     [DIFFER]
+  ✓ HGVSp                A='p.Asn546Lys'                  B='p.Asn577Lys'                   [DIFFER]
+
+  [API CHECK] [NM_023110] — validating against Ensembl REST:
+  ✓ NM_Transcript        MAF='NM_023110'                    API='NM_023110'                     [PASS]
+  ✓ HGVSc                MAF='c.1638C>A'                    API='c.1638C>A'                     [PASS]
+  ✓ HGVSp                MAF='p.Asn546Lys'                  API='p.Asn546Lys'                   [PASS]
+
+  [API CHECK] [NM_001174067] — validating against Ensembl REST:
+  ✓ NM_Transcript        MAF='NM_001174067'                 API='NM_001174067'                  [PASS]
+  ✓ HGVSc                MAF='c.1731C>A'                    API='c.1731C>A'                     [PASS]
+  ✓ HGVSp                MAF='p.Asn577Lys'                  API='p.Asn577Lys'                   [PASS]
+
+────────────────────────────────────────────────────────────
+Variant: MantaDEL:CDKN2A_CDKN2B
+  [DIFFER CHECK] Comparing MAF-A vs MAF-B annotation:
+  ✓ NM_Transcript        A='NM_058195'                    B='NM_004936'                     [DIFFER]
+  ✓ Hugo_Symbol          A='CDKN2A'                       B='CDKN2B'                        [DIFFER]
+  [API CHECK] CNA — skipping Ensembl REST (symbolic allele)
+  ✓  Checking Hugo_Symbol only via expected values:
+  ✓ [NM_058195]: Hugo_Symbol='CDKN2A'  [PASS]
+  ✓ [NM_004936]: Hugo_Symbol='CDKN2B'  [PASS]
+
+############################################################
+ONCOKB IMPACT — Does transcript choice change therapeutic annotation?
+(reading OncoKB fields already written by the pipeline into each MAF)
+############################################################
+
+────────────────────────────────────────────────────────────
+Variant: EGFR_L858R
+  [NM_005228] gene='EGFR'  hgvsp='p.L858R'  oncogenic='(empty)'  highestSensitiveLevel='None'  mutationEffect='(empty)'  hotspot='(empty)'
+  [NM_001346897] gene='EGFR'  hgvsp='p.L813R'  oncogenic='(empty)'  highestSensitiveLevel='None'  mutationEffect='(empty)'  hotspot='(empty)'
+  ○ [NM_005228] OncoKB fields not populated in MAF for this variant (SNV MafAnnotator merge issue) — skipping field validation
+  ○ [NM_001346897] OncoKB fields not populated in MAF for this variant (SNV MafAnnotator merge issue) — skipping field validation
+  ✓ Cross-transcript HGVSp_Short: [NM_005228]='p.L858R'  [NM_001346897]='p.L813R'  [DIFFER]
+
+────────────────────────────────────────────────────────────
+Variant: TP53_R175H
+  [NM_000546] gene='TP53'  hgvsp='p.R175H'  oncogenic='(empty)'  highestSensitiveLevel='None'  mutationEffect='(empty)'  hotspot='(empty)'
+  [NM_001126115] gene='TP53'  hgvsp='p.R43H'  oncogenic='(empty)'  highestSensitiveLevel='None'  mutationEffect='(empty)'  hotspot='(empty)'
+  ○ [NM_000546] OncoKB fields not populated in MAF for this variant (SNV MafAnnotator merge issue) — skipping field validation
+  ○ [NM_001126115] OncoKB fields not populated in MAF for this variant (SNV MafAnnotator merge issue) — skipping field validation
+  ✓ Cross-transcript HGVSp_Short: [NM_000546]='p.R175H'  [NM_001126115]='p.R43H'  [DIFFER]
+
+────────────────────────────────────────────────────────────
+Variant: FGFR1_N546K
+  [NM_023110] gene='FGFR1'  hgvsp='p.N546K'  oncogenic='(empty)'  highestSensitiveLevel='None'  mutationEffect='(empty)'  hotspot='(empty)'
+  [NM_001174067] gene='FGFR1'  hgvsp='p.N577K'  oncogenic='(empty)'  highestSensitiveLevel='None'  mutationEffect='(empty)'  hotspot='(empty)'
+  ○ [NM_023110] OncoKB fields not populated in MAF for this variant (SNV MafAnnotator merge issue) — skipping field validation
+  ○ [NM_001174067] OncoKB fields not populated in MAF for this variant (SNV MafAnnotator merge issue) — skipping field validation
+  ✓ Cross-transcript HGVSp_Short: [NM_023110]='p.N546K'  [NM_001174067]='p.N577K'  [DIFFER]
+
+────────────────────────────────────────────────────────────
+Variant: MantaDEL:CDKN2A_CDKN2B
+  [NM_058195] gene='CDKN2A'  hgvsp=''  oncogenic='Oncogenic'  highestSensitiveLevel='LEVEL_4'  mutationEffect='Loss-of-function'  hotspot='False'
+  [NM_004936] gene='CDKN2B'  hgvsp=''  oncogenic='Oncogenic'  highestSensitiveLevel='None'  mutationEffect='Loss-of-function'  hotspot='False'
+    ✓ [NM_058195] oncogenic                    expected='Oncogenic'          maf='Oncogenic'  [PASS]
+    ✓ [NM_058195] highestSensitiveLevel        expected='LEVEL_4'            maf='LEVEL_4'  [PASS]
+    ✓ [NM_058195] mutationEffect               expected='Loss-of-function'   maf='Loss-of-function'  [PASS]
+    ✓ [NM_004936] highestSensitiveLevel        expected='None'               maf=''  [PASS]
+  ✓ Cross-transcript Hugo_Symbol: [NM_058195]='CDKN2A'  [NM_004936]='CDKN2B'  [DIFFER]
+
+============================================================
+SUMMARY
+============================================================
+  Variants checked:   4
+  PASS / DIFFER:      39  (correct — annotations differ between runs as expected, or match API)
+  SAME (unexpected):  0  (transcript selection had no effect — investigate)
+  MISMATCH:           0  (pipeline annotation does not match Ensembl REST)
+  ERROR:              0
+============================================================
+
+Results written to: /Users/monkiky/Desktop/SMART/tests/verification3/results.tsv
+
+RESULT: PASSED
+
+================================================================
+ VERIFICATION 4: Parallel processing (--jobs 2)
+================================================================
+================================================================
+ VERIFICATION 4: Parallel processing (--nodes 2)
+================================================================
+
+>>> Preparing two sample copies from verification1 VCF...
+>>> Running SMART pipeline with --nodes 2...
+============================================================
+SMART — Somatic Mutation Annotation and Reporting Tool  v1.0.1
+============================================================
+Tool versions:
+  VEP:               114.0
+  GATK:              4.6.0.0
+  bcftools:          bcftools 1.13
+  Python:            Python 3.10.12
+  OncoKB API:        v1.6.0
+
+Reference versions:
+  ClinVar:           clinvar.vcf.gz
+  CIViC:             civic_grch38.vcf.gz
+  CancerHotSpots:    hg38.hotspots_changv2_gao_nc.vcf.gz
+  SpliceAI SNV:      spliceai_scores.raw.snv.hg38.vcf.gz
+  SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
+  REVEL:             new_tabbed_revel_grch38.tsv.gz
+  LOEUF:             loeuf_dataset_grch38.tsv.gz
+  OncoKB data:       v7.2 (05/29/2026)
+
+
+Config:
+  PASS filter:      ENABLED
+  Liftover:         DISABLED
+  VEP only:         NO
+  Clean tmp:        DISABLED
+  Clean tables:     DISABLED
+  Parallel jobs:    2
+  Transcript file:  /v1data/verification1_transcripts.txt
+  Config file:      /v1data/Config.yaml
+  Reference dir:    /refs
+  Input dir:        /vcfs
+============================================================
+
+Cleaning previous results...
+Cleanup complete.
+------------------------------------------------------------
+Input VCF directory: /vcfs
+Number of VCF files found: 2
+VCF files:
+/vcfs/par_sample_B.vcf.gz
+/vcfs/par_sample_A.vcf.gz
+------------------------------------------------------------
+>>> Launching: par_sample_A (log: /output/logs/par_sample_A.log)
+>>> Launching: par_sample_B (log: /output/logs/par_sample_B.log)
+>>> OK: par_sample_A
+>>> OK: par_sample_B
+###################### Post Analysis ##########################################
+Reading: ./FINAL_Table/par_sample_B.oncoKB.maf
+Reading: ./FINAL_Table/par_sample_A.oncoKB.maf
+
+=== Expanding OncoKB JSON array columns ===
+  ONCOKB_treatments: all rows empty — skipping expansion
+  ONCOKB_diagnosticImplications: all rows empty — skipping expansion
+  ONCOKB_prognosticImplications: all rows empty — skipping expansion
+
+Filled 8 empty ONCOKB_highestFdaLevel values from ONCOKB_FDA_LVL
+
+Applied CNA overwrite fix for 8 CNA rows (VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION_EFFECT, treatment levels, highest levels)
+
+=== WARNING: Undocumented columns found ===
+Undocumented column: BAM_EDIT
+Undocumented column: GIVEN_REF
+Undocumented column: ONCOKB_ABSTRACTS
+Undocumented column: ONCOKB_DIAG_SUMMARY
+Undocumented column: ONCOKB_EXON
+Undocumented column: ONCOKB_OTHER_RESIST_LVLS
+Undocumented column: ONCOKB_OTHER_SENS_LVLS
+Undocumented column: ONCOKB_PROG_LVL
+Undocumented column: ONCOKB_PROG_SUMMARY
+Undocumented column: ONCOKB_RESIST_LVL
+Undocumented column: ONCOKB_query.germline
+Undocumented column: ONCOKB_vus
+Undocumented column: REFSEQ_MATCH
+Undocumented column: REFSEQ_OFFSET
+Undocumented column: USED_REF
+Undocumented column: Variant_Classification
+Undocumented column: Variant_Type
+
+Dropped columns (tier=drop): 39
+  - CHROM
+  - ONCOKB_EFFECT
+  - ONCOKB_GENE_EXIST
+  - ONCOKB_ONCOGENIC
+  - ONCOKB_PROGNOSTIC_IMPLICATIONS
+  - ONCOKB_VARIANT_EXIST
+  - ONCOKB_geneExist
+  - ONCOKB_variantExist
+  - ONCOKB_highestSensitiveLevel
+  - ONCOKB_highestResistanceLevel
+  - ONCOKB_highestDiagnosticImplicationLevel
+  - ONCOKB_highestPrognosticImplicationLevel
+  - ONCOKB_geneSummary
+  - ONCOKB_variantSummary
+  - ONCOKB_tumorTypeSummary
+  - ONCOKB_diagnosticImplications
+  - ONCOKB_prognosticImplications
+  - ONCOKB_treatments
+  - ONCOKB_dataVersion
+  - ONCOKB_lastUpdate
+  - ONCOKB_alleleExist
+  - ONCOKB_oncogenic
+  - ONCOKB_hotspot
+  - ONCOKB_exon
+  - ONCOKB_query.id
+  - ONCOKB_query.referenceGenome
+  - ONCOKB_query.hugoSymbol
+  - ONCOKB_query.entrezGeneId
+  - ONCOKB_query.alteration
+  - ONCOKB_query.alterationType
+  - ONCOKB_query.svType
+  - ONCOKB_query.tumorType
+  - ONCOKB_query.consequence
+  - ONCOKB_query.proteinStart
+  - ONCOKB_query.proteinEnd
+  - ONCOKB_query.hgvs
+  - ONCOKB_query.hgvsInfo
+  - ONCOKB_query.canonicalTranscript
+  - ONCOKB_mutationEffect.knownEffect
+
+Tier1 columns: 1030
+Writing Tier1 MAF (all non-drop columns, no metadata header): ./output/Final_result_tier1.maf
+
+Tier2 columns: 670
+Tier3 columns: 77
+Writing Tier2 TSV (bioinformaticians, two-row header): ./output/Final_result_tier2.tsv
+Writing Tier3 TSV (clinical scientists, two-row header): ./output/Final_result_tier3.tsv
+============================================================
+SMART PIPELINE COMPLETE
+============================================================
+
+================================================================
+ VERIFICATION 4: Running verify.py
+================================================================
+
+Output directory: /Users/monkiky/Desktop/SMART/tests/verification4/output
+Samples:          par_sample_A, par_sample_B
+
+--- Log file checks ---
+  [PASS] log_exists:par_sample_A
+  [PASS] log_complete:par_sample_A
+  [PASS] log_exists:par_sample_B
+  [PASS] log_complete:par_sample_B
+
+--- Variant counts check ---
+  [PASS] counts_file_exists
+  [PASS] counts_row_count — 2 rows as expected
+  [PASS] counts_has_sample:par_sample_A
+  [PASS] counts_has_sample:par_sample_B
+
+--- MAF existence checks ---
+  [PASS] maf_exists:par_sample_A
+  [PASS] maf_exists:par_sample_B
+
+--- MAF content identity check ---
+  [PASS] maf_identical:par_sample_A_vs_par_sample_B — 22 data rows match
+  [PASS] maf_content_identical — all sample MAFs match after excluding Tumor_Sample_Barcode
+
+Results written to: /Users/monkiky/Desktop/SMART/tests/verification4/results.tsv
+
+Summary: 12/12 checks passed
+VERIFICATION 4: PASS
+
+████████████████████████████████████████████████████████████
+  VERIFICATION SUMMARY
+████████████████████████████████████████████████████████████
+  unit tests (multi-transcript): PASS
+  verification1: PASS
+  verification3: PASS
+  verification4: PASS
+
+  Passed: 4   Failed: 0
+████████████████████████████████████████████████████████████
