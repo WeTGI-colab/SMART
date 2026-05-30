@@ -545,6 +545,9 @@ if [[ $VEP_ONLY -eq 1 ]]; then
 fi
 
 echo "###################### Post Analysis ##########################################"
+# post_analysis.py uses relative paths (./FINAL_Table/, ./output/) so it must
+# run from OUTPUT_DIR_BASE where those directories were created.
+cd "$OUTPUT_DIR_BASE"
 python3 "$SCRIPT_DIR/post_analysis.py" --config "$CONFIG_FILE" \
     --smart-version "$SMART_VERSION" \
     || { echo "ERROR: post_analysis.py failed — aborting"; exit 1; }
