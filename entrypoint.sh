@@ -15,6 +15,9 @@ Usage:
 
 Required:
   --ref-dir DIR            Reference resources directory (mounted at /refs)
+  --output-dir DIR         Directory where all results will be written. Must be a
+                           mounted volume (e.g. -v /host/results:/results) so that
+                           output is preserved after the container exits.
 
 Optional (full pipeline):
   <ONCOKB_TOKEN>           OncoKB API token. If omitted, the pipeline stops
@@ -95,7 +98,7 @@ fi
 TRANSCRIPTS_FILE=""
 REF_DIR=""
 CONFIG_FILE=""
-OUTPUT_DIR_BASE="/output"
+OUTPUT_DIR_BASE=""
 
 # Parse flags
 while [[ $# -gt 0 ]]; do
@@ -176,6 +179,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate required arguments
+[[ -z "$OUTPUT_DIR_BASE" ]] && {
+    echo "ERROR: --output-dir is required."
+    echo "       Mount a host directory as a volume and pass it here, e.g.:"
+    echo "         -v /host/results:/results  --output-dir /results"
+    echo "       Without a mounted volume the results will be lost when the container exits."
+    usage; exit 2;
+}
 [[ -z "$REF_DIR" ]] && { echo "ERROR: --ref-dir is required"; usage; exit 2; }
 [[ ! -d "$REF_DIR" ]] && { echo "ERROR: Reference directory not found: $REF_DIR"; exit 2; }
 if [[ $VEP_ONLY -eq 0 ]]; then

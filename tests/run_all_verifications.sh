@@ -109,13 +109,14 @@ if [[ -z "$ONLY" || "$ONLY" == "verification1" ]]; then
 
     docker run --rm \
         -v "$V1_DIR":/data \
-        -v "$V1_OUTPUT":/output \
+        -v "$V1_OUTPUT":/results \
         -v "$REFS_DIR":/refs:ro \
         "$IMAGE" \
         "$TOKEN" \
         --transcripts-file /data/verification1_transcripts.txt \
         --config /data/Config.yaml \
         --ref-dir /refs \
+        --output-dir /results \
         --input-dir /data \
         --no-liftover \
         --keep-tmp \

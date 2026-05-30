@@ -147,13 +147,14 @@ export ONCOKB_TOKEN=your_token_here
 
 docker run --rm \
   -v /path/to/your/input:/data \
-  -v /path/to/your/output:/output \
+  -v /path/to/your/output:/results \
   -v /path/to/your/refs:/refs:ro \
   monkiky/smart:latest \
   "$ONCOKB_TOKEN" \
   --transcripts-file /data/transcripts_list.txt \
   --config /data/Config.yaml \
   --ref-dir /refs \
+  --output-dir /results \
   --input-dir /data \
   --no-liftover \
   --keep-tmp \
@@ -165,13 +166,14 @@ For example, using the verification1 test set:
 ```bash
 docker run --rm \
   -v /path/to/SMART/tests/verification1:/data \
-  -v /path/to/SMART/tests/verification1/output:/output \
+  -v /path/to/SMART/tests/verification1/output:/results \
   -v /path/to/refs:/refs:ro \
   monkiky/smart:latest \
   "$ONCOKB_TOKEN" \
   --transcripts-file /data/verification1_transcripts.txt \
   --config /data/Config.yaml \
   --ref-dir /refs \
+  --output-dir /results \
   --input-dir /data \
   --no-liftover \
   --keep-tmp \
