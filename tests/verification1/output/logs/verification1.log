@@ -2,7 +2,7 @@
 >>> PASS filtering: verification1
 >>> LiftOver DISABLED: verification1
 >>> VEP annotation: verification1
-2026-05-15 20:25:41 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
+2026-05-30 16:52:34 - INFO: BAM-edited cache detected, enabling --use_transcript_ref; use --use_given_ref to override this
 >>> OncoKB annotation: verification1
 
 ✔ Annotation Mode: Generic Query
@@ -43,7 +43,7 @@
 >>> VCF2TABLE: verification1
 >>> MafAnnotator: verification1
 INFO:MafAnnotator:annotating /output/Table/verification1.oncoKB.csv ...
-INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-06-01 18:42:20 UTC
+INFO:AnnotatorCore:Your OncoKB API token is valid and will expire on 2026-11-28 18:42:20 UTC
 INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 1
 INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 2
 INFO:AnnotatorCore:Cancer type for the sample should be defined for a more accurate result. 	Line 3

@@ -1,6 +1,5 @@
-WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
 ============================================================
-SMART — Somatic Mutation Annotation and Reporting Tool  v0.2.0
+SMART — Somatic Mutation Annotation and Reporting Tool  v1.0.1
 ============================================================
 Tool versions:
   VEP:               114.0
@@ -17,12 +16,13 @@ Reference versions:
   SpliceAI INDEL:    spliceai_scores.raw.indel.hg38.vcf.gz
   REVEL:             new_tabbed_revel_grch38.tsv.gz
   LOEUF:             loeuf_dataset_grch38.tsv.gz
-  OncoKB data:       v7.1 (04/30/2026)
+  OncoKB data:       v7.2 (05/29/2026)
 
 
 Config:
   PASS filter:      ENABLED
   Liftover:         DISABLED
+  VEP only:         NO
   Clean tmp:        DISABLED
   Clean tables:     ENABLED
   Parallel jobs:    1

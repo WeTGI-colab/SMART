@@ -1,0 +1,1033 @@
+CHROM	POS	REF	ALT	Gene	HGVSp	Tumour_type	Human_classification	SVIG_UK_equivalent
+chr1	114716123	C	T	NRAS	p.Gly13Asp	Myeloid	ONC	Oncogenic
+chr1	114716126	C	T	NRAS	p.Gly12Asp	Myeloid	ONC	Oncogenic
+chr1	114716127	C	A	NRAS	p.Gly12Cys	Myeloid	ONC	Oncogenic
+chr1	1815790	T	C	GNB1	p.Lys57Glu	Myeloid	VUS	VUS
+chr1	36466873	C	T	CSF3R	p.Gln692=	Myeloid	LBEN	Likely Benign
+chr1	36467833	G	A	CSF3R	p.Thr618Ile	Myeloid	ONC	Oncogenic
+chr1	43338725	G	C	MPL	.	Myeloid	VUS	VUS
+chr1	43339534	C	G	MPL	p.Gln219Glu	Myeloid	VUS	VUS
+chr1	43340125	A	C	MPL	p.Ala284=	Myeloid	LBEN	Likely Benign
+chr1	43349308	G	A	MPL	p.Ser505Asn	Myeloid	ONC	Oncogenic
+chr1	43349338	G	T	MPL	p.Trp515Leu	Myeloid	ONC	Oncogenic
+chr1	43352298	A	G	MPL	p.Ser550Gly	Myeloid	VUS	VUS
+chr1	43352522	A	T	MPL	p.Lys553Met	Myeloid	VUS	VUS
+chr1	43352635	T	G	MPL	p.Tyr591Asp	Myeloid	LONC	Likely Oncogenic
+chr11	119278149	AT	A	CBL	.	Myeloid	VUS	VUS
+chr11	119278181	T	C	CBL	p.Tyr371His	Myeloid	LONC	Likely Oncogenic
+chr11	119278209	T	C	CBL	p.Leu380Pro	Myeloid	LONC	Likely Oncogenic
+chr11	119278219	A	G	CBL	p.Ile383Met	Myeloid	LONC	Likely Oncogenic
+chr11	119278257	G	A	CBL	p.Cys396Tyr	Myeloid	LONC	Likely Oncogenic
+chr11	119278281	G	A	CBL	p.Cys404Tyr	Myeloid	LONC	Likely Oncogenic
+chr11	119278289	T	C	CBL	p.Ser407Pro	Myeloid	VUS	VUS
+chr11	119278525	G	A	CBL	p.Gly415Ser	Myeloid	VUS(HOT)	VUS
+chr11	119278541	G	A	CBL	p.Arg420Gln	Myeloid	LONC	Likely Oncogenic
+chr11	119278541	G	C	CBL	p.Arg420Pro	Myeloid	VUS(HOT)	VUS
+chr11	119278645	TATG	T	CBL	p.Asp460del	Myeloid	VUS	VUS
+chr11	32396361	G	GCCGA	WT1	p.Ala387ValfsTer4	Myeloid	ONC	Oncogenic
+chr11	32396390	A	G	WT1	p.Pro377=	Myeloid	LBEN	Likely Benign
+chr12	111418272	C	T	SH2B3	p.Arg43Cys	Myeloid	VUS	VUS
+chr12	111418301	T	G	SH2B3	p.His52Gln	Myeloid	VUS	VUS
+chr12	111418530	C	T	SH2B3	p.Pro129Ser	Myeloid	VUS	VUS
+chr12	111418767	G	C	SH2B3	p.Glu208Gln	Myeloid	LBEN	Likely Benign
+chr12	111447224	G	T	SH2B3	.	Myeloid	VUS	VUS
+chr12	112450359	G	C	PTPN11	p.Gly60Ala	Myeloid	LONC	Likely Oncogenic
+chr12	112450395	C	T	PTPN11	p.Ala72Val	Myeloid	ONC	Oncogenic
+chr12	112450395	C	T	PTPN11	p.Ala72Val	Myeloid	ONC	Oncogenic
+chr12	112450492	T	C	PTPN11	p.Cys104=	Myeloid	LBEN	Likely Benign
+chr12	112489011	G	A	PTPN11	.	Myeloid	VUS	VUS
+chr12	112489096	C	A	PTPN11	p.Thr507Lys	Myeloid	LONC	Likely Oncogenic
+chr12	11650108	G	C	ETV6	.	Myeloid	LBEN	Likely Benign
+chr12	11752473	T	C	ETV6	p.Pro19=	Myeloid	LBEN	Likely Benign
+chr12	11853478	G	A	ETV6	p.Arg127Gln	Myeloid	LBEN	Likely Benign
+chr12	11869562	T	C	ETV6	p.Leu201Pro	Myeloid	LBEN	Likely Benign
+chr12	11869565	G	A	ETV6	p.Arg202Gln	Myeloid	LBEN	Likely Benign
+chr12	11869567	T	TC	ETV6	p.Leu205ProfsTer12	Myeloid	ONC	Oncogenic
+chr12	11869601	C	T	ETV6	p.Pro214Leu	Myeloid	LONC	Likely Oncogenic
+chr12	11869658	A	AC	ETV6	p.Leu235SerfsTer9	Myeloid	ONC	Oncogenic
+chr12	11869945	G	A	ETV6	p.Ala329Thr	Myeloid	LBEN	Likely Benign
+chr12	11884510	C	A	ETV6	p.Arg359=	Myeloid	LBEN	Likely Benign
+chr12	11884592	A	G	ETV6	.	Myeloid	LBEN	Likely Benign
+chr12	22644005	C	T	ETNK1	p.Cys133=	Myeloid	LBEN	Likely Benign
+chr12	22659061	A	G	ETNK1	p.Asn155Ser	Myeloid	LONC	Likely Oncogenic
+chr12	25225627	G	A	KRAS	p.Ala146Val	Myeloid	LONC	Likely Oncogenic
+chr12	25225713	T	A	KRAS	p.Lys117Asn	Myeloid	LONC	Likely Oncogenic
+chr12	25227342	T	C	KRAS	p.Gln61Arg	Myeloid	ONC	Oncogenic
+chr12	25227342	T	C	KRAS	p.Gln61Arg	Myeloid	ONC	Oncogenic
+chr12	25227351	G	A	KRAS	p.Thr58Ile	Myeloid	ONC	Oncogenic
+chr12	25245286	A	T	KRAS	p.Asp33Glu	Myeloid	LONC	Likely Oncogenic
+chr12	25245286	A	T	KRAS	p.Asp33Glu	Myeloid	LONC	Likely Oncogenic
+chr12	25245350	C	T	KRAS	p.Gly12Asp	Myeloid	ONC	Oncogenic
+chr12	25245350	C	T	KRAS	p.Gly12Asp	Myeloid	ONC	Oncogenic
+chr12	25245393	G	A	KRAS	.	Myeloid	LBEN	Likely Benign
+chr12	54292402	C	G	NFE2	p.Arg365Pro	Myeloid	VUS	VUS
+chr12	54292764	G	A	NFE2	p.Asn244=	Myeloid	LBEN	Likely Benign
+chr12	54292858	C	T	NFE2	p.Arg213Gln	Myeloid	VUS	VUS
+chr12	54295240	C	T	NFE2	p.Pro3=	Myeloid	LBEN	Likely Benign
+chr13	28018497	CATG	C	FLT3	p.Ile836del	Myeloid	ONC	Oncogenic
+chr13	28018504	T	A	FLT3	p.Asp835Val	Myeloid	ONC	Oncogenic
+chr13	28018505	C	A	FLT3	p.Asp835Tyr	Myeloid	ONC	Oncogenic
+chr13	28018568	C	T	FLT3	p.Ala814Thr	Myeloid	VUS	VUS
+chr13	28033903	G	A	FLT3	p.Ala642=	Myeloid	LBEN	Likely Benign
+chr13	28034114	T	TTGAGATCATATTCATATTCTC	FLT3	p.Arg595_Leu601dup	Myeloid	ONC	Oncogenic
+chr15	90088606	C	T	IDH2	p.Arg172Lys	Myeloid	ONC	Oncogenic
+chr15	90088606	C	T	IDH2	p.Arg172Lys	Myeloid	ONC	Oncogenic
+chr15	90088702	C	A	IDH2	p.Arg140Leu	Myeloid	ONC	Oncogenic
+chr15	90088702	C	T	IDH2	p.Arg140Gln	Myeloid	ONC	Oncogenic
+chr15	90088702	C	T	IDH2	p.Arg140Gln	Myeloid	ONC	Oncogenic
+chr15	90088703	G	A	IDH2	p.Arg140Trp	Myeloid	ONC	Oncogenic
+chr17	1653672	G	C	PRPF8	p.Ala2080Gly	Myeloid	VUS	VUS
+chr17	1659994	T	A	PRPF8	p.Asp1598Val	Myeloid	VUS	VUS
+chr17	1659995	C	T	PRPF8	p.Asp1598Asn	Myeloid	VUS	VUS
+chr17	1660436	C	T	PRPF8	p.Cys1594Tyr	Myeloid	VUS	VUS
+chr17	1673381	G	A	PRPF8	p.Asp1211=	Myeloid	LBEN	Likely Benign
+chr17	1681870	G	A	PRPF8	p.Ala201=	Myeloid	LBEN	Likely Benign
+chr17	1684535	G	C	PRPF8	p.Pro13Ala	Myeloid	VUS	VUS
+chr17	31095288	G	C	NF1	.	Myeloid	LBEN	Likely Benign
+chr17	31155970	CT	C	NF1	.	Myeloid	LBEN	Likely Benign
+chr17	31156029	C	G	NF1	p.Thr36Ser	Myeloid	VUS	VUS
+chr17	31159042	A	AT	NF1	p.Tyr80LeufsTer27	Myeloid	ONC	Oncogenic
+chr17	31169939	T	A	NF1	p.Asp176Glu	Myeloid	VUS	VUS
+chr17	31181681	T	C	NF1	.	Myeloid	LBEN	Likely Benign
+chr17	31200466	AG	A	NF1	p.Gly312GlufsTer5	Myeloid	ONC	Oncogenic
+chr17	31201111	C	T	NF1	p.Cys379=	Myeloid	LBEN	Likely Benign
+chr17	31201388	C	CT	NF1	.	Myeloid	LBEN	Likely Benign
+chr17	31223532	T	C	NF1	p.Leu604=	Myeloid	LBEN	Likely Benign
+chr17	31225134	G	A	NF1	p.Gly629Arg	Myeloid	LONC	Likely Oncogenic
+chr17	31232079	G	T	NF1	p.Leu1068Phe	Myeloid	VUS	VUS
+chr17	31232853	C	T	NF1	p.Asn1156=	Myeloid	VUS	VUS
+chr17	31235769	C	T	NF1	p.Phe1289=	Myeloid	LBEN	Likely Benign
+chr17	31249094	G	A	NF1	p.Arg1362Gln	Myeloid	VUS	VUS
+chr17	31258333	CTTG	C	NF1	.	Myeloid	VUS	VUS
+chr17	31325799	C	CT	NF1	.	Myeloid	VUS	VUS
+chr17	31326033	C	T	NF1	p.Asn1683=	Myeloid	LBEN	Likely Benign
+chr17	31326219	G	A	NF1	p.Lys1745=	Myeloid	VUS	VUS
+chr17	31327743	C	G	NF1	p.Ser1838Cys	Myeloid	VUS	VUS
+chr17	31336481	C	G	NF1	.	Myeloid	LBEN	Likely Benign
+chr17	31336659	A	G	NF1	p.Ile2058Val	Myeloid	VUS	VUS
+chr17	31337526	A	G	NF1	p.Thr2196Ala	Myeloid	VUS	VUS
+chr17	31349086	CTTGTTTGTTTGT	C	NF1	.	Myeloid	BEN	Benign
+chr17	31350166	C	T	NF1	.	Myeloid	BEN	Benign
+chr17	31352394	C	T	NF1	p.Ala2532Val	Myeloid	VUS	VUS
+chr17	42207711	T	G	STAT5B	p.Asn642His	Myeloid	LONC	Likely Oncogenic
+chr17	42212020	G	A	STAT5B	p.Tyr548=	Myeloid	LBEN	Likely Benign
+chr17	42217431	G	A	STAT5B	p.Cys401=	Myeloid	VUS	VUS
+chr17	42218217	TG	T	STAT5B	p.Gln368ArgfsTer2	Myeloid	VUS	VUS
+chr17	44211158	C	T	UBTF	.	Myeloid	VUS	VUS
+chr17	60600545	C	G	PPM1D	p.Ser44Trp	Myeloid	VUS	VUS
+chr17	60600577	C	G	PPM1D	p.Pro55Ala	Myeloid	VUS	VUS
+chr17	60600648	T	A	PPM1D	p.Pro78=	Myeloid	LBEN	Likely Benign
+chr17	60600671	C	A	PPM1D	p.Pro86Gln	Myeloid	VUS	VUS
+chr17	60663139	A	G	PPM1D	p.Lys469Glu	Myeloid	VUS	VUS
+chr17	60663259	G	C	PPM1D	p.Asp509His	Myeloid	VUS	VUS
+chr17	7670685	G	A	TP53	p.Arg342Ter	Myeloid	ONC	Oncogenic
+chr17	7670700	G	A	TP53	p.Arg337Cys	Myeloid	ONC	Oncogenic
+chr17	76736853	CGGCGGCTGTGGTGTGAGTCCGGGG	C	SRSF2	p.Pro95_Arg102del	Myeloid	ONC	Oncogenic
+chr17	76736853	CGGCGGCTGTGGTGTGAGTCCGGGG	C	SRSF2	p.Pro95_Arg102del	Myeloid	ONC	Oncogenic
+chr17	76736877	G	A	SRSF2	p.Pro95Leu	Myeloid	ONC	Oncogenic
+chr17	76736877	G	A	SRSF2	p.Pro95Leu	Myeloid	ONC	Oncogenic
+chr17	76736877	G	C	SRSF2	p.Pro95Arg	Myeloid	ONC	Oncogenic
+chr17	76736877	G	C	SRSF2	p.Pro95Arg	Myeloid	ONC	Oncogenic
+chr17	76736877	G	GGGC	SRSF2	p.Arg94dup	Myeloid	LONC	Likely Oncogenic
+chr17	76736877	G	GGGC	SRSF2	p.Arg94dup	Myeloid	LONC	Likely Oncogenic
+chr17	76736877	G	T	SRSF2	p.Pro95His	Myeloid	ONC	Oncogenic
+chr17	76736877	G	T	SRSF2	p.Pro95His	Myeloid	ONC	Oncogenic
+chr17	76736878	G	T	SRSF2	p.Pro95Thr	Myeloid	LONC	Likely Oncogenic
+chr17	76736878	G	T	SRSF2	p.Pro95Thr	Myeloid	LONC	Likely Oncogenic
+chr17	7673776	G	A	TP53	p.Arg282Trp	Myeloid	ONC	Oncogenic
+chr17	7673788	G	C	TP53	p.Pro278Ala	Myeloid	ONC	Oncogenic
+chr17	7673788	G	C	TP53	p.Pro278Ala	Myeloid	ONC	Oncogenic
+chr17	7673796	C	T	TP53	p.Cys275Tyr	Myeloid	ONC	Oncogenic
+chr17	7673797	A	C	TP53	p.Cys275Gly	Myeloid	ONC	Oncogenic
+chr17	7673802	C	T	TP53	p.Arg273His	Myeloid	ONC	Oncogenic
+chr17	7674216	C	A	TP53	p.Arg249Ser	Myeloid	ONC	Oncogenic
+chr17	7674220	C	T	TP53	p.Arg248Gln	Myeloid	ONC	Oncogenic
+chr17	7674238	C	A	TP53	p.Cys242Phe	Myeloid	ONC	Oncogenic
+chr17	7674245	T	G	TP53	p.Ser240Arg	Myeloid	LONC	Likely Oncogenic
+chr17	7674247	T	C	TP53	p.Asn239Ser	Myeloid	ONC	Oncogenic
+chr17	7674947	A	G	TP53	p.Ile195Thr	Myeloid	ONC	Oncogenic
+chr17	7675089	G	C	TP53	p.Arg175Gly	Myeloid	ONC	Oncogenic
+chr17	7675095	C	T	TP53	p.Val173Met	Myeloid	ONC	Oncogenic
+chr17	7675156	C	CG	TP53	p.Pro153AlafsTer28	Myeloid	ONC	Oncogenic
+chr17	7675157	G	A	TP53	p.Pro152Leu	Myeloid	ONC	Oncogenic
+chr17	7675160	G	C	TP53	p.Pro151Arg	Myeloid	ONC	Oncogenic
+chr17	7675160	G	T	TP53	p.Pro151His	Myeloid	ONC	Oncogenic
+chr17	7675174	C	T	TP53	p.Trp146Ter	Myeloid	ONC	Oncogenic
+chr17	7675185	C	T	TP53	p.Val143Met	Myeloid	ONC	Oncogenic
+chr17	7675237	C	T	TP53	.	Myeloid	ONC	Oncogenic
+chr17	7676017	TC	T	TP53	p.Thr118GlnfsTer5	Myeloid	ONC	Oncogenic
+chr17	7676154	G	C	TP53	p.Pro72Arg	Myeloid	BEN	Benign
+chr17	7676266	AG	A	TP53	p.Leu35CysfsTer9	Myeloid	ONC	Oncogenic
+chr18	44951942	G	A	SETBP1	p.Asp868Asn	Myeloid	ONC	Oncogenic
+chr18	44951942	G	A	SETBP1	p.Asp868Asn	Myeloid	ONC	Oncogenic
+chr18	44951948	G	A	SETBP1	p.Gly870Ser	Myeloid	ONC	Oncogenic
+chr18	44951948	G	A	SETBP1	p.Gly870Ser	Myeloid	ONC	Oncogenic
+chr18	63318208	G	A	BCL2	p.Phe153=	Myeloid	LBEN	Likely Benign
+chr18	63318208	G	A	BCL2	p.Phe153=	Myeloid	LBEN	Likely Benign
+chr18	63318482	G	A	BCL2	p.Ser62Phe	Myeloid	VUS	VUS
+chr18	63318542	G	A	BCL2	p.Ala42Val	Myeloid	VUS	VUS
+chr19	12943750	AGCAGAGGCTTAAGGAGGAGGAAGAAGACAAGAAACGCAAAGAGGAGGAGGAG	A	CALR	p.Leu367ThrfsTer46	Myeloid	ONC	Oncogenic
+chr19	12943813	A	ATTGTC	CALR	p.Lys385AsnfsTer47	Myeloid	ONC	Oncogenic
+chr19	33301394	T	C	CEBPA	p.Ile341Val	Myeloid	VUS	VUS
+chr19	33301454	T	C	CEBPA	p.Asn321Asp	Myeloid	VUS	VUS
+chr19	33301566	G	GT	CEBPA	p.Asn283LysfsTer38	Myeloid	LONC	Likely Oncogenic
+chr19	33301691	C	T	CEBPA	p.Gly242Ser	Myeloid	VUS	VUS
+chr19	33301701	C	CGCGGGGT	CEBPA	p.Ala240ArgfsTer83	Myeloid	LONC	Likely Oncogenic
+chr19	33302013	C	T	CEBPA	p.Ala134=	Myeloid	LBEN	Likely Benign
+chr19	33302092	T	TA	CEBPA	p.Tyr108LeufsTer62	Myeloid	ONC	Oncogenic
+chr19	33302163	G	C	CEBPA	p.His84Gln	Myeloid	VUS	VUS
+chr19	33302348	G	A	CEBPA	p.Pro23Ser	Myeloid	VUS	VUS
+chr2	197401770	T	C	SF3B1	p.Asp781Gly	Myeloid	LONC	Likely Oncogenic
+chr2	197401887	C	T	SF3B1	p.Gly742Asp	Myeloid	ONC	Oncogenic
+chr2	197401990	C	T	SF3B1	p.Gly740Arg	Myeloid	LONC	Likely Oncogenic
+chr2	197402110	T	C	SF3B1	p.Lys700Glu	Myeloid	ONC	Oncogenic
+chr2	197402635	C	A	SF3B1	p.Lys666Asn	Myeloid	ONC	Oncogenic
+chr2	197402635	C	G	SF3B1	p.Lys666Asn	Myeloid	ONC	Oncogenic
+chr2	197402636	T	C	SF3B1	p.Lys666Arg	Myeloid	ONC	Oncogenic
+chr2	197402637	T	C	SF3B1	p.Lys666Glu	Myeloid	LONC	Likely Oncogenic
+chr2	197402647	G	C	SF3B1	p.His662Gln	Myeloid	ONC	Oncogenic
+chr2	197402647	G	T	SF3B1	p.His662Gln	Myeloid	ONC	Oncogenic
+chr2	197402725	G	A	SF3B1	p.Ala636=	Myeloid	LBEN	Likely Benign
+chr2	197402760	G	A	SF3B1	p.Arg625Cys	Myeloid	ONC	Oncogenic
+chr2	208248388	C	T	IDH1	p.Arg132His	Myeloid	ONC	Oncogenic
+chr2	208248388	C	T	IDH1	p.Arg132His	Myeloid	ONC	Oncogenic
+chr2	208248389	G	A	IDH1	p.Arg132Cys	Myeloid	ONC	Oncogenic
+chr2	208248389	G	A	IDH1	p.Arg132Cys	Myeloid	ONC	Oncogenic
+chr2	208248389	G	C	IDH1	p.Arg132Gly	Myeloid	ONC	Oncogenic
+chr2	208248389	G	C	IDH1	p.Arg132Gly	Myeloid	ONC	Oncogenic
+chr2	25234373	C	T	DNMT3A	p.Arg882His	Myeloid	ONC	Oncogenic
+chr2	25234373	C	T	DNMT3A	p.Arg882His	Myeloid	ONC	Oncogenic
+chr2	25234374	G	A	DNMT3A	p.Arg882Cys	Myeloid	ONC	Oncogenic
+chr2	25234374	G	A	DNMT3A	p.Arg882Cys	Myeloid	ONC	Oncogenic
+chr2	25234383	T	C	DNMT3A	p.Asn879Asp	Myeloid	LONC	Likely Oncogenic
+chr2	25234383	T	C	DNMT3A	p.Asn879Asp	Myeloid	LONC	Likely Oncogenic
+chr2	25236937	T	C	DNMT3A	p.Lys826Arg	Myeloid	VUS	VUS
+chr2	25239218	A	C	DNMT3A	.	Myeloid	VUS	VUS
+chr2	25240313	G	A	DNMT3A	p.Arg771Ter	Myeloid	ONC	Oncogenic
+chr2	25240313	G	A	DNMT3A	p.Arg771Ter	Myeloid	ONC	Oncogenic
+chr2	25240417	C	T	DNMT3A	p.Arg736His	Myeloid	LONC	Likely Oncogenic
+chr2	25240417	C	T	DNMT3A	p.Arg736His	Myeloid	LONC	Likely Oncogenic
+chr2	25240418	G	A	DNMT3A	p.Arg736Cys	Myeloid	LONC	Likely Oncogenic
+chr2	25240420	T	C	DNMT3A	p.Tyr735Cys	Myeloid	LONC	Likely Oncogenic
+chr2	25240420	T	C	DNMT3A	p.Tyr735Cys	Myeloid	LONC	Likely Oncogenic
+chr2	25240662	G	A	DNMT3A	p.Asn717=	Myeloid	LBEN	Likely Benign
+chr2	25240667	C	T	DNMT3A	p.Val716Ile	Myeloid	VUS	VUS
+chr2	25240672	G	C	DNMT3A	p.Ser714Cys	Myeloid	LONC	Likely Oncogenic
+chr2	25240672	G	C	DNMT3A	p.Ser714Cys	Myeloid	LONC	Likely Oncogenic
+chr2	25240699	A	G	DNMT3A	p.Ile705Thr	Myeloid	VUS	VUS
+chr2	25240714	G	A	DNMT3A	p.Pro700Leu	Myeloid	LONC	Likely Oncogenic
+chr2	25241627	C	A	DNMT3A	p.Gly673Cys	Myeloid	VUS	VUS
+chr2	25243928	C	G	DNMT3A	p.Val636Leu	Myeloid	LONC	Likely Oncogenic
+chr2	25243931	G	A	DNMT3A	p.Arg635Trp	Myeloid	LONC	Likely Oncogenic
+chr2	25243931	G	A	DNMT3A	p.Arg635Trp	Myeloid	LONC	Likely Oncogenic
+chr2	25244214	G	A	DNMT3A	p.Arg598Ter	Myeloid	ONC	Oncogenic
+chr2	25244214	G	A	DNMT3A	p.Arg598Ter	Myeloid	ONC	Oncogenic
+chr2	25245305	T	C	DNMT3A	p.Asn501Ser	Myeloid	VUS	VUS
+chr2	25245305	T	C	DNMT3A	p.Asn501Ser	Myeloid	VUS	VUS
+chr2	25246062	G	T	DNMT3A	p.Arg478=	Myeloid	LBEN	Likely Benign
+chr2	25246744	C	T	DNMT3A	p.Pro385=	Myeloid	LBEN	Likely Benign
+chr2	25246755	TC	T	DNMT3A	p.Lys382SerfsTer25	Myeloid	ONC	Oncogenic
+chr2	25246755	TC	T	DNMT3A	p.Lys382SerfsTer25	Myeloid	ONC	Oncogenic
+chr2	25247133	A	G	DNMT3A	p.Leu347Pro	Myeloid	VUS	VUS
+chr2	25247159	C	G	DNMT3A	.	Myeloid	LONC	Likely Oncogenic
+chr2	25247612	GA	G	DNMT3A	p.Phe331SerfsTer14	Myeloid	ONC	Oncogenic
+chr2	25247615	C	T	DNMT3A	p.Trp330Ter	Myeloid	ONC	Oncogenic
+chr2	25247615	C	T	DNMT3A	p.Trp330Ter	Myeloid	ONC	Oncogenic
+chr2	25247666	C	T	DNMT3A	p.Trp313Ter	Myeloid	ONC	Oncogenic
+chr20	32433360	G	A	ASXL1	p.Val388Ile	Myeloid	VUS	VUS
+chr20	32433447	C	T	ASXL1	p.Arg417Ter	Myeloid	ONC	Oncogenic
+chr20	32434483	T	TA	ASXL1	p.Tyr591Ter	Myeloid	LONC	Likely Oncogenic
+chr20	32434490	T	TA	ASXL1	p.Cys594MetfsTer25	Myeloid	LONC	Likely Oncogenic
+chr20	32434538	C	T	ASXL1	p.Thr609Ile	Myeloid	VUS	VUS
+chr20	32434563	T	TA	ASXL1	p.Ala619SerfsTer16	Myeloid	ONC	Oncogenic
+chr20	32434599	TCACCACTGCCATAGAGAGGCGGC	T	ASXL1	p.Glu635ArgfsTer15	Myeloid	LONC	Likely Oncogenic
+chr20	32434599	TCACCACTGCCATAGAGAGGCGGC	T	ASXL1	p.Glu635ArgfsTer15	Myeloid	LONC	Likely Oncogenic
+chr20	32434629	TGCCATCGGAGG	T	ASXL1	p.Ala640GlyfsTer14	Myeloid	LONC	Likely Oncogenic
+chr20	32434636	GGAGGGGGGGGT	G	ASXL1	p.Gly643ProfsTer11	Myeloid	LONC	Likely Oncogenic
+chr20	32434638	A	AG	ASXL1	p.Gly646TrpfsTer12	Myeloid	LONC	Likely Oncogenic
+chr20	32434789	C	T	ASXL1	p.Arg693Ter	Myeloid	LONC	Likely Oncogenic
+chr20	32434822	G	T	ASXL1	p.Gly704Trp	Myeloid	VUS	VUS
+chr20	32434958	TC	T	ASXL1	p.Val751LeufsTer21	Myeloid	LONC	Likely Oncogenic
+chr20	32435034	AT	A	ASXL1	p.Leu775Ter	Myeloid	LONC	Likely Oncogenic
+chr20	32435095	TC	T	ASXL1	p.Trp796GlyfsTer22	Myeloid	LONC	Likely Oncogenic
+chr20	32435099	G	A	ASXL1	p.Trp796Ter	Myeloid	ONC	Oncogenic
+chr20	32435100	G	A	ASXL1	p.Trp796Ter	Myeloid	ONC	Oncogenic
+chr20	32435273	CTGAT	C	ASXL1	p.Asp855AlafsTer11	Myeloid	LONC	Likely Oncogenic
+chr20	32435304	C	T	ASXL1	p.Asp864=	Myeloid	LBEN	Likely Benign
+chr20	32435440	C	T	ASXL1	p.Gln910Ter	Myeloid	ONC	Oncogenic
+chr20	32435605	C	T	ASXL1	p.Arg965Ter	Myeloid	LONC	Likely Oncogenic
+chr20	32435860	A	G	ASXL1	p.Met1050Val	Myeloid	VUS	VUS
+chr20	32436091	G	A	ASXL1	p.Asp1127Asn	Myeloid	VUS	VUS
+chr20	32436622	C	G	ASXL1	p.Leu1304Val	Myeloid	VUS	VUS
+chr20	32436745	A	T	ASXL1	p.Met1345Leu	Myeloid	VUS	VUS
+chr20	32436811	G	A	ASXL1	p.Val1367Ile	Myeloid	VUS	VUS
+chr20	32436895	C	G	ASXL1	p.Leu1395Val	Myeloid	VUS	VUS
+chr20	32437205	C	T	ASXL1	p.Thr1498Met	Myeloid	VUS	VUS
+chr21	34792388	TG	T	RUNX1	p.Gln397LysfsTer197	Myeloid	ONC	Oncogenic
+chr21	34792435	C	CAGGT	RUNX1	p.Pro383AlafsTer218	Myeloid	LONC	Likely Oncogenic
+chr21	34792541	C	CG	RUNX1	p.Arg346ProfsTer254	Myeloid	ONC	Oncogenic
+chr21	34792541	C	CG	RUNX1	p.Arg346ProfsTer254	Myeloid	ONC	Oncogenic
+chr21	34799310	G	A	RUNX1	p.Arg320Ter	Myeloid	ONC	Oncogenic
+chr21	34834566	C	CGG	RUNX1	p.Gly217ProfsTer21	Myeloid	ONC	Oncogenic
+chr21	34834596	G	A	RUNX1	p.Arg207Trp	Myeloid	VUS	VUS
+chr21	34834605	T	C	RUNX1	.	Myeloid	VUS	VUS
+chr21	34859473	C	T	RUNX1	.	Myeloid	LONC	Likely Oncogenic
+chr21	34859477	G	A	RUNX1	p.Arg204Ter	Myeloid	ONC	Oncogenic
+chr21	34859485	C	T	RUNX1	p.Arg201Gln	Myeloid	ONC	Oncogenic
+chr21	34859494	T	C	RUNX1	p.Asp198Gly	Myeloid	ONC	Oncogenic
+chr21	34859495	C	T	RUNX1	p.Asp198Asn	Myeloid	ONC	Oncogenic
+chr21	34859579	C	T	RUNX1	.	Myeloid	VUS(HOT)	VUS
+chr21	34880552	C	T	RUNX1	.	Myeloid	VUS	VUS
+chr21	34880568	C	G	RUNX1	p.Arg166Pro	Myeloid	LONC	Likely Oncogenic
+chr21	34880643	G	A	RUNX1	p.Ser141Leu	Myeloid	LONC	Likely Oncogenic
+chr21	34880697	T	TCC	RUNX1	p.Asp123GlyfsTer11	Myeloid	ONC	Oncogenic
+chr21	34886860	G	C	RUNX1	p.Leu112Val	Myeloid	VUS	VUS
+chr21	34886884	TAGGCAGC	T	RUNX1	p.Leu102ArgfsTer18	Myeloid	ONC	Oncogenic
+chr21	34886901	AG	A	RUNX1	p.Leu98SerfsTer24	Myeloid	ONC	Oncogenic
+chr21	34886952	A	AC	RUNX1	p.Val81GlyfsTer57	Myeloid	ONC	Oncogenic
+chr21	34887039	A	T	RUNX1	p.Met52Lys	Myeloid	VUS	VUS
+chr21	34887048	G	A	RUNX1	p.Pro49Leu	Myeloid	VUS	VUS
+chr21	35049197	A	G	RUNX1	.	Myeloid	LBEN	Likely Benign
+chr21	43094659	T	TCTCATA	U2AF1	p.Tyr158_Glu159dup	Myeloid	LONC	Likely Oncogenic
+chr21	43094667	T	C	U2AF1	p.Gln157Arg	Myeloid	ONC	Oncogenic
+chr21	43094667	T	G	U2AF1	p.Gln157Pro	Myeloid	ONC	Oncogenic
+chr21	43094667	T	G	U2AF1	p.Gln157Pro	Myeloid	ONC	Oncogenic
+chr21	43094670	C	T	U2AF1	p.Arg156His	Myeloid	LONC	Likely Oncogenic
+chr21	43104346	G	A	U2AF1	p.Ser34Phe	Myeloid	ONC	Oncogenic
+chr21	43104346	G	A	U2AF1	p.Ser34Phe	Myeloid	ONC	Oncogenic
+chr21	43104346	G	T	U2AF1	p.Ser34Tyr	Myeloid	ONC	Oncogenic
+chr21	43104346	G	T	U2AF1	p.Ser34Tyr	Myeloid	ONC	Oncogenic
+chr3	128481299	A	G	GATA2	p.Met388Thr	Myeloid	VUS	VUS
+chr3	128481887	A	C	GATA2	p.Leu359Val	Myeloid	LONC	Likely Oncogenic
+chr3	128481887	A	C	GATA2	p.Leu359Val	Myeloid	LONC	Likely Oncogenic
+chr3	128487002	C	A	GATA2	p.Trp10Cys	Myeloid	VUS	VUS
+chr4	105233957	A	G	TET2	p.Arg5=	Myeloid	LBEN	Likely Benign
+chr4	105234334	GAAAT	G	TET2	p.Arg131SerfsTer13	Myeloid	ONC	Oncogenic
+chr4	105234686	C	A	TET2	p.His248Gln	Myeloid	VUS	VUS
+chr4	105234715	ATGAGTTGTCC	A	TET2	p.Glu259ValfsTer31	Myeloid	ONC	Oncogenic
+chr4	105234746	G	C	TET2	p.Ser268=	Myeloid	LBEN	Likely Benign
+chr4	105234763	TC	T	TET2	p.Asn275IlefsTer18	Myeloid	ONC	Oncogenic
+chr4	105234912	C	T	TET2	p.Gln324Ter	Myeloid	ONC	Oncogenic
+chr4	105235074	G	C	TET2	p.Gly378Arg	Myeloid	VUS	VUS
+chr4	105235191	C	T	TET2	p.Gln417Ter	Myeloid	ONC	Oncogenic
+chr4	105235227	G	A	TET2	p.Gly429Arg	Myeloid	VUS	VUS
+chr4	105235318	C	CTT	TET2	p.Ser460PhefsTer27	Myeloid	ONC	Oncogenic
+chr4	105235547	C	CA	TET2	p.Glu537ArgfsTer30	Myeloid	ONC	Oncogenic
+chr4	105235554	C	T	TET2	p.Gln538Ter	Myeloid	ONC	Oncogenic
+chr4	105235572	C	T	TET2	p.Arg544Ter	Myeloid	ONC	Oncogenic
+chr4	105235659	CA	C	TET2	p.His573ProfsTer7	Myeloid	ONC	Oncogenic
+chr4	105235778	T	TG	TET2	p.Leu615AlafsTer23	Myeloid	ONC	Oncogenic
+chr4	105235816	C	T	TET2	p.Thr625Ile	Myeloid	VUS	VUS
+chr4	105235902	C	T	TET2	p.Gln654Ter	Myeloid	ONC	Oncogenic
+chr4	105235912	C	A	TET2	p.Ser657Ter	Myeloid	ONC	Oncogenic
+chr4	105235914	C	CA	TET2	p.His658GlnfsTer23	Myeloid	ONC	Oncogenic
+chr4	105235962	C	T	TET2	p.Gln674Ter	Myeloid	ONC	Oncogenic
+chr4	105235995	C	CA	TET2	p.Arg686LysfsTer7	Myeloid	ONC	Oncogenic
+chr4	105236089	C	CA	TET2	p.His717ThrfsTer6	Myeloid	ONC	Oncogenic
+chr4	105236111	TC	T	TET2	p.His724IlefsTer27	Myeloid	ONC	Oncogenic
+chr4	105236131	C	CA	TET2	p.Gln731ThrfsTer23	Myeloid	ONC	Oncogenic
+chr4	105236187	CAAAT	C	TET2	p.Ile750ArgfsTer62	Myeloid	ONC	Oncogenic
+chr4	105236188	AAATAAAG	A	TET2	p.Asn752ArgfsTer59	Myeloid	ONC	Oncogenic
+chr4	105236209	T	TA	TET2	p.Leu757ThrfsTer12	Myeloid	ONC	Oncogenic
+chr4	105236212	TC	T	TET2	p.Gln758ArgfsTer55	Myeloid	ONC	Oncogenic
+chr4	105236214	C	T	TET2	p.Gln758Ter	Myeloid	ONC	Oncogenic
+chr4	105236227	A	AC	TET2	p.Gln764ProfsTer5	Myeloid	ONC	Oncogenic
+chr4	105236399	T	G	TET2	p.Tyr819Ter	Myeloid	ONC	Oncogenic
+chr4	105236433	C	T	TET2	p.Gln831Ter	Myeloid	ONC	Oncogenic
+chr4	105236446	C	A	TET2	p.Ser835Ter	Myeloid	ONC	Oncogenic
+chr4	105236481	C	T	TET2	p.Gln847Ter	Myeloid	ONC	Oncogenic
+chr4	105236688	C	T	TET2	p.Gln916Ter	Myeloid	ONC	Oncogenic
+chr4	105236760	AC	A	TET2	p.Pro941LeufsTer12	Myeloid	ONC	Oncogenic
+chr4	105236769	C	T	TET2	p.Gln943Ter	Myeloid	ONC	Oncogenic
+chr4	105236851	C	CT	TET2	p.Glu971Ter	Myeloid	ONC	Oncogenic
+chr4	105237030	C	T	TET2	p.Gln1030Ter	Myeloid	ONC	Oncogenic
+chr4	105237103	TA	T	TET2	p.Val1056LeufsTer10	Myeloid	ONC	Oncogenic
+chr4	105237192	C	T	TET2	p.Gln1084Ter	Myeloid	ONC	Oncogenic
+chr4	105237289	T	TA	TET2	p.Asn1118LysfsTer12	Myeloid	ONC	Oncogenic
+chr4	105237352	G	A	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105237352	G	A	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105237352	G	GT	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105237352	G	GT	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105241350	GA	G	TET2	p.Asp1143MetfsTer9	Myeloid	ONC	Oncogenic
+chr4	105241384	G	A	TET2	p.Gly1152Glu	Myeloid	VUS	VUS
+chr4	105242832	A	G	TET2	.	Myeloid	ONC	Oncogenic
+chr4	105242904	C	T	TET2	p.Gln1191Ter	Myeloid	ONC	Oncogenic
+chr4	105242912	T	G	TET2	p.Cys1193Trp	Myeloid	VUS	VUS
+chr4	105242922	A	T	TET2	p.Lys1197Ter	Myeloid	ONC	Oncogenic
+chr4	105242928	G	GT	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105242932	G	A	TET2	.	Myeloid	VUS	VUS
+chr4	105243568	A	G	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105243615	C	T	TET2	p.Arg1214Trp	Myeloid	LONC	Likely Oncogenic
+chr4	105243673	G	A	TET2	p.Trp1233Ter	Myeloid	LONC	Likely Oncogenic
+chr4	105243704	ACT	A	TET2	p.Tyr1245LeufsTer22	Myeloid	ONC	Oncogenic
+chr4	105243738	T	TA	TET2	p.Tyr1255Ter	Myeloid	ONC	Oncogenic
+chr4	105243756	C	T	TET2	p.Arg1261Cys	Myeloid	LONC	Likely Oncogenic
+chr4	105243760	G	A	TET2	p.Arg1262Gln	Myeloid	LONC	Likely Oncogenic
+chr4	105243783	G	A	TET2	.	Myeloid	VUS	VUS
+chr4	105259618	G	A	TET2	.	Myeloid	ONC	Oncogenic
+chr4	105259626	T	TG	TET2	p.Cys1271TrpfsTer29	Myeloid	ONC	Oncogenic
+chr4	105259709	T	G	TET2	p.Cys1298Trp	Myeloid	VUS	VUS
+chr4	105259769	GGTTT	G	TET2	.	Myeloid	VUS	VUS
+chr4	105259770	G	A	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105261757	AG	A	TET2	p.Glu1319LysfsTer44	Myeloid	ONC	Oncogenic
+chr4	105261757	AG	A	TET2	p.Glu1319LysfsTer44	Myeloid	ONC	Oncogenic
+chr4	105261846	C	T	TET2	p.Gln1348Ter	Myeloid	ONC	Oncogenic
+chr4	105269641	G	A	TET2	p.Arg1359His	Myeloid	LONC	Likely Oncogenic
+chr4	105269663	TC	T	TET2	p.Pro1367HisfsTer81	Myeloid	ONC	Oncogenic
+chr4	105269673	G	A	TET2	p.Gly1370Arg	Myeloid	VUS	VUS
+chr4	105269680	C	T	TET2	p.Thr1372Ile	Myeloid	VUS	VUS
+chr4	105269683	C	A	TET2	p.Ala1373Glu	Myeloid	VUS	VUS
+chr4	105269697	T	C	TET2	p.Cys1378Arg	Myeloid	VUS	VUS
+chr4	105269698	G	A	TET2	p.Cys1378Tyr	Myeloid	LONC	Likely Oncogenic
+chr4	105269709	C	T	TET2	p.His1382Tyr	Myeloid	VUS	VUS
+chr4	105269716	A	T	TET2	p.(Asp1384Val)	Myeloid	VUS	VUS
+chr4	105269719	T	A	TET2	p.Leu1385Ter	Myeloid	ONC	Oncogenic
+chr4	105272562	A	G	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr4	105272625	T	C	TET2	p.Leu1415Pro	Myeloid	VUS	VUS
+chr4	105272692	G	GA	TET2	p.Arg1440ThrfsTer38	Myeloid	ONC	Oncogenic
+chr4	105272735	C	T	TET2	p.Arg1452Ter	Myeloid	ONC	Oncogenic
+chr4	105272774	C	T	TET2	p.Arg1465Ter	Myeloid	ONC	Oncogenic
+chr4	105272832	A	G	TET2	p.Asn1484Ser	Myeloid	VUS	VUS
+chr4	105272848	TGAAAAG	T	TET2	p.Glu1492_Lys1493del	Myeloid	VUS	VUS
+chr4	105275056	C	T	TET2	p.Arg1516Ter	Myeloid	LONC	Likely Oncogenic
+chr4	105275065	G	A	TET2	p.Gly1519Arg	Myeloid	VUS	VUS
+chr4	105275077	C	T	TET2	p.Gln1523Ter	Myeloid	ONC	Oncogenic
+chr4	105275086	C	T	TET2	p.Gln1526Ter	Myeloid	ONC	Oncogenic
+chr4	105275119	C	T	TET2	p.Gln1537Ter	Myeloid	ONC	Oncogenic
+chr4	105275134	C	T	TET2	p.Gln1542Ter	Myeloid	ONC	Oncogenic
+chr4	105275143	C	T	TET2	p.Gln1545Ter	Myeloid	ONC	Oncogenic
+chr4	105275188	T	TA	TET2	p.Tyr1560Ter	Myeloid	LONC	Likely Oncogenic
+chr4	105275255	CT	C	TET2	p.Ser1583HisfsTer13	Myeloid	LONC	Likely Oncogenic
+chr4	105275509	CT	C	TET2	p.Leu1667ArgfsTer28	Myeloid	ONC	Oncogenic
+chr4	105275569	C	T	TET2	p.Gln1687Ter	Myeloid	LONC	Likely Oncogenic
+chr4	105275624	GT	G	TET2	p.Phe1706SerfsTer13	Myeloid	ONC	Oncogenic
+chr4	105275862	CA	C	TET2	p.Lys1785ArgfsTer35	Myeloid	LONC	Likely Oncogenic
+chr4	105276091	G	A	TET2	p.Gly1861Arg	Myeloid	VUS	VUS
+chr4	105276122	T	A	TET2	p.Ile1871Asn	Myeloid	VUS	VUS
+chr4	105276128	T	C	TET2	p.Ile1873Thr	Myeloid	LONC	Likely Oncogenic
+chr4	105276244	C	T	TET2	p.His1912Tyr	Myeloid	VUS	VUS
+chr4	105276395	C	T	TET2	p.Pro1962Leu	Myeloid	VUS	VUS
+chr4	54695644	C	G	KIT	p.Thr67Ser	Myeloid	VUS	VUS
+chr4	54727271	G	A	KIT	p.Val532Ile	Myeloid	VUS	VUS
+chr4	54727271	G	A	KIT	p.Val532Ile	Myeloid	VUS	VUS
+chr4	54733155	A	T	KIT	p.Asp816Val	Myeloid	ONC	Oncogenic
+chr4	54733155	A	T	KIT	p.Asp816Val	Myeloid	ONC	Oncogenic
+chr5	171410539	C	CTCTG	NPM1	p.Trp288CysfsTer12	Myeloid	ONC	Oncogenic
+chr5	171410539	C	CTCTG	NPM1	p.Trp288CysfsTer12	Myeloid	ONC	Oncogenic
+chr5	171410539	C	CTCTG	NPM1	p.Trp288CysfsTer12	Myeloid	ONC	Oncogenic
+chr5	171410541	C	CTGCA	NPM1	p.Trp288CysfsTer12	Myeloid	ONC	Oncogenic
+chr5	171410541	C	CTGCA	NPM1	p.Trp288CysfsTer12	Myeloid	ONC	Oncogenic
+chr5	171410543	G	GCAGA	NPM1	p.Trp288CysfsTer12	Myeloid	ONC	Oncogenic
+chr5	177511881	A	G	DDX41	p.Thr593=	Myeloid	LBEN	Likely Benign
+chr5	177512355	C	T	DDX41	p.Gly530Ser	Myeloid	LONC	Likely Oncogenic
+chr5	177512369	C	T	DDX41	p.Arg525His	Myeloid	ONC	Oncogenic
+chr5	177512370	G	A	DDX41	p.Arg525Cys	Myeloid	VUS(HOT)	VUS
+chr5	177512417	C	G	DDX41	.	Myeloid	BEN	Benign
+chr5	177512770	C	T	DDX41	.	Myeloid	VUS	VUS
+chr5	177512825	G	A	DDX41	p.Leu452=	Myeloid	LBEN	Likely Benign
+chr5	177513456	G	A	DDX41	p.Ala376Val	Myeloid	VUS	VUS
+chr5	177513737	A	T	DDX41	p.Met349Lys	Myeloid	VUS	VUS
+chr5	177513751	G	C	DDX41	p.Asp344Glu	Myeloid	ONC	Oncogenic
+chr5	177513788	ATCT	A	DDX41	p.Lys331del	Myeloid	VUS	VUS
+chr5	177514938	T	C	DDX41	p.Tyr259Cys	Myeloid	VUS	VUS
+chr5	177515061	C	T	DDX41	p.Gly218Asp	Myeloid	VUS	VUS
+chr5	177515071	T	C	DDX41	.	Myeloid	ONC	Oncogenic
+chr5	177515181	C	T	DDX41	.	Myeloid	VUS	VUS
+chr5	177515791	C	T	DDX41	p.Met155Ile	Myeloid	VUS	VUS
+chr5	177515944	T	TCATC	DDX41	p.Asp140GlyfsTer2	Myeloid	LONC	Likely Oncogenic
+chr5	177515944	T	TCATC	DDX41	p.Asp140GlyfsTer2	Myeloid	LONC	Likely Oncogenic
+chr5	177516295	C	T	DDX41	p.Lys97=	Myeloid	LBEN	Likely Benign
+chr5	177516394	C	G	DDX41	p.Gln64His	Myeloid	VUS	VUS
+chr5	177516451	A	C	DDX41	.	Myeloid	BEN	Benign
+chr5	177516913	T	TCCTA	DDX41	.	Myeloid	BEN	Benign
+chr7	102097396	C	T	CUX1	p.Leu101Phe	Myeloid	VUS	VUS
+chr7	102104358	A	G	CUX1	p.Lys154=	Myeloid	LBEN	Likely Benign
+chr7	102104413	C	T	CUX1	p.Leu173Phe	Myeloid	VUS	VUS
+chr7	102104413	C	T	CUX1	p.Leu173Phe	Myeloid	VUS	VUS
+chr7	102115253	C	T	CUX1	p.Tyr229=	Myeloid	LBEN	Likely Benign
+chr7	102170461	C	T	CUX1	p.Gln258Ter	Myeloid	ONC	Oncogenic
+chr7	102178599	C	T	CUX1	p.Ser331Leu	Myeloid	VUS	VUS
+chr7	102196717	C	T	CUX1	p.Arg436Cys	Myeloid	VUS	VUS
+chr7	102197190	C	T	CUX1	p.Pro593=	Myeloid	LBEN	Likely Benign
+chr7	102197196	A	G	CUX1	p.Pro595=	Myeloid	LBEN	Likely Benign
+chr7	102198849	C	T	CUX1	p.Arg648Ter	Myeloid	ONC	Oncogenic
+chr7	102198849	C	T	CUX1	p.Arg648Ter	Myeloid	ONC	Oncogenic
+chr7	102201647	C	G	CUX1	p.Leu784Val	Myeloid	VUS	VUS
+chr7	102202052	A	T	CUX1	p.Met919Leu	Myeloid	VUS	VUS
+chr7	102205125	G	A	CUX1	p.Val1029Met	Myeloid	VUS	VUS
+chr7	102227623	C	T	CUX1	p.Tyr1129=	Myeloid	LBEN	Likely Benign
+chr7	102227668	C	T	CUX1	p.Leu1144=	Myeloid	LBEN	Likely Benign
+chr7	102248514	G	A	CUX1	p.Ala1330=	Myeloid	LBEN	Likely Benign
+chr7	102248520	C	T	CUX1	p.Ser1332=	Myeloid	LBEN	Likely Benign
+chr7	102248526	G	C	CUX1	p.Glu1334Asp	Myeloid	VUS	VUS
+chr7	102248526	G	C	CUX1	p.Glu1334Asp	Myeloid	VUS	VUS
+chr7	102248670	C	G	CUX1	p.Gly1382=	Myeloid	LBEN	Likely Benign
+chr7	102248705	G	A	CUX1	p.Gly1394Asp	Myeloid	VUS	VUS
+chr7	102248705	G	A	CUX1	p.Gly1394Asp	Myeloid	VUS	VUS
+chr7	102280065	G	A	CUX1	p.Arg570Gln	Myeloid	VUS	VUS
+chr7	102281871	G	A	CUX1	p.Arg618His	Myeloid	VUS	VUS
+chr7	148809078	C	CA	EZH2	p.Asp730Ter	Myeloid	LONC	Likely Oncogenic
+chr7	148809352	G	A	EZH2	p.Arg690Cys	Myeloid	LONC	Likely Oncogenic
+chr7	148810344	T	A	EZH2	p.Asn673Ile	Myeloid	VUS	VUS
+chr7	148814057	A	G	EZH2	p.Cys585Arg	Myeloid	VUS	VUS
+chr7	148816731	G	A	EZH2	p.Pro486=	Myeloid	LBEN	Likely Benign
+chr7	148819630	T	C	EZH2	p.Asn322Ser	Myeloid	VUS	VUS
+chr7	148826449	C	T	EZH2	.	Myeloid	VUS	VUS
+chr7	148827231	CA	C	EZH2	p.Asp221IlefsTer20	Myeloid	ONC	Oncogenic
+chr7	148827235	A	G	EZH2	p.Pro219=	Myeloid	LBEN	Likely Benign
+chr7	148828746	G	A	EZH2	p.Arg207Ter	Myeloid	ONC	Oncogenic
+chr7	148828792	G	A	EZH2	p.Asp191=	Myeloid	LBEN	Likely Benign
+chr7	148829778	A	G	EZH2	p.Phe145Ser	Myeloid	VUS	VUS
+chr7	152139227	G	A	KMT2C	p.Asn4831=	Myeloid	LBEN	Likely Benign
+chr7	152145254	G	A	KMT2C	p.Tyr4691=	Myeloid	LBEN	Likely Benign
+chr7	152148104	C	T	KMT2C	p.Arg4608His	Myeloid	VUS	VUS
+chr7	152148466	G	A	KMT2C	p.Cys4487=	Myeloid	LBEN	Likely Benign
+chr7	152151551	C	T	KMT2C	p.Gly4186Asp	Myeloid	VUS	VUS
+chr7	152152787	C	A	KMT2C	p.Pro4148=	Myeloid	LBEN	Likely Benign
+chr7	152154308	G	A	KMT2C	p.Pro4033Leu	Myeloid	VUS	VUS
+chr7	152163209	G	C	KMT2C	p.Ser3456=	Myeloid	LBEN	Likely Benign
+chr7	152171312	T	C	KMT2C	p.Gly3135=	Myeloid	LBEN	Likely Benign
+chr7	152176207	C	T	KMT2C	p.Pro3082=	Myeloid	LBEN	Likely Benign
+chr7	152177062	C	CT	KMT2C	p.Glu2798GlyfsTer11	Myeloid	ONC	Oncogenic
+chr7	152180043	T	C	KMT2C	p.Ser2411=	Myeloid	LBEN	Likely Benign
+chr7	152180043	T	C	KMT2C	p.Ser2411=	Myeloid	LBEN	Likely Benign
+chr7	152195995	TG	T	KMT2C	p.Pro1430HisfsTer2	Myeloid	ONC	Oncogenic
+chr7	152199324	G	T	KMT2C	p.Pro1410Thr	Myeloid	VUS	VUS
+chr7	152222012	A	G	KMT2C	p.Val1163Ala	Myeloid	VUS	VUS
+chr7	152230009	C	A	KMT2C	p.Gly964Cys	Myeloid	VUS	VUS
+chr7	152235864	C	A	KMT2C	p.Gly908Cys	Myeloid	VUS	VUS
+chr7	152265049	G	A	KMT2C	p.Cys391=	Myeloid	LBEN	Likely Benign
+chr7	152265100	C	T	KMT2C	p.Ala374=	Myeloid	LBEN	Likely Benign
+chr7	152265124	A	G	KMT2C	p.Tyr366=	Myeloid	LBEN	Likely Benign
+chr7	152265209	G	A	KMT2C	p.Ser338Leu	Myeloid	VUS	VUS
+chr7	152358670	C	T	KMT2C	p.Arg56Gln	Myeloid	VUS	VUS
+chr7	50400076	G	A	IKZF1	p.Gly337Ser	Myeloid	BEN	Benign
+chr7	50400124	C	T	IKZF1	p.Pro353Ser	Myeloid	VUS	VUS
+chr8	116849019	G	A	RAD21	p.Ala544Val	Myeloid	VUS	VUS
+chr8	116852561	G	A	RAD21	p.Arg437Cys	Myeloid	VUS	VUS
+chr9	136496094	G	A	NOTCH1	p.Arg2549Cys	Myeloid	VUS	VUS
+chr9	136496367	G	T	NOTCH1	p.Pro2458Thr	Myeloid	VUS	VUS
+chr9	136496370	G	C	NOTCH1	p.Leu2457Val	Myeloid	VUS	VUS
+chr9	136496582	T	C	NOTCH1	p.Gln2386Arg	Myeloid	VUS	VUS
+chr9	136497006	C	T	NOTCH1	p.Gly2245Arg	Myeloid	VUS	VUS
+chr9	136497054	C	T	NOTCH1	p.Val2229Met	Myeloid	VUS	VUS
+chr9	136497204	G	A	NOTCH1	p.Arg2179Trp	Myeloid	VUS	VUS
+chr9	136497310	G	A	NOTCH1	p.Asn2143=	Myeloid	LBEN	Likely Benign
+chr9	136502493	G	A	NOTCH1	.	Myeloid	VUS	VUS
+chr9	136504761	G	A	NOTCH1	p.Leu1644=	Myeloid	LBEN	Likely Benign
+chr9	136504785	C	T	NOTCH1	p.Glu1636Lys	Myeloid	VUS	VUS
+chr9	136504882	G	A	NOTCH1	p.Asn1603=	Myeloid	LBEN	Likely Benign
+chr9	5072536	C	T	JAK2	p.Gly562=	Myeloid	LBEN	Likely Benign
+chr9	5072560	C	T	JAK2	p.Tyr570=	Myeloid	LBEN	Likely Benign
+chr9	5073770	G	T	JAK2	p.Val617Phe	Myeloid	ONC	Oncogenic
+chr9	5073770	G	T	JAK2	p.Val617Phe	Myeloid	ONC	Oncogenic
+chr9	5078371	C	A	JAK2	p.Asp686Glu	Myeloid	VUS	VUS
+chr9	5081778	C	T	JAK2	p.Leu830=	Myeloid	LBEN	Likely Benign
+chr9	5081828	G	C	JAK2	p.Glu846Asp	Myeloid	VUS	VUS
+chrX	124051376	TACTC	T	STAG2	p.Thr395LeufsTer29	Myeloid	ONC	Oncogenic
+chrX	124051376	TACTC	T	STAG2	p.Thr395LeufsTer29	Myeloid	ONC	Oncogenic
+chrX	124057924	G	T	STAG2	p.Gly455Cys	Myeloid	VUS	VUS
+chrX	124057944	T	TA	STAG2	p.Thr463AspfsTer10	Myeloid	ONC	Oncogenic
+chrX	134377638	G	GA	PHF6	p.Gly10ArgfsTer12	Myeloid	LONC	Likely Oncogenic
+chrX	134377745	A	G	PHF6	p.His43Arg	Myeloid	VUS	VUS
+chrX	124030998	G	T	STAG2	p.Gly54Val	Myeloid	VUS	VUS
+chrX	124064053	T	C	STAG2	.	Myeloid	VUS	VUS
+chrX	124076449	A	AT	STAG2	p.Ile885TyrfsTer10	Myeloid	ONC	Oncogenic
+chrX	124090730	C	T	STAG2	p.Gln1145Ter	Myeloid	ONC	Oncogenic
+chrX	130015441	G	A	BCORL1	p.Arg890Gln	Myeloid	LBEN	Likely Benign
+chrX	130015441	G	A	BCORL1	p.Arg890Gln	Myeloid	LBEN	Likely Benign
+chrX	130025119	G	A	BCORL1	p.Arg1273Gln	Myeloid	VUS	VUS
+chrX	130025119	G	A	BCORL1	p.Arg1273Gln	Myeloid	VUS	VUS
+chrX	130025362	G	A	BCORL1	p.Arg1354Gln	Myeloid	VUS	VUS
+chrX	130025362	G	A	BCORL1	p.Arg1354Gln	Myeloid	VUS	VUS
+chrX	130037416	G	A	BCORL1	p.Arg1526His	Myeloid	VUS	VUS
+chrX	130050740	C	T	BCORL1	p.Arg1622Trp	Myeloid	LBEN	Likely Benign
+chrX	134377638	G	GA	PHF6	p.Gly10ArgfsTer12	Myeloid	LONC	Likely Oncogenic
+chrX	134413955	T	G	PHF6	p.Tyr240Asp	Myeloid	VUS	VUS
+chrX	134413955	T	G	PHF6	p.Tyr240Asp	Myeloid	VUS	VUS
+chrX	134415107	G	A	PHF6	p.Arg274Gln	Myeloid	LONC	Likely Oncogenic
+chrX	134415107	G	A	PHF6	p.Arg274Gln	Myeloid	LONC	Likely Oncogenic
+chrX	134417238	C	T	PHF6	p.His302Tyr	Myeloid	VUS	VUS
+chrX	134417238	C	T	PHF6	p.His302Tyr	Myeloid	VUS	VUS
+chrX	134417275	T	C	PHF6	p.Ile314Thr	Myeloid	LONC	Likely Oncogenic
+chrX	134417275	T	C	PHF6	p.Ile314Thr	Myeloid	LONC	Likely Oncogenic
+chrX	134417289	C	T	PHF6	p.Arg319Ter	Myeloid	ONC	Oncogenic
+chrX	134417289	C	T	PHF6	p.Arg319Ter	Myeloid	ONC	Oncogenic
+chrX	15790972	G	C	ZRSR2	p.Arg27Pro	Myeloid	VUS	VUS
+chrX	15790983	C	T	ZRSR2	p.Arg31Trp	Myeloid	VUS	VUS
+chrX	15809198	A	G	ZRSR2	.	Myeloid	ONC	Oncogenic
+chrX	15809266	C	T	ZRSR2	p.Arg169Ter	Myeloid	ONC	Oncogenic
+chrX	15815891	G	T	ZRSR2	.	Myeloid	ONC	Oncogenic
+chrX	15818643	G	A	ZRSR2	.	Myeloid	LONC	Likely Oncogenic
+chrX	15820231	TTC	T	ZRSR2	p.Leu286ValfsTer2	Myeloid	LONC	Likely Oncogenic
+chrX	15822769	T	A	ZRSR2	p.Cys326Ser	Myeloid	VUS	VUS
+chrX	15822814	G	T	ZRSR2	p.Glu341Ter	Myeloid	LONC	Likely Oncogenic
+chrX	15823071	T	C	ZRSR2	p.Asn426=	Myeloid	LBEN	Likely Benign
+chrX	15823071	T	TAGGGACCGCAGC	ZRSR2	p.Asp432_Arg435dup	Myeloid	VUS	VUS
+chrX	15823107	CAGCCGG	C	ZRSR2	p.Ser447_Arg448del	Myeloid	LBEN	Likely Benign
+chrX	40052376	C	T	BCOR	p.Ser1667=	Myeloid	LBEN	Likely Benign
+chrX	40052396	G	A	BCOR	p.Arg1661Ter	Myeloid	LONC	Likely Oncogenic
+chrX	40053999	TG	T	BCOR	p.Pro1621GlnfsTer53	Myeloid	LONC	Likely Oncogenic
+chrX	40063786	C	T	BCOR	p.Ser1223=	Myeloid	LBEN	Likely Benign
+chrX	40063806	G	A	BCOR	p.Arg1217Ter	Myeloid	ONC	Oncogenic
+chrX	40064425	A	G	BCOR	p.Val1138Ala	Myeloid	LBEN	Likely Benign
+chrX	40073147	C	A	BCOR	p.Thr733=	Myeloid	LBEN	Likely Benign
+chrX	40073311	C	T	BCOR	p.Val679Ile	Myeloid	LBEN	Likely Benign
+chrX	40074965	A	G	BCOR	p.Asn127=	Myeloid	LBEN	Likely Benign
+chrX	47199051	A	C	UBA1	p.Met41Leu	Myeloid	ONC	Oncogenic
+chrX	47199052	T	C	UBA1	p.Met41Thr	Myeloid	LONC	Likely Oncogenic
+chrX	47203005	C	T	UBA1	p.Leu432=	Myeloid	LBEN	Likely Benign
+chrX	47203603	C	T	UBA1	p.Cys494=	Myeloid	LBEN	Likely Benign
+chrX	47200899	G	C	UBA1	p.Val162=	Myeloid	LBEN	Likely Benign
+chrX	130016139	A	G	BCORL1	p.Lys1123Glu	Myeloid	VUS	VUS
+chr12	22659060	A	G	ETNK1	p.Asn155Asp	Myeloid	VUS	VUS
+chrX	134417233	C	CT	PHF6	p.Tyr301LeufsTer12	Myeloid	ONC	Oncogenic
+chr1	43352220	C	T	MPL	p.Leu524=	Myeloid	LBEN	Likely Benign
+chr12	111447770	G	A	SH2B3	p.Gly451Ser	Myeloid	VUS	VUS
+chr17	60663531	G	A	PPM1D	p.Arg599=	Myeloid	LBEN	Likely Benign
+chr1	1815860	G	C	GNB1	p.Ile33Met	Myeloid	VUS	VUS
+chr7	148832680	G	C	EZH2	p.Ser106Ter	Myeloid	ONC	Oncogenic
+chr17	1659995	C	G	PRPF8	p.Asp1598His	Myeloid	VUS	VUS
+chr21	34834463	GC	G	RUNX1	p.Ala251ProfsTer3	Myeloid	ONC	Oncogenic
+chrX	124030988	G	GC	STAG2	p.Glu52ArgfsTer35	Myeloid	ONC	Oncogenic
+chrX	134417215	T	A	PHF6	p.Ile294Lys	Myeloid	VUS	VUS
+chr17	42218334	C	T	STAT5B	.	Myeloid	LBEN	Likely Benign
+chrX	124057905	GA	G	STAG2	p.Arg450GlufsTer20	Myeloid	ONC	Oncogenic
+chrX	124063873	T	TA	STAG2	p.Arg617ProfsTer18	Myeloid	ONC	Oncogenic
+chr11	119278180	A	C	CBL	p.Leu370Phe	Myeloid	VUS(HOT)	VUS
+chr5	177512354	C	T	DDX41	p.Gly530Asp	Myeloid	ONC	Oncogenic
+chr8	116861834	CACAT	C	RAD21	.	Myeloid	VUS	VUS
+chr19	33301803	C	G	CEBPA	p.Pro204=	Myeloid	LBEN	Likely Benign
+chr4	105272565	T	A	TET2	p.Val1395Glu	Myeloid	VUS	VUS
+chr4	105237058	C	A	TET2	p.Ser1039Ter	Myeloid	ONC	Oncogenic
+chr4	105269644	T	G	TET2	p.Leu1360Arg	Myeloid	VUS	VUS
+chr21	34792513	G	T	RUNX1	p.Tyr355Ter	Myeloid	ONC	Oncogenic
+chr17	31258385	AG	A	NF1	p.Gly1406GlufsTer22	Myeloid	ONC	Oncogenic
+chrX	15822791	GA	G	ZRSR2	p.Asn334IlefsTer?	Myeloid	ONC	Oncogenic
+chrX	40073438	GCTTGGTGGAAGGCCGTT	G	BCOR	p.Asn631LeufsTer8	Myeloid	ONC	Oncogenic
+chrX	15818638	C	T	ZRSR2	p.Gln275Ter	Myeloid	ONC	Oncogenic
+chr7	102111774	G	A	CUX1	p.Ala203Thr	Myeloid	VUS	VUS
+chr7	102197043	C	T	CUX1	p.Ser544=	Myeloid	LBEN	Likely Benign
+chr20	32435279	GC	G	ASXL1	p.Leu857CysfsTer10	Myeloid	ONC	Oncogenic
+chr7	152139230	A	G	KMT2C	p.Asp4830=	Myeloid	LBEN	Likely Benign
+chr7	102281870	C	T	CUX1	p.Arg618Cys	Myeloid	VUS	VUS
+chr7	101816064	T	C	CUX1	p.Trp12Arg	Myeloid	VUS	VUS
+chr5	177516333	CG	C	DDX41	p.Asn84LysfsTer27	Myeloid	ONC	Oncogenic
+chr12	111418795	G	A	SH2B3	p.Trp217Ter	Myeloid	ONC	Oncogenic
+chr4	105275538	T	TA	TET2	p.Thr1677AsnfsTer10	Myeloid	ONC	Oncogenic
+chr17	7673802	C	T	TP53	p.Arg273His	Lymphoid	ONC	Oncogenic
+chr17	7675214	A	T	TP53	p.Met133Lys	Lymphoid	LONC	Likely Oncogenic
+chr17	7673523	A	G	TP53	.	Myeloid	BEN	Benign
+chr17	7676261	C	T	TP53	p.Pro36=	Myeloid	BEN	Benign
+chr17	7675076	T	C	TP53	p.His179Arg	TP53 [Other]	ONC	Oncogenic
+chr17	7675143	C	A	TP53	p.Val157Phe	TP53 [Other]	ONC	Oncogenic
+chr7	148815007	G	C	EZH2	p.Pro527Ala	Myeloid	VUS	VUS
+chr12	54292451	CT	C	NFE2	p.Glu349SerfsTer43	Myeloid	VUS	VUS
+chr7	102248703	A	C	CUX1	p.Gly1393=	Myeloid	LBEN	Likely Benign
+chr3	128485997	T	C	GATA2	p.Ser201Gly	Myeloid	VUS	VUS
+chrX	124086662	A	G	STAG2	p.Met1057Val	Myeloid	VUS	VUS
+chr7	148810333	C	T	EZH2	p.Asp677Asn	Myeloid	VUS	VUS
+chr9	5126728	A	G	JAK2	p.Gln1112=	Myeloid	LBEN	Likely Benign
+chr4	105269664	C	T	TET2	p.Pro1367Ser	Myeloid	VUS	VUS
+chr4	105272601	GA	G	TET2	p.Gly1408GlufsTer40	Myeloid	ONC	Oncogenic
+chr19	33301423	A	G	CEBPA	p.Leu331Pro	Myeloid	VUS	VUS
+chrX	124061844	TCCTC	T	STAG2	p.Pro538TrpfsTer37	Myeloid	ONC	Oncogenic
+chr19	33302139	C	CT	CEBPA	p.Ala93GlyfsTer15	Myeloid	LONC	Likely Oncogenic
+chr7	152163761	T	C	KMT2C	p.Gln3272=	Myeloid	LBEN	Likely Benign
+chr13	28034100	T	TTGGAAACTCCCATTTGAGATCATA	FLT3	p.Tyr599_Pro606dup	Myeloid	ONC	Oncogenic
+chr19	33301902	C	CT	CEBPA	p.Gln172AlafsTer149	Myeloid	ONC	Oncogenic
+chr4	105236210	AC	A	TET2	p.Leu757SerfsTer56	Myeloid	ONC	Oncogenic
+chr2	25235779	T	C	DNMT3A	p.Gln842Arg	Myeloid	VUS	VUS
+chr17	60663135	CTCAAAAGATCCAGA	C	PPM1D	p.Ser468ThrfsTer3	Myeloid	LONC	Likely Oncogenic
+chr3	128483954	C	T	GATA2	p.Arg308Gln	Myeloid	VUS(HOT)	VUS
+chr19	33301746	AC	A	CEBPA	p.Gly223ValfsTer95	Myeloid	LONC	Likely Oncogenic
+chrX	40074853	C	G	BCOR	p.Ala165Pro	Myeloid	VUS	VUS
+chr13	28034087	T	TCTAAATTTTCTCTTGGAAACTCCCATTTGAGATCATATTCATATTCTCTGAAATCAACGTAGAAGTACTCATTATCTGAGGAGCCGGTCACCTGTA	FLT3	p.Val579_Leu610dup	Myeloid	ONC	Oncogenic
+chr13	28034138	A	AAATCAACGTAGAAGTACGGGT	FLT3	p.Asp593_Phe594insTyrProTyrPheTyrValAsp	Myeloid	ONC	Oncogenic
+chr4	152328391	T	C	FBXW7	.	Myeloid	ONC	Oncogenic
+chr18	44951946	G	T	SETBP1	p.Ser869Ile	Myeloid	VUS	VUS
+chr2	25234340	C	G	DNMT3A	p.Trp893Ser	Myeloid	LONC	Likely Oncogenic
+chr3	128481031	G	A	GATA2	p.Thr477=	Myeloid	LBEN	Likely Benign
+chr5	177512555	T	G	DDX41	p.Asp497Ala	Myeloid	LONC	Likely Oncogenic
+chr13	28034078	T	TTACCAAACTCTAAATTTTCTCTTGGAAACTCCCATTTGAGATCATATTCATATTCTCTGAAATCAA	FLT3	.	Myeloid	ONC	Oncogenic
+chr17	1679713	T	C	PRPF8	p.Thr395=	Myeloid	VUS	VUS
+chrX	15331257	CT	C	PIGA	p.Ser225ValfsTer2	Myeloid	ONC	Oncogenic
+chrX	47212792	A	G	UBA1	p.Met859Val	Myeloid	VUS	VUS
+chr4	105234708	GC	G	TET2	p.Ala256ValfsTer37	Myeloid	ONC	Oncogenic
+chr21	34792613	GC	CT	RUNX1	.	Myeloid	LONC	Likely Oncogenic
+chr7	152152709	G	A	KMT2C	p.Ser4174=	Myeloid	LBEN	Likely Benign
+chr12	54292679	G	A	NFE2	p.Arg273Trp	Myeloid	VUS	VUS
+chrX	47201531	C	T	UBA1	p.Ser244=	Myeloid	LBEN	Likely Benign
+chr4	105237340	GC	G	TET2	p.Cys1133Ter	Myeloid	ONC	Oncogenic
+chr4	105275656	CA	C	TET2	p.His1716LeufsTer3	Myeloid	ONC	Oncogenic
+chr17	31350167	A	G	NF1	.	Myeloid	VUS	VUS
+chr5	177512145	G	A	DDX41	p.Pro561=	Myeloid	LBEN	Likely Benign
+chr17	31358463	CT	C	NF1	.	Myeloid	BEN	Benign
+chr4	105237273	TTACTAGATACTCCTATA	T	TET2	p.Leu1111Ter	Myeloid	ONC	Oncogenic
+chr4	105269748	G	A	TET2	.	Myeloid	LONC	Likely Oncogenic
+chr12	25227422	G	A	KRAS	.	Myeloid	VUS	VUS
+chr20	32434896	A	G	ASXL1	p.Glu728=	Myeloid	LBEN	Likely Benign
+chr1	43352636	A	G	MPL	p.Tyr591Cys	Myeloid	VUS	VUS
+chr17	7673805	A	T	TP53	p.Val272Glu	Myeloid	ONC	Oncogenic
+chr12	111418673	TG	T	SH2B3	p.Gly177AlafsTer20	Myeloid	ONC	Oncogenic
+chrX	130014281	G	A	BCORL1	p.Pro503=	Myeloid	LBEN	Likely Benign
+chr17	42207664	G	A	STAT5B	p.Ala657=	Myeloid	VUS	VUS
+chr17	1684563	T	A	PRPF8	p.Gly3=	Myeloid	LBEN	Likely Benign
+chr4	105259760	CCCAAAAGAGGT	G	TET2	p.?	Myeloid	ONC	Oncogenic
+chr4	105237248	TA	T	TET2	p.Asn1103IlefsTer3	Myeloid	ONC	Oncogenic
+chr9	136497262	G	T	NOTCH1	p.Arg2159=	Myeloid	LBEN	Likely Benign
+chr4	105234550	AG	A	TET2	p.Ala204GlnfsTer3	Myeloid	LONC	Likely Oncogenic
+chr4	105275605	C	CA	TET2	p.Asn1700LysfsTer13	Myeloid	ONC	Oncogenic
+chrX	130037516	T	C	BCORL1	p.Ser1559=	Myeloid	LBEN	Likely Benign
+chr17	42212095	C	T	STAT5B	p.Arg523=	Myeloid	LBEN	Likely Benign
+chr7	102115222	G	A	CUX1	p.Arg208Gln	Myeloid	VUS	VUS
+chr20	32436861	G	T	ASXL1	p.Glu1383Asp	Myeloid	VUS	VUS
+chr4	105276239	CA	C	TET2	p.Lys1911AsnfsTer39	Myeloid	LONC	Likely Oncogenic
+chr21	34792408	T	G	RUNX1	p.Gln390His	Myeloid	VUS	VUS
+chr7	102201616	C	T	CUX1	p.Ala773=	Myeloid	LBEN	Likely Benign
+chr11	108302908	T	C	ATM	p.Ile1792Thr	Lymphoid	VUS	VUS
+chr16	81928588	T	C	PLCG2	p.Cys849Arg	Lymphoid	VUS	VUS
+chr17	7673534	C	A	TP53	.	Lymphoid	ONC	Oncogenic
+chr11	108279524	G	T	ATM	p.Arg1106Ser	Lymphoid	VUS	VUS
+chr17	7675052	C	A	TP53	.	Lymphoid	ONC	Oncogenic
+chr17	7675218	T	C	TP53	p.Lys132Glu	Lymphoid	ONC	Oncogenic
+chr17	7674953	T	C	TP53	p.His193Arg	Lymphoid	ONC	Oncogenic
+chr17	7674908	T	A	TP53	p.Asp208Val	Lymphoid	ONC	Oncogenic
+chr17	7673786	A	ATAGTAGGTACCATCC	TP53	p.Pro278_Gly279insAspGlyThrTyrTyr	Lymphoid	ONC	Oncogenic
+chrX	101356176	C	G	BTK	p.Cys481Ser	Lymphoid	LONC	Likely Oncogenic
+chr12	25227326	T	C	KRAS	p.Ala66=	Myeloid	LBEN	Likely Benign
+chrX	130014698	C	T	BCORL1	p.Pro642=	Myeloid	LBEN	Likely Benign
+chr18	63318347	C	A	BCL2	p.Arg107Leu	Myeloid	VUS	VUS
+chr4	105234821	T	C	TET2	p.Ser293=	Myeloid	LBEN	Likely Benign
+chr4	105236149	C	G	TET2	p.Ser736Ter	Myeloid	ONC	Oncogenic
+chr19	33301588	T	C	CEBPA	p.Lys276Arg	Myeloid	VUS	VUS
+chr1	1806476	T	C	GNB1	p.Lys89Arg	Myeloid	VUS	VUS
+chr2	25246659	AG	A	DNMT3A	p.Phe414SerfsTer237	Myeloid	ONC	Oncogenic
+chr4	105241394	TAATGT	C	TET2	p.(Asn1156GlyfsTer4)	Myeloid	ONC	Oncogenic
+chr11	534269	C	T	HRAS	p.Ala18=	Myeloid	LBEN	Likely Benign
+chr4	105236133	CA	C	TET2	p.Gln731HisfsTer20	Myeloid	ONC	Oncogenic
+chrX	15815871	G	A	ZRSR2	p.Gly251Glu	Myeloid	VUS	VUS
+chr4	105234901	A	AC	TET2	p.Glu320AspfsTer11	Myeloid	ONC	Oncogenic
+chr12	25245266	A	C	KRAS	.	Myeloid	LBEN	Likely Benign
+chr17	7673821	G	A	TP53	p.Arg267Trp	TP53 [Other]	ONC	Oncogenic
+chr17	7673534	C	T	TP53	.	Lymphoid	ONC	Oncogenic
+chr18	63318329	G	C	BCL2	p.Ala113Gly	Lymphoid	LONC	Likely Oncogenic
+chr17	7673774	CCG	CAAGAGATGGAGAC	TP53	p.Arg282ValfsTer67	Lymphoid	ONC	Oncogenic
+chr19	33301405	G	TT	CEBPA	p.Thr337LysfsTer66	Myeloid	LONC	Likely Oncogenic
+chr11	32396404	C	T	WT1	p.Val373Met	Myeloid	VUS	VUS
+chrX	47202952	G	A	UBA1	p.Gly415Arg	Myeloid	VUS	VUS
+chr4	105276274	G	T	TET2	p.Ala1922Ser	Myeloid	VUS	VUS
+chr9	5073774	G	GTGGAGACGAGAGTAAGTAAAACTA	JAK2	.	Myeloid	VUS	VUS
+chr7	152163089	G	A	KMT2C	p.Pro3496=	Myeloid	LBEN	Likely Benign
+chr7	102239397	C	T	CUX1	p.Gln1234Ter	Myeloid	ONC	Oncogenic
+chr17	1658304	G	A	PRPF8	p.Phe1818=	Myeloid	LBEN	Likely Benign
+chr12	11839180	G	C	ETV6	p.Gln68His	Myeloid	VUS	VUS
+chr7	148817292	A	T	EZH2	p.Val447Asp	Myeloid	VUS	VUS
+chr7	148817987	AC	A	EZH2	p.Val377CysfsTer47	Myeloid	ONC	Oncogenic
+chrX	134417246	CTG	C	PHF6	p.Cys305TrpfsTer7	Myeloid	LONC	Likely Oncogenic
+chr12	54292561	C	G	NFE2	p.Arg312Pro	Myeloid	VUS	VUS
+chr7	152169199	A	G	KMT2C	p.Gly3168=	Myeloid	LBEN	Likely Benign
+chr4	105276011	AG	A	TET2	p.Gly1835ValfsTer52	Myeloid	ONC	Oncogenic
+chr4	105236721	G	GT	TET2	p.Pro929SerfsTer4	Myeloid	ONC	Oncogenic
+chr12	111418174	C	A	SH2B3	p.Ser10Ter	Myeloid	LONC	Likely Oncogenic
+chr17	31232759	C	T	NF1	p.Ala1125Val	Myeloid	VUS	VUS
+chr2	25234386	AG	A	DNMT3A	p.Ser878ProfsTer3	Myeloid	LONC	Likely Oncogenic
+chr7	152273750	T	C	KMT2C	p.Ile323Val	Myeloid	VUS	VUS
+chr4	105275334	T	G	TET2	p.Tyr1608Ter	Myeloid	ONC	Oncogenic
+chrX	15803796	G	T	ZRSR2	p.Glu104Asp	Myeloid	VUS	VUS
+chr2	25240424	A	C	DNMT3A	p.Phe734Val	Myeloid	VUS	VUS
+chr7	102196725	G	C	CUX1	p.Pro438=	Myeloid	LBEN	Likely Benign
+chr17	44210817	C	CACATTCGGGCCAGCAGGCGGGTCAGCTCGCTCTCGTGCTCGGAGAGCG	UBTF	p.Met444_Trp445insSerLeuSerGluHisGluSerGluLeuThrArgLeuLeuAlaArgMet	Myeloid	ONC	Oncogenic
+chr1	114716062	A	C	NRAS	p.Asp33Glu	Myeloid	VUS	VUS
+chrX	40052187	C	T	BCOR	p.Thr1730=	Myeloid	LBEN	Likely Benign
+chr1	43352635	T	C	MPL	p.Tyr591His	Myeloid	VUS	VUS
+chr1	43352636	A	C	MPL	p.Tyr591Ser	Myeloid	VUS	VUS
+chrX	47199519	G	A	UBA1	p.Glu129Lys	Myeloid	VUS	VUS
+chr3	49375540	C	A	RHOA	p.Gly17Val	Lymphoid	ONC	Oncogenic
+chr4	105243615	CG	C	TET2	p.Glu1215SerfsTer11	Lymphoid	ONC	Oncogenic
+chr7	102197110	C	T	CUX1	p.His567Tyr	Myeloid	VUS	VUS
+chr1	43339427	C	T	MPL	p.Thr183Met	Myeloid	VUS	VUS
+chr7	148819591	CT	C	EZH2	.	Myeloid	VUS	VUS
+chr15	90088607	T	C	IDH2	p.Arg172Gly	Lymphoid	LONC	Likely Oncogenic
+chr20	41170266	C	T	PLCG1	p.Ala935=	Lymphoid	LBEN	Likely Benign
+chr5	177513080	C	T	DDX41	p.Glu411=	Myeloid	LBEN	Likely Benign
+chr17	60663340	AG	A	PPM1D	p.Thr537HisfsTer2	Myeloid	LONC	Likely Oncogenic
+chr9	136497317	G	A	NOTCH1	p.Ser2141Leu	Myeloid	VUS	VUS
+chr17	76736880	C	G	SRSF2	p.Arg94Pro	Myeloid	VUS	VUS
+chr4	105236814	C	T	TET2	p.Gln958Ter	Myeloid	ONC	Oncogenic
+chr4	105272921	A	C	TET2	.	Myeloid	VUS	VUS
+chr12	11884540	C	T	ETV6	p.Arg369Trp	Myeloid	LONC	Likely Oncogenic
+chr17	7674891	G	A	TP53	p.His214Tyr	CLL	VUS	VUS
+chr21	34859518	T	G	RUNX1	p.His190Pro	Myeloid	VUS	VUS
+chr17	7670669	G	A	TP53	p.Ala347Val	TP53 [Other]	VUS	VUS
+chr5	171410509	C	CT	NPM1	.	Myeloid	BEN	Benign
+chr17	7674892	T	C	TP53	p.Arg213=	Myeloid	BEN	Benign
+chr17	42322464	T	A	STAT3	p.Tyr640Phe	Lymphoid	ONC	Oncogenic
+chr17	42323050	G	C	STAT3	p.Ser614Arg	Lymphoid	LONC	Likely Oncogenic
+chr17	42322402	C	A	STAT3	p.Asp661Tyr	Lymphoid	ONC	Oncogenic
+chr17	60663242	C	G	PPM1D	p.Ser503Ter	Myeloid	LONC	Likely Oncogenic
+chr20	32435605	CGAG	C	ASXL1	p.Gly967del	Myeloid	VUS	VUS
+chr4	105234922	C	G	TET2	p.Ser327Ter	Myeloid	ONC	Oncogenic
+chr4	105276005	TA	T	TET2	p.Val1833SerfsTer54	Myeloid	ONC	Oncogenic
+chr12	22659064	G	A	ETNK1	p.Gly156Asp	Myeloid	VUS	VUS
+chr12	111446967	T	C	SH2B3	p.Phe287Ser	Myeloid	VUS	VUS
+chr8	116866731	G	A	RAD21	.	Myeloid	VUS	VUS
+chrX	15823068	A	C	ZRSR2	p.Arg425Ser	Myeloid	VUS	VUS
+chr12	11884473	T	G	ETV6	p.Tyr346Ter	Myeloid	ONC	Oncogenic
+chr21	34834438	A	AAAGGCAGT	RUNX1	p.Phe259LeufsTer55	Myeloid	ONC	Oncogenic
+chr17	7675156	C	T	TP53	p.Pro152=	Myeloid	LBEN	Likely Benign
+chr1	43349337	TG	AA	MPL	p.Trp515Lys	Myeloid	ONC	Oncogenic
+chr21	34834500	T	TGACCCTCATGGCTGTGCGCC	RUNX1	p.Ser239GlyfsTer5	Myeloid	ONC	Oncogenic
+chr12	111448011	CTCCCTTCCTCACTGGGATTCAGAG	C	SH2B3	p.Asp485_Trp492del	Myeloid	VUS	VUS
+chr7	152185571	CTTTCTTGTGA	CCCATCG	KMT2C	p.Ser1687ArgfsTer29	Myeloid	ONC	Oncogenic
+chr17	42323045	T	C	STAT3	p.Glu616Gly	Lymphoid	LONC	Likely Oncogenic
+chr21	34792303	C	G	RUNX1	p.Pro425=	Myeloid	LBEN	Likely Benign
+chr3	128483887	TCGGTTCT	TGGTCCCGAAG	GATA2	p.Gln328_Arg330delinsProSerGlyPro	Myeloid	VUS	VUS
+chr4	105236773	AG	A	TET2	p.Asp945ThrfsTer8	Myeloid	ONC	Oncogenic
+chr4	105237165	GA	G	TET2	p.Asp1075ValfsTer7	Myeloid	ONC	Oncogenic
+chr17	1682280	T	C	PRPF8	p.Met95Val	Myeloid	VUS	VUS
+chr17	7676032	A	C	TP53	p.Phe113Val	TP53 [Other]	ONC	Oncogenic
+chrX	15822903	C	G	ZRSR2	p.His370Gln	Myeloid	VUS	VUS
+chrX	40064561	C	T	BCOR	p.Glu1093Lys	Myeloid	VUS	VUS
+chr3	128481319	C	G	GATA2	.	Myeloid	LONC	Likely Oncogenic
+chr7	152148834	C	A	KMT2C	p.Val4365Leu	Myeloid	VUS	VUS
+chrX	124051120	G	A	STAG2	.	Myeloid	VUS	VUS
+chrX	124064046	C	T	STAG2	p.Gln674Ter	Myeloid	ONC	Oncogenic
+chr17	7670711	C	T	TP53	p.Arg333His	Myeloid	LBEN	Likely Benign
+chr17	31330479	T	C	NF1	p.Ile1931=	Myeloid	LBEN	Likely Benign
+chr17	7675246	G	T	TP53	.	Myeloid	VUS	VUS
+chr17	7676093	G	T	TP53	p.Pro92=	Myeloid	LBEN	Likely Benign
+chr17	7674326	C	G	TP53	.	Myeloid	BEN	Benign
+chr17	7674229	C	T	TP53	p.Gly245Asp	CLL	ONC	Oncogenic
+chr17	7675075	A	G	TP53	p.His179=	Myeloid	LBEN	Likely Benign
+chr4	105234174	TTTACACAAGAAAG	T	TET2	p.Phe78LeufsTer13	Myeloid	ONC	Oncogenic
+chr2	25244579	C	T	DNMT3A	p.Gly543Asp	Myeloid	VUS(HOT)	VUS
+chr11	119278537	T	G	CBL	p.Cys419Gly	Myeloid	VUS	VUS
+chr7	102201748	C	T	CUX1	p.Ser817=	Myeloid	LBEN	Likely Benign
+chr17	31235903	C	T	NF1	.	Myeloid	VUS	VUS
+chr5	177511871	T	C	DDX41	p.Lys597Glu	Myeloid	VUS	VUS
+chrX	124065872	A	G	STAG2	.	Myeloid	VUS	VUS
+chr1	43352743	C	A	MPL	p.Leu627Ile	Myeloid	VUS	VUS
+chr7	152199324	G	A	KMT2C	p.Pro1410Ser	Myeloid	VUS	VUS
+chr19	33302112	GC	G	CEBPA	p.Gly101AlafsTer59	Myeloid	ONC	Oncogenic
+chr19	33301480	TGCTGCGTCTCCACGTTGC	T	CEBPA	p.Arg306_Gln311del	Myeloid	LONC	Likely Oncogenic
+chrX	40074827	G	A	BCOR	p.Ser173=	Myeloid	LBEN	Likely Benign
+chr17	31232043	A	ATTTTT	NF1	.	Myeloid	LBEN	Likely Benign
+chr12	111447002	A	G	SH2B3	p.Met299Val	Myeloid	VUS	VUS
+chr12	54293301	G	GT	NFE2	p.Tyr65Ter	Myeloid	VUS	VUS
+chr9	136497343	C	G	NOTCH1	p.Thr2132=	Myeloid	LBEN	Likely Benign
+chrX	101353928	GGA	TCC	BTK	p.Ser564Gly	Lymphoid	VUS	VUS
+chr5	177515007	G	A	DDX41	p.Thr236Met	Myeloid	VUS	VUS
+chr4	105275871	T	C	TET2	p.Asn1787=	Myeloid	LBEN	Likely Benign
+chr17	7674221	G	C	TP53	p.Arg248Gly	Myeloid	ONC	Oncogenic
+chr1	43346515	C	T	MPL	p.Arg351Cys	Myeloid	VUS	VUS
+chrX	124064016	A	T	STAG2	p.Lys664Ter	Myeloid	ONC	Oncogenic
+chrX	134393500	G	A	PHF6	.	Myeloid	ONC	Oncogenic
+chr3	128485797	G	A	GATA2	p.Pro267=	Myeloid	LBEN	Likely Benign
+chr21	34792447	G	C	RUNX1	p.Tyr377Ter	Myeloid	ONC	Oncogenic
+chr21	34886989	C	CGGCCA	RUNX1	p.Gly69TrpfsTer5	Myeloid	ONC	Oncogenic
+chrX	134393953	G	C	PHF6	.	Myeloid	ONC	Oncogenic
+chr4	105234903	C	T	TET2	p.Gln321Ter	Myeloid	ONC	Oncogenic
+chr12	111448092	T	TCC	SH2B3	p.Arg508ProfsTer41	Myeloid	LONC	Likely Oncogenic
+chr2	25243898	C	T	DNMT3A	p.Gly646Arg	Myeloid	VUS	VUS
+chr7	148807705	A	T	EZH2	p.Tyr733Asn	Myeloid	VUS	VUS
+chr12	11853562	GT	G	ETV6	.	Myeloid	LONC	Likely Oncogenic
+chr7	148819690	G	A	EZH2	.	Myeloid	VUS	VUS
+chr21	34880727	A	G	RUNX1	.	Myeloid	VUS	VUS
+chrX	130013653	C	T	BCORL1	p.Pro294Leu	Myeloid	VUS	VUS
+chr1	43352752	AGCTATTG	A	MPL	p.Tyr631SerfsTer49	Myeloid	VUS	VUS
+chr2	25240694	C	T	DNMT3A	p.Gly707Ser	Myeloid	VUS	VUS
+chr2	25247051	CT	C	DNMT3A	p.Gln374ArgfsTer33	Myeloid	ONC	Oncogenic
+chr21	34887020	CAGCGGCAACGCCTCGCTCATCTTGCCTGGGCTCAGCGCGGTGGAAGGCGGCGTGA	C	RUNX1	p.Phe40TrpfsTer14	Myeloid	ONC	Oncogenic
+chr7	152176996	G	A	KMT2C	p.Thr2819=	Myeloid	LBEN	Likely Benign
+chr12	54292547	G	A	NFE2	p.Arg317Trp	Myeloid	VUS	VUS
+chrX	47209931	C	A	UBA1	p.Asp669Glu	Myeloid	VUS	VUS
+chr2	25246041	G	A	DNMT3A	p.Gln485Ter	Myeloid	ONC	Oncogenic
+chr17	31233141	C	A	NF1	p.Val1212=	Myeloid	LBEN	Likely Benign
+chr2	25239205	A	C	DNMT3A	p.Val778Gly	Myeloid	VUS	VUS
+chr2	25247690	C	T	DNMT3A	p.Trp305Ter	Myeloid	ONC	Oncogenic
+chr4	105269610	A	T	TET2	p.Ile1349Phe	Myeloid	VUS	VUS
+chrX	40064389	T	C	BCOR	p.Glu1150Gly	Myeloid	VUS	VUS
+chrX	47212481	G	T	UBA1	p.Gly841Val	Myeloid	VUS	VUS
+chr4	105275349	T	A	TET2	p.Asn1613Lys	Myeloid	VUS	VUS
+chr4	105235915	AC	A	TET2	p.Gln659ArgfsTer41	Myeloid	ONC	Oncogenic
+chr4	105243610	T	C	TET2	p.Leu1212Ser	Myeloid	VUS	VUS
+chrX	15822782	A	ATG	ZRSR2	p.Phe332CysfsTer?	Myeloid	ONC	Oncogenic
+chr7	152224451	C	T	KMT2C	p.Gly1048Ser	Myeloid	VUS	VUS
+chr12	112489179	C	A	PTPN11	.	Myeloid	VUS	VUS
+chrX	130013554	C	T	BCORL1	p.Ala261Val	Myeloid	VUS	VUS
+chrX	40052402	T	C	BCOR	.	Myeloid	VUS	VUS
+chr17	7674202	A	G	TP53	p.Ile254Thr	Myeloid	ONC	Oncogenic
+chrX	124077953	A	ATAG	STAG2	.	Myeloid	VUS	VUS
+chrX	40064601	TG	CT	BCOR	p.?	Myeloid	VUS	VUS
+chr17	7674226	A	C	TP53	p.Met246Arg	CLL	ONC	Oncogenic
+chr2	25241615	GC	G	DNMT3A	p.His677ThrfsTer28	Myeloid	ONC	Oncogenic
+chr17	31374156	A	C	NF1	.	Myeloid	VUS	VUS
+chrX	124068591	A	ATG	STAG2	p.Arg766Ter	Myeloid	ONC	Oncogenic
+chr4	105269730	C	T	TET2	p.Gln1389Ter	Myeloid	ONC	Oncogenic
+chr4	105269654	G	T	TET2	p.Lys1363Asn	Myeloid	VUS	VUS
+chr17	44210306	C	T	UBTF	.	Myeloid	VUS	VUS
+chr3	128486188	G	T	GATA2	p.Pro137Gln	Myeloid	VUS	VUS
+chr7	101916184	CT	C	CUX1	p.Ile46SerfsTer19	Myeloid	ONC	Oncogenic
+chr20	32436945	G	A	ASXL1	p.Trp1411Ter	Myeloid	LONC	Likely Oncogenic
+chr4	105275857	CA	C	TET2	p.Asn1784ThrfsTer36	Myeloid	LONC	Likely Oncogenic
+chr17	7674919	C	T	TP53	p.Glu204=	Myeloid	LBEN	Likely Benign
+chr2	25240346	C	CCACCACATTCTCAAAGAGCCAGAAGAAGGGGCGATCATCTCCCTCCTTGGGCCGCGCATCATGCAGGAGGCGGTAGAACTCAAAGAAGAGCCGG	DNMT3A	p.Ala760ProfsTer5	Myeloid	ONC	Oncogenic
+chr12	111446949	AC	A	SH2B3	p.Arg282GlyfsTer14	Myeloid	ONC	Oncogenic
+chr4	105275493	T	TC	TET2	p.Ser1663LysfsTer7	Myeloid	ONC	Oncogenic
+chr7	152163528	C	T	KMT2C	p.Arg3350Lys	Myeloid	VUS	VUS
+chr17	31258426	T	G	NF1	p.Val1419Gly	Myeloid	VUS	VUS
+chrX	40063846	G	T	BCOR	p.Leu1203=	Myeloid	LBEN	Likely Benign
+chrX	130025173	G	A	BCORL1	p.Gly1291Asp	Myeloid	VUS	VUS
+chrX	47199051	A	G	UBA1	p.Met41Val	Myeloid	ONC	Oncogenic
+chr21	34792367	T	TG	RUNX1	p.His404ProfsTer196	Myeloid	ONC	Oncogenic
+chr1	43346917	GG	AA	MPL	p.Gly431Asn	Myeloid	VUS	VUS
+chr13	28034079	T	TACCAAACTCTAAATTTTCTCTTGGAAACTCCCATTTGAGATCATATTC	FLT3	.	Myeloid	ONC	Oncogenic
+chr12	54295134	C	T	NFE2	.	Myeloid	VUS	VUS
+chr7	152202954	T	C	KMT2C	p.Thr1358Ala	Myeloid	VUS	VUS
+chr17	31340488	CAT	C	NF1	.	Myeloid	LBEN	Likely Benign
+chrX	15324758	T	C	PIGA	p.Gln365=	Myeloid	LBEN	Likely Benign
+chr17	31374134	T	C	NF1	p.Asn2833=	Myeloid	LBEN	Likely Benign
+chr21	34886902	G	GGAA	RUNX1	p.Phe97dup	Myeloid	VUS	VUS
+chr12	25215446	T	G	KRAS	p.Met189Leu	Myeloid	VUS	VUS
+chr13	28034134	T	TCTGAAATCAACGTAGAAGTACTCATTATCTGAG	FLT3	p.Ser584_Phe594dup	Myeloid	ONC	Oncogenic
+chr4	105235856	G	GA	TET2	p.Asn639LysfsTer42	Myeloid	ONC	Oncogenic
+chr4	105276183	G	GA	TET2	p.Asn1892LysfsTer14	Myeloid	LONC	Likely Oncogenic
+chr7	102248831	G	T	CUX1	p.Ser1436Ile	Myeloid	VUS	VUS
+chrX	134417193	GG	GAA	PHF6	p.Gly287GlufsTer7	Myeloid	ONC	Oncogenic
+chrX	130015630	C	CGGGG	BCORL1	p.Glu954GlyfsTer8	Myeloid	ONC	Oncogenic
+chr17	1679180	G	C	PRPF8	p.Thr479Ser	Myeloid	VUS	VUS
+chr7	152252002	G	A	KMT2C	p.Leu520=	Myeloid	LBEN	Likely Benign
+chr7	102227405	CCT	C	CUX1	p.Pro1057ArgfsTer8	Myeloid	ONC	Oncogenic
+chr4	105272786	C	AG	TET2	p.Leu1469SerfsTer9	Myeloid	ONC	Oncogenic
+chr4	105275798	TC	T	TET2	p.His1764IlefsTer56	Myeloid	ONC	Oncogenic
+chr21	34834485	C	T	RUNX1	p.Ala244Thr	Myeloid	VUS	VUS
+chr21	34886865	T	G	RUNX1	p.Lys110Thr	Myeloid	LONC	Likely Oncogenic
+chr7	148817221	C	T	EZH2	.	Myeloid	ONC	Oncogenic
+chr12	25225628	C	T	KRAS	p.Ala146Thr	Myeloid	ONC	Oncogenic
+chr17	60663352	GA	G	PPM1D	p.Glu540GlyfsTer7	Myeloid	LONC	Likely Oncogenic
+chr21	34792309	G	A	RUNX1	p.Arg423=	Myeloid	LBEN	Likely Benign
+chrX	47199485	C	T	UBA1	p.Tyr117=	Myeloid	LBEN	Likely Benign
+chr2	25246272	CAT	C	DNMT3A	p.Met439ValfsTer5	Myeloid	ONC	Oncogenic
+chr7	102189858	A	T	CUX1	p.Lys355Ter	Myeloid	ONC	Oncogenic
+chr17	44210310	CCT	C	UBTF	.	Myeloid	LBEN	Likely Benign
+chr9	136496464	G	A	NOTCH1	p.Ala2425=	Myeloid	LBEN	Likely Benign
+chr20	32433412	A	ATGGG	ASXL1	p.His407TrpfsTer4	Myeloid	ONC	Oncogenic
+chr7	152194558	A	G	KMT2C	p.Pro1463=	Myeloid	LBEN	Likely Benign
+chr7	152247989	A	G	KMT2C	p.Thr815=	Myeloid	LBEN	Likely Benign
+chr7	152199375	G	A	KMT2C	p.Leu1393Phe	Myeloid	VUS	VUS
+chr8	116856237	G	T	RAD21	p.Thr289Asn	Myeloid	VUS	VUS
+chr9	5077495	C	T	JAK2	p.Thr636Ile	Myeloid	VUS	VUS
+chrX	130016116	C	T	BCORL1	p.Pro1115Leu	Myeloid	VUS	VUS
+chr9	136502463	C	T	NOTCH1	p.Pro1731=	Myeloid	LBEN	Likely Benign
+chr13	28034081	C	CCAAACTCTAAATTTTCTCTTGGAAACTCCCATTTGAGATCATATTCATATTCTCTGA	FLT3	p.Phe612_Gly613insValArgGluTyrGluTyrAspLeuLysTrpGluPheProArgGluAsnLeuGluPhe	Myeloid	ONC	Oncogenic
+chr2	25234397	T	C	DNMT3A	p.Tyr874Cys	Myeloid	VUS	VUS
+chr7	102280064	C	A	CUX1	p.Arg570=	Myeloid	VUS	VUS
+chr12	111418241	G	T	SH2B3	p.Leu32Phe	Myeloid	VUS	VUS
+chr17	44210786	C	T	UBTF	.	Myeloid	VUS	VUS
+chr2	25247657	C	G	DNMT3A	p.Thr316=	Myeloid	LBEN	Likely Benign
+chr9	5069980	A	G	JAK2	p.Ser523=	Myeloid	LBEN	Likely Benign
+chr17	31356976	C	T	NF1	p.Ser2585=	Myeloid	BEN	Benign
+chr2	25239161	A	C	DNMT3A	p.Tyr793Asp	Myeloid	VUS(HOT)	VUS
+chr4	105275309	C	T	TET2	p.Thr1600Ile	Myeloid	VUS	VUS
+chr4	105236261	ATCAT	A	TET2	p.Phe775LeufsTer37	Myeloid	ONC	Oncogenic
+chr4	105236198	TA	T	TET2	p.Glu754ArgfsTer59	Lymphoid	ONC	Oncogenic
+chr4	105236816	G	GA	TET2	p.Gln960AlafsTer12	Lymphoid	ONC	Oncogenic
+chr3	49375540	C	G	RHOA	p.Gly17Ala	Lymphoid	VUS(HOT)	VUS
+chr7	148829775	A	C	EZH2	p.Ile146Ser	Myeloid	LONC	Likely Oncogenic
+chr20	32434971	C	T	ASXL1	p.Pro753=	Myeloid	LBEN	Likely Benign
+chr17	31182623	G	A	NF1	p.Gln282=	Myeloid	LBEN	Likely Benign
+chr7	152176641	G	T	KMT2C	p.Pro2938Thr	Myeloid	VUS	VUS
+chr7	152248014	G	A	KMT2C	p.Ser807Phe	Myeloid	VUS	VUS
+chr17	31163300	C	T	NF1	p.Arg135Trp	Myeloid	VUS	VUS
+chr13	28018547	G	A	FLT3	p.His821Tyr	Myeloid	VUS	VUS
+chr17	31235695	G	GTA	NF1	p.Glu1266Ter	Myeloid	ONC	Oncogenic
+chr8	116854440	C	T	RAD21	p.Arg322=	Myeloid	LBEN	Likely Benign
+chr1	43338704	CT	C	MPL	p.Phe126LeufsTer5	Myeloid	VUS	VUS
+chr17	31226459	A	AC	NF1	p.Ile679AspfsTer21	Myeloid	ONC	Oncogenic
+chrX	40074499	C	A	BCOR	p.Ala283Ser	Myeloid	VUS	VUS
+chr1	43352726	T	C	MPL	p.Ile621Thr	Myeloid	VUS	VUS
+chr7	50376714	C	T	IKZF1	p.Asn114=	Myeloid	LBEN	Likely Benign
+chr2	208248388	C	A	IDH1	p.Arg132Leu	Myeloid	ONC	Oncogenic
+chr9	136496614	G	T	NOTCH1	p.Thr2375=	Myeloid	LBEN	Likely Benign
+chr12	11650099	G	A	ETV6	.	Myeloid	LBEN	Likely Benign
+chr5	177512574	C	T	DDX41	p.Val491Ile	Myeloid	VUS	VUS
+chr13	28034081	C	CCAAACTCTAAATTTTCTCTTGGAAACTCCCATTTGAGATCATATTCATATTCTCTGAAATGAACAT	FLT3	p.Phe612_Gly613insAspValHisPheArgGluTyrGluTyrAspLeuLysTrpGluPheProArgGluAsnLeuGluPhe	Myeloid	ONC	Oncogenic
+chr4	105275957	T	TA	TET2	p.His1817ThrfsTer5	Myeloid	ONC	Oncogenic
+chr4	105269661	C	G	TET2	p.Arg1366Gly	Myeloid	VUS	VUS
+chr13	28034117	A	AGATCATATTCATATTCTCTGAAATCAAAGC	FLT3	p.Asp600_Leu601insArgPheAspPheArgGluTyrGluTyrAsp	Myeloid	ONC	Oncogenic
+chr17	7675142	A	G	TP53	p.Val157Ala	TP53 [Other]	LONC	Likely Oncogenic
+chr17	1658664	C	A	PRPF8	p.Arg1746=	Myeloid	LBEN	Likely Benign
+chr17	7675191	A	G	TP53	p.Cys141Arg	CLL	LONC	Likely Oncogenic
+chr17	7675142	A	C	TP53	p.Val157Gly	CLL	ONC	Oncogenic
+chr17	7675131	C	T	TP53	p.Ala161Thr	Myeloid	ONC	Oncogenic
+chrX	124062933	TGG	T	STAG2	p.Asp558Ter	Myeloid	ONC	Oncogenic
+chrX	15804123	GA	G	ZRSR2	p.Glu109AspfsTer56	Myeloid	ONC	Oncogenic
+chrX	124051137	T	C	STAG2	p.Leu345Pro	Myeloid	VUS	VUS
+chr7	152148138	G	A	KMT2C	p.Arg4597Cys	Myeloid	VUS	VUS
+chr17	42224856	G	A	STAT5B	p.Arg100Cys	Myeloid	VUS	VUS
+chr17	1676568	AT	A	PRPF8	p.Asn775IlefsTer10	Myeloid	LONC	Likely Oncogenic
+chr4	105242851	AAGCTATTAGGATTGAAAGAGTCATCTAT	A	TET2	p.Ala1174LeufsTer43	Myeloid	ONC	Oncogenic
+chr12	54293070	TG	T	NFE2	p.Pro142GlnfsTer32	Myeloid	VUS	VUS
+chr7	152177047	T	A	KMT2C	p.Lys2802Asn	Myeloid	VUS	VUS
+chr4	54695695	C	T	KIT	p.Thr84Met	Myeloid	VUS	VUS
+chr20	32435514	T	C	ASXL1	p.Ala934=	Myeloid	LBEN	Likely Benign
+chr18	44952004	C	T	SETBP1	p.Ser888=	Myeloid	LBEN	Likely Benign
+chr2	25247727	C	A	DNMT3A	p.Gly293Val	Myeloid	VUS	VUS
+chr9	5070031	C	T	JAK2	p.Ile540=	Myeloid	LBEN	Likely Benign
+chr9	5070033	GAAATGA	G	JAK2	p.Asn542_Glu543del	Myeloid	LONC	Likely Oncogenic
+chr20	32435551	G	T	ASXL1	p.Glu947Ter	Myeloid	ONC	Oncogenic
+chr21	34859485	C	A	RUNX1	p.Arg201Leu	Myeloid	LONC	Likely Oncogenic
+chr17	31258377	G	A	NF1	p.Gly1403Ser	Myeloid	VUS	VUS
+chr4	105235034	TG	T	TET2	p.Gly365AlafsTer7	Myeloid	ONC	Oncogenic
+chr8	116850662	C	A	RAD21	p.Glu526Ter	Myeloid	ONC	Oncogenic
+chr7	148807705	A	C	EZH2	p.Tyr733Asp	Myeloid	VUS	VUS
+chr9	136504704	G	A	NOTCH1	p.Arg1663Trp	Myeloid	VUS	VUS
+chr17	31225257	T	C	NF1	.	Myeloid	LBEN	Likely Benign
+chr17	31226565	G	A	NF1	p.Arg711His	Myeloid	VUS	VUS
+chr21	34792326	T	A	RUNX1	p.Met418Leu	Lymphoid	LBEN	Likely Benign
+chr2	197400763	T	C	SF3B1	p.Glu890=	Lymphoid	LBEN	Likely Benign
+chr9	136497304	G	GTA	NOTCH1	p.Leu2146ThrfsTer103	Lymphoid	ONC	Oncogenic
+chr2	197400752	T	C	SF3B1	p.Asp894Gly	Lymphoid	VUS	VUS
+chrX	101356177	A	T	BTK	p.Cys481Ser	Lymphoid	LONC	Likely Oncogenic
+chrX	101353930	GGA	TCC	BTK	p.Ser564Gly	Lymphoid	VUS	VUS
+chrX	15818643	G	C	ZRSR2	.	Myeloid	ONC	Oncogenic
+chr2	25245326	C	G	DNMT3A	p.Cys494Ser	Myeloid	VUS	VUS
+chr7	152177666	C	T	KMT2C	p.Arg2596Gln	Myeloid	VUS	VUS
+chr4	105276053	C	G	TET2	p.Ser1848Ter	Myeloid	LONC	Likely Oncogenic
+chr4	105236817	A	T	TET2	p.Lys959Ter	Myeloid	ONC	Oncogenic
+chr4	105259710	A	C	TET2	p.Lys1299Gln	Lymphoid	VUS	VUS
+chr15	90088605	C	A	IDH2	p.Arg172Ser	Lymphoid	ONC	Oncogenic
+chr4	105275095	C	T	TET2	p.Gln1529Ter	Lymphoid	ONC	Oncogenic
+chr20	41173481	T	C	PLCG1	p.Ile1114Thr	Lymphoid	VUS	VUS
+chr17	7676254	C	A	TP53	p.Ala39Ser	TP53 [Other]	LBEN	Likely Benign
+chr17	7676102	G	A	TP53	p.Pro89=	Myeloid	LBEN	Likely Benign
+chr17	7676529	T	C	TP53	p.Leu22=	Lymphoid	LBEN	Likely Benign
+chr17	31327535	C	T	NF1	p.Arg1769Ter	Myeloid	ONC	Oncogenic
+chr7	148846528	C	T	EZH2	p.Arg63Gln	Myeloid	VUS	VUS
+chr17	7674885	C	T	TP53	p.Val216Met	TP53 [Other]	ONC	Oncogenic
+chr17	7675200	C	T	TP53	p.Ala138Thr	TP53 [Other]	LONC	Likely Oncogenic
+chr17	7675208	C	G	TP53	p.Cys135Ser	TP53 [Other]	ONC	Oncogenic
+chr17	31181429	A	T	NF1	p.Ala198=	Myeloid	LBEN	Likely Benign
+chr4	105275729	T	A	TET2	p.Leu1740Ter	Myeloid	LONC	Likely Oncogenic
+chr2	25240422	GA	G	DNMT3A	p.Phe734SerfsTer45	Myeloid	ONC	Oncogenic
+chr7	152248555	C	G	KMT2C	p.Asp627His	Myeloid	VUS	VUS
+chr7	50400064	A	G	IKZF1	p.Thr333Ala	Myeloid	VUS	VUS
+chr2	25237007	T	C	DNMT3A	.	Myeloid	ONC	Oncogenic
+chr7	102196895	A	G	CUX1	p.Lys495Arg	Myeloid	VUS	VUS
+chr11	533879	G	A	HRAS	p.Ala59=	Myeloid	LBEN	Likely Benign
+chr2	25246051	G	A	DNMT3A	p.Tyr481=	Myeloid	LBEN	Likely Benign
+chrX	40052282	G	A	BCOR	p.Arg1699Trp	Myeloid	VUS	VUS
+chr1	1815788	C	A	GNB1	p.Lys57Asn	Myeloid	VUS	VUS
+chr7	152230027	C	G	KMT2C	p.Asp958His	Myeloid	VUS	VUS
+chr9	136497079	G	A	NOTCH1	p.Pro2220=	Myeloid	LBEN	Likely Benign
+chr12	11869602	G	A	ETV6	p.Pro214=	Myeloid	LBEN	Likely Benign
+chr17	1678605	C	T	PRPF8	p.Thr589=	Myeloid	VUS	VUS
+chr4	105269695	TC	T	TET2	p.Cys1378ValfsTer70	Myeloid	ONC	Oncogenic
+chr8	116851977	CA	TG	RAD21	p.Gly481Arg	Myeloid	VUS	VUS
+chr8	116851978	A	G	RAD21	p.Ala480=	Myeloid	BEN	Benign
+chr8	116851977	C	T	RAD21	p.Gly481Arg	Myeloid	VUS	VUS
+chr17	31155970	C	CT	NF1	.	Myeloid	LBEN	Likely Benign
+chr7	152182049	T	C	KMT2C	p.Gln1937=	Myeloid	LBEN	Likely Benign
+chr9	5073770	G	A	JAK2	p.Val617Ile	Myeloid	VUS	VUS
+chr17	7676088	G	C	TP53	p.Ser94Ter	Myeloid	ONC	Oncogenic
