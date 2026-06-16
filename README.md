@@ -375,6 +375,8 @@ Binary task, positive = geneticist (Likely) Oncogenic:
 | OncoKB-only, evaluable (OncoKB had data) | 539 | 0.994 | **0.080** | — |
 | Multi-evidence (SVIG-UK v1) | 1,054 | 0.937 | 0.928 | **0.74** |
 
+> **Weighted κ** is Cohen's kappa with linear weights over the ordinal Benign < VUS < Oncogenic scale. It measures agreement with the geneticist *above chance*, penalising each disagreement by how far apart the two calls are — an Oncogenic↔Benign mismatch (2 steps) counts double an Oncogenic↔VUS one (1 step). Unlike raw accuracy it discounts the trivial agreement created by OncoKB's no-data→VUS abstentions, which is why it is used as the headline metric here. By the Landis & Koch convention 0.61–0.80 is "substantial" agreement; the multi-evidence gain (0.63 → 0.74) comes mostly from fixing benign-side 2-step errors.
+
 Key findings:
 
 - **Coverage drives the headline numbers.** 48.9% (515/1,054) of variants have no OncoKB data and default to VUS. Those abstentions count as "true negatives" in the all-variants row, inflating specificity. On the 539 variants OncoKB *actually* has data for, specificity collapses to **0.08** — OncoKB almost never calls a variant non-oncogenic, so its negative class is essentially untested. Always report coverage alongside accuracy.
@@ -450,6 +452,8 @@ needing data not present in the MAF are **not** implemented — most importantly
 (GENIE / COSMIC somatic counts, the strongest discriminator for recovering oncogenic
 calls), plus O5, O9, O11, B2, B5 and B7. Thresholds follow the documented framework;
 calibration is not independently validated against the certified WGLS pipeline.
+
+> The point values in the **Evidence / Code / Points** table above were assigned by a bioinformatician, not a geneticist, and were fixed *before* this validation was run — the numbers have **not** been adapted to fit the geneticist's classifications. They are a reasonable first pass rather than a calibrated model, and there is clear room for improvement: with further work (ideally geneticist-led) the weights could be refined to track real-world classification more closely.
 
 ---
 
