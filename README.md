@@ -383,10 +383,6 @@ Key findings:
 
 ![Sensitivity and specificity of each classifier against the geneticist](Files4ThisProject/validation/fig1_sens_spec.png)
 
-![Per-class agreement with the geneticist, OncoKB-only vs multi-evidence](Files4ThisProject/validation/fig2_class_agreement.png)
-
-The second figure shows where the multi-evidence scorer earns its keep: OncoKB-only never agrees with the geneticist on a benign call (0%), whereas the multi-evidence scorer recovers the benign class (98%) at a modest cost to the VUS class.
-
 The SVIG-UK multi-evidence scorer used here is included as methodology in `data/jack_list_validation/validation_report/` (`score_multievidence_inplace.py`, `smart_multievidence.py`). The curated variant set itself was constructed by the reference laboratory and is **not redistributed** with this repository; it is available on request.
 
 > The geneticist labels are tumour-type specific while SMART/OncoKB is tumour-agnostic, so some "false positives" are defensible rather than errors. This caveat affects the false-positive count more than the false-negative count.
