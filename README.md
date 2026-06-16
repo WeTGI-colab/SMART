@@ -365,7 +365,7 @@ Because MafAnnotator does not correctly annotate CNA rows, the pipeline's post-a
 
 ## Validation against expert classification
 
-SMART's calls were benchmarked against an independent geneticist's SVIG-UK classification on a synthetic myeloid validation set (`data/jack_list_validation/`, 1,054 tier-1 variants, hand-curated — **not patient data**). Two classifiers were compared: the current OncoKB-only verdict (`MY_VERDICT`) and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
+SMART's calls were benchmarked against an independent expert classification: the WGLS oncology team manually classified **1,054 onco-related variants across 58 genes** following SVIG-UK. Two classifiers were compared: the current OncoKB-only verdict (`MY_VERDICT`) and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
 
 Binary task, positive = geneticist (Likely) Oncogenic:
 
@@ -453,7 +453,7 @@ needing data not present in the MAF are **not** implemented — most importantly
 calls), plus O5, O9, O11, B2, B5 and B7. Thresholds follow the documented framework;
 calibration is not independently validated against the certified WGLS pipeline.
 
-> The point values in the **Evidence / Code / Points** table above were assigned by a bioinformatician, not a geneticist, and were fixed *before* this validation was run — the numbers have **not** been adapted to fit the geneticist's classifications. They are a reasonable first pass rather than a calibrated model, and there is clear room for improvement: with further work (ideally geneticist-led) the weights could be refined to track real-world classification more closely.
+> The point values in the **Evidence / Code / Points** table above were assigned by a bioinformatician, not a geneticist, and were fixed *before* this validation was run — the numbers have **not** been adapted to fit the geneticist's classifications. They are a reasonable first pass rather than a calibrated model, and there is clear room for improvement: with further work (ideally geneticist-led) the weights could be refined to track real-world classification more closely. It should also be kept in mind that SMART's annotation is tumour-agnostic, whereas the geneticists' classification is tumour-specific, so the two are not expected to align perfectly. Even with these limitations, this validation meets its objective: to gauge, in broad terms, how closely SMART's output approximates the reality represented by the geneticist's classification — and the encouraging result is that OncoKB alone, supplemented by a handful of additional annotation columns, already yields a good approximation.
 
 ---
 
