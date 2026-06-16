@@ -391,6 +391,70 @@ The SVIG-UK multi-evidence scorer used here is included as methodology in `data/
 
 > The geneticist labels are tumour-type specific while SMART/OncoKB is tumour-agnostic, so some "false positives" are defensible rather than errors. This caveat affects the false-positive count more than the false-negative count.
 
+### Class harmonisation
+
+OncoKB, the geneticist (WGLS, 5-class SVIG-UK) and the multi-evidence scorer use
+different label spaces, so all three were mapped onto a common Oncogenic / VUS / Benign
+scale before comparison:
+
+| Source | → Oncogenic (ONC) | → VUS | → Benign (BEN) |
+|--------|-------------------|-------|----------------|
+| OncoKB-only (`MY_VERDICT`) | `Oncogenic`, `Likely Oncogenic` | `Unknown` / no data | `Likely Neutral`, `Neutral` |
+| Geneticist (`WGLS`) | `Oncogenic`, `Likely Oncogenic` | `VUS` | `Likely Benign`, `Benign` |
+| Multi-evidence | `Oncogenic`, `Likely Oncogenic` | `VUS` | `Likely Benign`, `Benign` |
+
+For the binary metrics, **positive = (Likely) Oncogenic** on both sides.
+
+### Multi-evidence scoring scheme (SVIG-UK v1)
+
+Each variant accrues points from independent evidence axes; the codes (`O*`/`B*`) follow
+the ACGS / SVIG-UK 2025 framework. Points are additive **across** axes but mutually
+exclusive **within** an axis (only the strongest tier of each axis fires).
+
+| Evidence | Code | Points |
+|----------|------|-------:|
+| OncoKB `Oncogenic` | O10 | +10 |
+| OncoKB `Likely Oncogenic` / `Resistance` | O10 | +6 |
+| ClinVar `Pathogenic` | O10 | +5 |
+| ClinVar oncogenicity flag = `Oncogenic` | O10 | +4 |
+| ClinVar `Likely pathogenic` | O10 | +3 |
+| Loss-of-function (frameshift / stop-gain / splice, `HIGH` impact) | O2 | +4 |
+| Mutational hotspot (OncoKB **or** CancerHotspots) | O7 | +2 |
+| Absent from gnomAD | O3 | +2 |
+| Ultra-rare (gnomAD MAX_AF ≤ 1e-5) | O3 | +1 |
+| In-silico damaging (REVEL ≥ 0.7 **or** SpliceAI ≥ 0.2) | O6 | +1 |
+| Constrained gene (LOEUF < 0.6) | O8 | +1 |
+| OncoKB `Likely Neutral` | B6 | −4 |
+| OncoKB `Neutral` | B6 | −7 |
+| ClinVar `Benign` | B6 | −5 |
+| ClinVar `Likely benign` | B6 | −3 |
+| Common (gnomAD MAX_AF ≥ 1%) | B1 | −8 |
+| Sub-common (gnomAD MAX_AF ≥ 0.1%) | B1 | −4 |
+| In-silico benign (REVEL < 0.7 **and** SpliceAI < 0.1) | B3 | −1 |
+| Synonymous change | B4 | −4 |
+
+The summed score maps to a 5-class verdict:
+
+| Score | Verdict |
+|-------|---------|
+| ≥ 10 | Oncogenic |
+| 6 … 9 | Likely Oncogenic |
+| 0 … 5 | VUS |
+| −6 … −1 | Likely Benign |
+| ≤ −7 | Benign |
+
+*Example — DNMT3A R882H (a canonical hotspot):* OncoKB `Oncogenic` (+10) + ClinVar
+`Pathogenic` (+5) + ClinVar oncogenic flag (+4) + hotspot (+2) + in-silico damaging (+1)
+= **22 → Oncogenic**. Each variant's fired codes are written to an `EVIDENCE_CODES`
+column so the score is auditable by eye.
+
+This is a **v1 approximation** of SVIG-UK: it implements O2 (conservatively, no
+tumour-suppressor mode-of-action check), O3, O6, O7, O8, O10, B1, B3, B4 and B6. Codes
+needing data not present in the MAF are **not** implemented — most importantly **O4**
+(GENIE / COSMIC somatic counts, the strongest discriminator for recovering oncogenic
+calls), plus O5, O9, O11, B2, B5 and B7. Thresholds follow the documented framework;
+calibration is not independently validated against the certified WGLS pipeline.
+
 ---
 
 ## Tumor Type Handling
