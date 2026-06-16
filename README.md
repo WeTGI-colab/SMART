@@ -312,7 +312,9 @@ Intended for bioinformatics QC, cohort-level analysis, and integration with down
 
 ### Tier 1 — Full MAF &nbsp;(`Final_result_tier1.maf` · 1,028 columns)
 
-Standard MAF format carrying all non-dropped fields. Includes every `ONCOKB_TX_0` … `ONCOKB_TX_33` treatment expansion column, every diagnostic and prognostic implication entry, plus all raw VCF FORMAT fields. Column count scales with the breadth of OncoKB evidence returned for the variants in the run (higher for larger, more diverse cohorts).
+Standard MAF format carrying all non-dropped fields. Includes every `ONCOKB_TX_0` … `ONCOKB_TX_33` treatment expansion column, every diagnostic and prognostic implication entry, plus all raw VCF FORMAT fields.
+
+> **Note on the column count.** The OncoKB treatment, diagnostic, and prognostic implications are expanded into indexed columns (`ONCOKB_TX_0` … `ONCOKB_TX_33`, `ONCOKB_DIAG_*`, `ONCOKB_PROG_*`). To avoid emitting a large block of permanently empty columns, this expansion is **pruned dynamically**: only the index positions populated for at least one variant in the run are kept. The canonical full count is **1,028 columns**. Consequently the exact number varies with the breadth of OncoKB evidence returned for that specific set of variants — and if *none* of the variants in a given analysis populate any of the dynamic OncoKB expansion columns, the count can fall to roughly **800**. A lower count is therefore expected behaviour for small or low-evidence variant sets, not a pipeline error. The same dynamic pruning applies to Tier 2.
 
 Designed for direct input to downstream tools such as cBioPortal, oncoPrint generators, and custom R/Python analysis scripts.
 
@@ -358,6 +360,36 @@ Structural insertions (MantaINS) are intentionally routed to the mutation endpoi
 For copy-number variants, SMART applies the same 3-tier transcript selection logic to determine the correct gene symbol before querying OncoKB. This prevents misannotation in regions where multiple genes overlap (e.g. selecting CDKN2A over the adjacent CDKN2B for a 9p21 deletion).
 
 Because MafAnnotator does not correctly annotate CNA rows, the pipeline's post-analysis step overrides MafAnnotator's output for CNA variants with values derived directly from the OncoKB API: `VARIANT_IN_ONCOKB`, `ONCOGENIC`, `MUTATION_EFFECT`, all treatment levels, and `HIGHEST_SENSITIVE/RESISTANCE_LEVEL`.
+
+---
+
+## Validation against expert classification
+
+SMART's calls were benchmarked against an independent geneticist's SVIG-UK classification on a synthetic myeloid validation set (`data/jack_list_validation/`, 1,054 tier-1 variants, hand-curated — **not patient data**). Two classifiers were compared: the current OncoKB-only verdict (`MY_VERDICT`) and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
+
+Binary task, positive = geneticist (Likely) Oncogenic:
+
+| Classifier | N | Sens | Spec | Weighted κ |
+|---|---|---|---|---|
+| OncoKB-only, all variants | 1,054 | 0.953 | 0.915 | 0.63 |
+| OncoKB-only, evaluable (OncoKB had data) | 539 | 0.994 | **0.080** | — |
+| Multi-evidence (SVIG-UK v1) | 1,054 | 0.937 | 0.928 | **0.74** |
+
+Key findings:
+
+- **Coverage drives the headline numbers.** 48.9% (515/1,054) of variants have no OncoKB data and default to VUS. Those abstentions count as "true negatives" in the all-variants row, inflating specificity. On the 539 variants OncoKB *actually* has data for, specificity collapses to **0.08** — OncoKB almost never calls a variant non-oncogenic, so its negative class is essentially untested. Always report coverage alongside accuracy.
+- **Multi-evidence adds value on the benign side.** Per-class agreement with the geneticist for benign variants rises from 0% (OncoKB-only) to 98% (multi-evidence), lifting specificity (0.92 → 0.93) and weighted kappa (0.63 → 0.74).
+- **It does not recover missed oncogenic calls.** The false negatives are dominated by OncoKB-blind variants with high REVEL but no somatic-frequency evidence. Adding **O4 (GENIE/COSMIC somatic counts)** is the single change most likely to recover them.
+
+![Sensitivity and specificity of each classifier against the geneticist](Files4ThisProject/validation/fig1_sens_spec.png)
+
+![Per-class agreement with the geneticist, OncoKB-only vs multi-evidence](Files4ThisProject/validation/fig2_class_agreement.png)
+
+The second figure shows where the multi-evidence scorer earns its keep: OncoKB-only never agrees with the geneticist on a benign call (0%), whereas the multi-evidence scorer recovers the benign class (98%) at a modest cost to the VUS class.
+
+The SVIG-UK multi-evidence scorer used here is included as methodology in `data/jack_list_validation/validation_report/` (`score_multievidence_inplace.py`, `smart_multievidence.py`). The curated variant set itself was constructed by the reference laboratory and is **not redistributed** with this repository; it is available on request.
+
+> The geneticist labels are tumour-type specific while SMART/OncoKB is tumour-agnostic, so some "false positives" are defensible rather than errors. This caveat affects the false-positive count more than the false-negative count.
 
 ---
 
