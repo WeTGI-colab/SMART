@@ -377,6 +377,23 @@ Binary task, positive = geneticist (Likely) Oncogenic:
 
 > **Weighted κ** is Cohen's kappa with linear weights over the ordinal Benign < VUS < Oncogenic scale. It measures agreement with the geneticist *above chance*, penalising each disagreement by how far apart the two calls are — an Oncogenic↔Benign mismatch (2 steps) counts double an Oncogenic↔VUS one (1 step). Unlike raw accuracy it discounts the trivial agreement created by OncoKB's no-data→VUS abstentions, which is why it is used as the headline metric here. By the Landis & Koch convention 0.61–0.80 is "substantial" agreement; the multi-evidence gain (0.63 → 0.74) comes mostly from fixing benign-side 2-step errors.
 
+### Confusion counts (TP / TN / FP / FN)
+
+SMART is treated as **positive** when it calls a variant (Likely) Oncogenic, with the geneticist's classification as ground truth. Every variant then falls into one of four cases:
+
+- **TP — true positive:** SMART called it oncogenic *and* the geneticist agrees → a correctly flagged actionable variant.
+- **FP — false positive:** SMART called it oncogenic but the geneticist did not → an over-call (often defensible — see the tumour-type caveat below).
+- **TN — true negative:** SMART did **not** call it oncogenic *and* neither did the geneticist → a correctly *not*-flagged variant.
+- **FN — false negative:** SMART did not call it oncogenic but the geneticist did → a **missed** actionable variant, the most clinically important error.
+
+| Analysis | TP | TN | FP | FN | N |
+|----------|---:|---:|---:|---:|---:|
+| OncoKB-only, all variants | 486 | 498 | 46 | 24 | 1,054 |
+| OncoKB-only, evaluable (OncoKB had data) | 486 | 4 | 46 | 3 | 539 |
+| Multi-evidence, all variants | 478 | 505 | 39 | 32 | 1,054 |
+
+**The TN caveat — why the "evaluable" row matters.** The TN column of the first row (498) looks like a strong negative class, but it is misleading. **515 of the 1,054 variants have no OncoKB data at all** and default to VUS, i.e. "not oncogenic" — so almost all of those 498 TN are *abstentions*, not genuine "this is benign" judgements. When the count is restricted to the **539 variants OncoKB actually has data for**, the TN collapses to **4**: OncoKB almost never makes a confident non-oncogenic call, so its negative class is essentially untested. A high TN (and therefore high specificity) in the all-variants row is largely an artefact of OncoKB's missing data, not evidence that it discriminates benign variants. The multi-evidence scorer instead reaches **505 TN** by *actively* classifying those data-less variants, which is exactly where its specificity gain (0.92 → 0.93) comes from.
+
 Key findings:
 
 - **Coverage drives the headline numbers.** 48.9% (515/1,054) of variants have no OncoKB data and default to VUS. Those abstentions count as "true negatives" in the all-variants row, inflating specificity. On the 539 variants OncoKB *actually* has data for, specificity collapses to **0.08** — OncoKB almost never calls a variant non-oncogenic, so its negative class is essentially untested. Always report coverage alongside accuracy.
