@@ -673,7 +673,7 @@ python3 -m pytest . -v
 | `oncokb2.0.py` | `get_cancer_from_filename`, `clean_value`, `stringify_list`, `_extract_one_letter_protein`, `classify_variant` (all SVTYPE + MantaID combinations), `map_svtype_to_cna`, `load_preferred_transcripts`, `get_csq_index`, `parse_csq_format` |
 | `post_analysis.py` | `load_field_config`, `resolve_field_meta` (exact + wildcard pattern), `standardize_format_column`, `normalize_format_fields`, `add_vaf_column`, `clean_column_values`, `calculate_end_position`, `drop_columns` |
 
-**147 tests, all passing.** Real variants from the verification1 dataset (NRAS Q61R, IDH1 R132H, PIK3CA E545K/H1047R, BRAF V600E, TP53 R175H/R248W, EGFR exon 19 deletion) are used as parametrised ground-truth cases.
+**161 tests, all passing.** Real variants from the verification1 dataset (NRAS Q61R, IDH1 R132H, PIK3CA E545K/H1047R, BRAF V600E, TP53 R175H/R248W, EGFR exon 19 deletion) are used as parametrised ground-truth cases.
 
 #### Code coverage
 

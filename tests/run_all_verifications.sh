@@ -2,7 +2,8 @@
 # ==============================================================================
 # run_all_verifications.sh — Run all SMART verification suites
 #
-# Runs unit tests + verification1, verification3, verification4, and reports results.
+# Runs unit tests + verification1, verification3, verification4, verification5,
+# and reports results.
 # verification2 is a manual compatibility check (multiple callers, no automated
 # verify.py) and is excluded from automated runs.
 #
@@ -13,7 +14,8 @@
 # Options:
 #   --image IMAGE    Docker image to use (default: monkiky/smart:latest)
 #   --refs  DIR      Reference directory   (default: /Volumes/ExternalSSD/refs)
-#   --only  NAME     Run only one suite: unit | verification1 | verification3 | verification4
+#   --only  NAME     Run only one suite: unit | verification1 | verification3 | verification4 | verification5
+#                    (unit and verification5 need no Docker image, refs, or token)
 # ==============================================================================
 set -euo pipefail
 
@@ -34,7 +36,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ -z "$TOKEN" ]]; then
+# unit and verification5 are pure-Python suites that need no token; only require
+# the token when a Docker-based suite will actually run.
+if [[ -z "$TOKEN" && "$ONLY" != "unit" && "$ONLY" != "verification5" ]]; then
     echo "ERROR: ONCOKB_TOKEN is not set."
     echo "       Run: export ONCOKB_TOKEN=your_token_here"
     exit 1
@@ -87,6 +91,22 @@ if [[ -z "$ONLY" || "$ONLY" == "unit" ]]; then
         PASS_COUNT=$((PASS_COUNT + 1))
     else
         RESULTS+=("  unit tests (multi-transcript): FAIL")
+        FAIL_COUNT=$((FAIL_COUNT + 1))
+    fi
+fi
+
+# ── Verification 5 — Core pipeline unit tests (pytest, no Docker/token/refs) ──
+if [[ -z "$ONLY" || "$ONLY" == "verification5" ]]; then
+    echo ""
+    echo "================================================================"
+    echo " VERIFICATION 5: Core pipeline unit tests (pytest)"
+    echo "================================================================"
+
+    if bash "$SCRIPT_DIR/verification5/run_verification5.sh"; then
+        RESULTS+=("  verification5 (unit, pytest): PASS")
+        PASS_COUNT=$((PASS_COUNT + 1))
+    else
+        RESULTS+=("  verification5 (unit, pytest): FAIL")
         FAIL_COUNT=$((FAIL_COUNT + 1))
     fi
 fi

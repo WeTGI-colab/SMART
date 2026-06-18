@@ -1,36 +1,36 @@
 fields:
   COSMIC_CNT:
-    description: COSMIC Cancer Mutation Census — samples carrying this mutation (recurrence)
+    description: 'Number of samples in COSMIC with this mutation (official CMC column COSMIC_SAMPLE_MUTATED)'
     source: COSMIC
     version: CMC_v104
     tier: 2
   COSMIC_TIER:
-    description: COSMIC CMC mutation significance tier (1/2/3/Other)
+    description: 'Mutation significance: 1 = high, 2 = medium, 3 = low, Other = no predicted significance (official CMC column MUTATION_SIGNIFICANCE_TIER)'
     source: COSMIC
     version: CMC_v104
     tier: 2
   COSMIC_ONC_TSG:
-    description: COSMIC gene role (oncogene/TSG) from Cancer Gene Census
+    description: 'Role of gene in cancer (official CMC column ONC_TSG)'
     source: COSMIC
     version: CMC_v104
     tier: 2
   COSMIC_TESTED:
-    description: COSMIC CMC — samples tested at this locus
+    description: 'Number of samples in COSMIC tested for this mutation (official CMC column COSMIC_SAMPLE_TESTED)'
     source: COSMIC
     version: CMC_v104
     tier: 2
   COSMIC_CGC_TIER:
-    description: COSMIC Cancer Gene Census tier (1/2)
+    description: 'Cancer Gene Census Tier; see https://cancer.sanger.ac.uk/census (official CMC column CGC_TIER)'
     source: COSMIC
     version: CMC_v104
     tier: 2
   COSMIC_DNDS:
-    description: COSMIC CMC dN/dS disease q-value significance (driver signal)
+    description: 'dN/dS diseases with significant q-values (q-value < 0.05), analysed from TCGA whole-exome data in COSMIC (official CMC column DNDS_DISEASE_QVAL)'
     source: COSMIC
     version: CMC_v104
     tier: 2
   COSMIC_GENE:
-    description: COSMIC gene name for the matched mutation
+    description: 'Gene name curated in COSMIC, usually the accepted HGNC symbol (official CMC column GENE_NAME)'
     source: COSMIC
     version: CMC_v104
     tier: 2
@@ -902,7 +902,7 @@ fields:
     version: CIViC_v3.6
     tier: 3
   CIViC_VT:
-    description: CIViC Variant Name
+    description: 'Short, specific variant name, e.g. an amino-acid change (V600E) or a fusion. Ref: https://docs.civicdb.org/en/latest/model/variants/overview.html'
     source: CIViC
     version: CIViC_v3.6
     tier: 3
@@ -947,7 +947,7 @@ fields:
     version: CIViC_v3.6
     tier: 2
   CIViC_CSQ_CIViC Variant Name:
-    description: CIViC variant name
+    description: 'Short, specific variant name, e.g. an amino-acid change (V600E) or a fusion. Ref: https://docs.civicdb.org/en/latest/model/variants/overview.html'
     source: CIViC
     version: CIViC_v3.6
     tier: 3
@@ -957,7 +957,7 @@ fields:
     version: CIViC_v3.6
     tier: 2
   CIViC_CSQ_CIViC Variant Aliases:
-    description: Alternative names used for the CIViC variant
+    description: 'Additional names for the variant: longer nomenclature, database IDs (e.g. dbSNP), or alternative terms from the literature. Ref: https://docs.civicdb.org/en/latest/model/variants/overview.html'
     source: CIViC
     version: CIViC_v3.6
     tier: 2
@@ -977,7 +977,7 @@ fields:
     version: CIViC_v3.6
     tier: 2
   CIViC_CSQ_CIViC Molecular Profile Aliases:
-    description: Molecular Profile Aliases
+    description: 'Alternate names for the molecular profile that express the same variant combination. Ref: https://docs.civicdb.org/en/latest/model/molecular_profiles/overview.html'
     source: CIViC
     version: CIViC_v3.6
     tier: 2
@@ -1002,8 +1002,7 @@ fields:
     version: CIViC_v3.6
     tier: 2
   CIViC_CSQ_CIViC Molecular Profile Score:
-    description: Score assigned by CIViC representing evidence strength for the molecular
-      profile
+    description: 'Cumulative sum of Evidence Item Scores for the molecular profile (Evidence Level A=10/B=5/C=3/D=1/E=0.5 multiplied by the 1-5 star trust rating); reflects strength and amount of curated evidence. Ref: https://docs.civicdb.org/en/latest/model/molecular_profiles/evidence_score.html'
     source: CIViC
     version: CIViC_v3.6
     tier: 2
@@ -1018,7 +1017,7 @@ fields:
     version: CIViC_v3.6
     tier: 2
   CIViC_CSQ_CIViC Entity Disease:
-    description: Unique CIViC identifier for Entity Disease
+    description: Disease associated with the CIViC entity
     source: CIViC
     version: CIViC_v3.6
     tier: 3
@@ -1053,7 +1052,7 @@ fields:
     version: CIViC_v3.6
     tier: 3
   CIViC_CSQ_CIViC Entity ID:
-    description: Disease context associated with the CIViC entity
+    description: Unique CIViC identifier for the entity record
     source: CIViC
     version: CIViC_v3.6
     tier: 1
@@ -1073,12 +1072,12 @@ fields:
     version: CIViC_v3.6
     tier: 2
   CIViC_CSQ_CIViC Evidence Level:
-    description: CIViC evidence level classification
+    description: 'Evidence strength category from A (Validated, e.g. phase III) down to E; curation priority A>B>C>D>E. Ref: https://docs.civicdb.org/en/latest/model/evidence/level.html'
     source: CIViC
     version: CIViC_v3.6
     tier: 3
   CIViC_CSQ_CIViC Evidence Rating:
-    description: CIViC evidence rating score
+    description: 'Curator trust rating of the supporting study on a 1-5 star scale (reliability/quality of the evidence). Ref: https://docs.civicdb.org/en/latest/model/evidence/level.html'
     source: CIViC
     version: CIViC_v3.6
     tier: 2
@@ -1315,17 +1314,17 @@ fields:
     version: Version-Refer to the ONCOKB_DATA_VERSION column
     tier: drop
   ONCOKB_PROGNOSTIC_IMPLICATIONS:
-    description: This need to be updated. I cant find documentation online.
+    description: Detailed prognostic implications reported by OncoKB for the queried variant
     source: OncoKB
     version: Version-Refer to the ONCOKB_DATA_VERSION column
     tier: drop
   ONCOKB_variantSummary:
-    description: This need to be updated. I cant find documentation online.
+    description: Variant summary describing the variant oncogenicity (and last review date if VUS), provided by OncoKB
     source: OncoKB
     version: Version-Refer to the ONCOKB_DATA_VERSION column
     tier: drop
   ONCOKB_VUS.1:
-    description: This need to be updated. I cant find documentation online.
+    description: Indicates whether the variant is classified as a Variant of Uncertain Significance (duplicate of ONCOKB_VUS)
     source: OncoKB
     version: Version-Refer to the ONCOKB_DATA_VERSION column
     tier: drop
