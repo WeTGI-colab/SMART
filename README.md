@@ -81,6 +81,9 @@ This logic applies to both SNV/indel and CNA variants, ensuring consistent gene 
 | Python 3.10 | + pandas, cyvcf2, requests | Pipeline scripts |
 | OncoKB Annotator | Latest | MafAnnotator for MAF output |
 
+> **The container ships only _software_ — the annotation tools, VEP plugins, and pipeline scripts. It does _not_ contain the annotation databases.**
+> The reference/annotation data (VEP cache, ClinVar, CIViC, COSMIC, SpliceAI, REVEL, gnomAD constraints, Cancer Hotspots, liftover chain + genome) are large, separately-licensed datasets that you download once and provide at runtime via the mounted reference directory — see [Reference Files Setup](#reference-files-setup). This keeps the image small and lets each database be updated independently of the SMART code.
+
 ---
 
 ## Prerequisites
@@ -114,11 +117,15 @@ SMART expects a reference directory with the following structure:
 │   └── loeuf_dataset_grch38.tsv.gz               (+.tbi)
 ├── CancerHotSpots/
 │   └── hg38.hotspots_changv2_gao_nc.vcf.gz      (+.tbi)
+├── COSMIC/                          # OPTIONAL — enables COSMIC recurrence annotation
+│   └── cosmic_cmc_grch38.vcf.gz                 (+.tbi)
 └── homo_sapiens/                    # VEP cache directory
     └── 114_GRCh38/
 ```
 
 All reference files can be downloaded using the provided `utils/get_ref_files.sh` script (see [utils/README.md](utils/README.md)).
+
+COSMIC is **optional** and not redistributable: if the `COSMIC/` directory is present SMART adds Cancer Mutation Census recurrence columns, otherwise it is skipped. Build the file from your own COSMIC download with `utils/cosmic_cmc_to_vcf.py` (see [utils/README.md](utils/README.md)).
 
 ---
 
