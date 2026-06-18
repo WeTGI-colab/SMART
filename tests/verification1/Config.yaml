@@ -1,4 +1,39 @@
 fields:
+  COSMIC_CNT:
+    description: COSMIC Cancer Mutation Census — samples carrying this mutation (recurrence)
+    source: COSMIC
+    version: CMC_v104
+    tier: 2
+  COSMIC_TIER:
+    description: COSMIC CMC mutation significance tier (1/2/3/Other)
+    source: COSMIC
+    version: CMC_v104
+    tier: 2
+  COSMIC_ONC_TSG:
+    description: COSMIC gene role (oncogene/TSG) from Cancer Gene Census
+    source: COSMIC
+    version: CMC_v104
+    tier: 2
+  COSMIC_TESTED:
+    description: COSMIC CMC — samples tested at this locus
+    source: COSMIC
+    version: CMC_v104
+    tier: 2
+  COSMIC_CGC_TIER:
+    description: COSMIC Cancer Gene Census tier (1/2)
+    source: COSMIC
+    version: CMC_v104
+    tier: 2
+  COSMIC_DNDS:
+    description: COSMIC CMC dN/dS disease q-value significance (driver signal)
+    source: COSMIC
+    version: CMC_v104
+    tier: 2
+  COSMIC_GENE:
+    description: COSMIC gene name for the matched mutation
+    source: COSMIC
+    version: CMC_v104
+    tier: 2
   Tumor_Sample_Barcode:
     description: Tumour sample identifier
     source: VCF
