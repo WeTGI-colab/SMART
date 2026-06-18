@@ -365,7 +365,7 @@ Because MafAnnotator does not correctly annotate CNA rows, the pipeline's post-a
 
 ## Validation against expert classification
 
-SMART's calls were benchmarked against an independent expert classification: the WGLS oncology team manually classified **1,054 onco-related variants across 58 genes** following SVIG-UK. Two classifiers were compared: the current OncoKB-only verdict (`MY_VERDICT`) and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
+SMART's calls were benchmarked against an independent expert classification: the WGLS oncology team manually classified **1,054 onco-related variants across 58 genes** following SVIG-UK. Two classifiers were compared: the current OncoKB-only verdict and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
 
 Binary task, positive = geneticist (Likely) Oncogenic:
 
@@ -434,7 +434,7 @@ scale before comparison:
 
 | Source | → Oncogenic (ONC) | → VUS | → Benign (BEN) |
 |--------|-------------------|-------|----------------|
-| OncoKB-only (`MY_VERDICT`) | `Oncogenic`, `Likely Oncogenic` | `Unknown` / no data | `Likely Neutral`, `Neutral` |
+| OncoKB-only | `Oncogenic`, `Likely Oncogenic` | `Unknown` / no data | `Likely Neutral`, `Neutral` |
 | Geneticist (`WGLS`) | `Oncogenic`, `Likely Oncogenic` | `VUS` | `Likely Benign`, `Benign` |
 | Multi-evidence | `Oncogenic`, `Likely Oncogenic` | `VUS` | `Likely Benign`, `Benign` |
 
