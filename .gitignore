@@ -190,12 +190,8 @@ cython_debug/
 
 # local run scripts (replaced by tests/run_all_verifications.sh)
 
-# --- jack_list_validation: lab's curated variant data (kept local, NOT published) ---
-# Only the methodology scripts (validation_report/*.py) and the run config are tracked.
-# The curated mutation set was built by the reference lab and is not redistributed.
-data/jack_list_validation/output/
-data/jack_list_validation/OriginalVcf/
-data/jack_list_validation/jack_curated.*
-data/jack_list_validation/validation_report/smart_multievidence_full_annotated.tsv
-data/jack_list_validation/validation_report/SMART_validation_report.docx
-data/jack_list_validation/.DS_Store
+# --- jack_list_validation: the reference lab's curated variant data (kept local, NOT published) ---
+# Ignore the WHOLE directory so no variant-level data is ever committed. The methodology
+# scripts and run config that are already tracked stay tracked (gitignore does not untrack
+# existing files); only new/derived data files are excluded.
+data/jack_list_validation/
