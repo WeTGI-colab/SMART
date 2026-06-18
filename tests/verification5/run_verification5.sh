@@ -7,8 +7,13 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Ensure pytest is available
-if ! command -v pytest &>/dev/null; then
+# Resolve pytest: prefer the CLI, fall back to `python3 -m pytest` (common when
+# pytest is installed but its console script is not on PATH).
+if command -v pytest &>/dev/null; then
+    PYTEST=(pytest)
+elif python3 -m pytest --version &>/dev/null; then
+    PYTEST=(python3 -m pytest)
+else
     echo "ERROR: pytest not found. Install test dependencies:"
     echo "       pip install pytest pytest-cov"
     exit 1
@@ -18,7 +23,7 @@ cd "$SCRIPT_DIR"
 
 if [[ "${1:-}" == "--coverage" ]]; then
     echo "Running unit tests with coverage report..."
-    pytest . -v \
+    "${PYTEST[@]}" . -v \
         --cov=../../scripts \
         --cov-report=term-missing \
         --cov-report=html:../../coverage_html \
@@ -27,5 +32,5 @@ if [[ "${1:-}" == "--coverage" ]]; then
     echo "HTML coverage report written to: coverage_html/index.html"
 else
     echo "Running unit tests..."
-    pytest . -v --tb=short
+    "${PYTEST[@]}" . -v --tb=short
 fi
