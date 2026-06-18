@@ -89,6 +89,54 @@ python3 utils/civic_formating.py \
 
 ---
 
+## `cosmic_cmc_to_vcf.py` — Convert COSMIC Cancer Mutation Census to VCF
+
+Builds the **optional** COSMIC reference track for SMART. COSMIC data is licence-gated
+and **not redistributable**, so SMART cannot ship it — each user downloads the Cancer
+Mutation Census (CMC) with their own (free for non-commercial research) COSMIC account
+and runs this script to produce the VCF the pipeline consumes. No COSMIC data is bundled
+with SMART; only this transformation code.
+
+If the resulting VCF is present at `<refs>/COSMIC/cosmic_cmc_grch38.vcf.gz`, the
+entrypoint automatically adds it as a VEP `--custom` track, populating `COSMIC_CNT`
+(recurrence), `COSMIC_TIER` (significance tier 1/2/3), `COSMIC_ONC_TSG` (gene role) and
+related columns. If the file is absent, annotation runs unchanged — COSMIC is skipped.
+
+### Get the input
+
+1. Register / log in at <https://cancer.sanger.ac.uk/cosmic>.
+2. Downloads → project **Cancer Mutation Census** → **All Data CMC** (GRCh37 — the CMC is
+   only released on GRCh37, but the file carries a GRCh38 coordinate column, which this
+   script uses, so the output is GRCh38-native).
+3. You get `CancerMutationCensus_AllData_Tsv_v<NN>_GRCh37.tar`.
+
+### Usage
+
+```bash
+python3 utils/cosmic_cmc_to_vcf.py \
+    --input  CancerMutationCensus_AllData_Tsv_v104_GRCh37.tar \
+    --output /path/to/refs/COSMIC/cosmic_cmc_grch38.vcf.gz
+```
+
+The `.tar`, the inner `.tsv.gz`, or a plain `.tsv` are all accepted as `--input`.
+Requires `bgzip`, `tabix` and `sort` on `PATH` (uses only the Python standard library).
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--input` | required | CMC `.tar` / `.tsv.gz` / `.tsv` |
+| `--output` | required | Output `.vcf.gz` path |
+| `--bgzip` / `--tabix` / `--sort` | from PATH | Override binary locations |
+
+### Scope
+
+Only substitutions where REF and ALT are equal-length A/C/G/T strings (SNVs and MNVs) are
+emitted — they match VEP `exact` by position+allele with no reference genome needed. True
+indels (≈9 % of the CMC) are skipped (they would need left-normalisation against the
+genome FASTA) and reported in the run summary. **Do not commit or redistribute the
+resulting VCF** — it is derived COSMIC data (see <https://www.cosmickb.org/terms/>).
+
+---
+
 ## `get_oncokb_transcripts.py` — Fetch OncoKB canonical transcripts
 
 Queries the OncoKB API (`/utils/allCuratedGenes`) and writes a transcript

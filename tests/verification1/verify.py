@@ -958,6 +958,76 @@ def run_civic(df: pd.DataFrame) -> list:
 # Entry point
 # =============================================================================
 
+# Canonical COSMIC hotspots present in the verification1 panel. COSMIC has no public
+# API (login-gated), so these are *expected-value* checks that are robust to COSMIC
+# release version: we assert the recurrence count is annotated and large and that the
+# canonical drivers are tier 1 / oncogene — never the exact count, which changes per release.
+COSMIC_EXPECTED = {
+    "IDH1_R132H": {"min_cnt": 1000, "tier": "1", "role_contains": "oncogene"},
+    "BRAF_V600E": {"min_cnt": 1000, "tier": "1", "role_contains": "oncogene"},
+}
+
+
+def run_cosmic(df: pd.DataFrame) -> list:
+    """Validate the optional COSMIC CMC annotation columns on canonical hotspots."""
+    results = []
+    print(f"\n{'#'*60}\nMODULE: COSMIC\n{'#'*60}")
+    print("NOTE: COSMIC is login-gated (no public API); these are version-robust")
+    print("      expected-value checks on canonical hotspots in the panel.")
+
+    def res(sample, vid, gene, hgvsp, field, expected, got, status):
+        return {"Module": "COSMIC", "Sample": sample, "Variant_ID": vid,
+                "Gene": gene, "HGVSp": hgvsp, "MAF_Field": field,
+                "API_Field": "expected", "MAF_Value": got, "API_Value": expected,
+                "Result": status, "Note": ""}
+
+    # COSMIC is optional — if the VCF was not mounted the columns won't exist.
+    if "COSMIC_CNT" not in df.columns:
+        print("  SKIP: COSMIC columns absent — optional COSMIC VCF not mounted.")
+        results.append(res("", "", "", "", "COSMIC_CNT", "populated", "",
+                           "SKIP: COSMIC not annotated (optional ref absent)"))
+        return results
+
+    by_id = {}
+    for _, row in df.iterrows():
+        by_id.setdefault(str(row.get("ID", "")).strip(), row)
+
+    for vid, exp in COSMIC_EXPECTED.items():
+        row = by_id.get(vid)
+        if row is None:
+            print(f"\n  {vid}: not in MAF — SKIP")
+            results.append(res("", vid, "", "", "COSMIC_CNT", "populated", "",
+                               f"SKIP: {vid} not in MAF"))
+            continue
+
+        gene   = str(row.get("Hugo_Symbol", "")).strip()
+        hgvsp  = str(row.get("HGVSp_Short", "")).strip()
+        sample = str(row.get("Tumor_Sample_Barcode", "")).strip()
+        cnt  = maf_value(row, "COSMIC_CNT")
+        tier = maf_value(row, "COSMIC_TIER")
+        role = maf_value(row, "COSMIC_ONC_TSG")
+        print(f"\n  {vid}: COSMIC_CNT={cnt!r}  COSMIC_TIER={tier!r}  COSMIC_ONC_TSG={role!r}")
+
+        try:
+            cnt_ok = int(cnt) >= exp["min_cnt"]
+        except (ValueError, TypeError):
+            cnt_ok = False
+        results.append(res(sample, vid, gene, hgvsp, "COSMIC_CNT",
+                           f">={exp['min_cnt']}", cnt, "PASS" if cnt_ok else "MISMATCH"))
+        results.append(res(sample, vid, gene, hgvsp, "COSMIC_TIER",
+                           exp["tier"], tier, "PASS" if tier == exp["tier"] else "MISMATCH"))
+        role_ok = exp["role_contains"].lower() in role.lower()
+        results.append(res(sample, vid, gene, hgvsp, "COSMIC_ONC_TSG",
+                           f"contains:{exp['role_contains']}", role,
+                           "PASS" if role_ok else "MISMATCH"))
+
+    p = sum(1 for r in results if r["Result"] == "PASS")
+    m = sum(1 for r in results if r["Result"] == "MISMATCH")
+    s = sum(1 for r in results if r["Result"].startswith("SKIP"))
+    print(f"\n  COSMIC: PASS={p}  MISMATCH={m}  SKIP={s}")
+    return results
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Verify VEP and/or OncoKB fields in SMART MAF output.",
@@ -968,7 +1038,7 @@ def main():
     parser.add_argument("--token",   default=None,
                         help="OncoKB API bearer token (required when running oncokb module)")
     parser.add_argument("--modules", default=["all"], nargs="+",
-                        choices=["all", "vep", "oncokb", "civic"],
+                        choices=["all", "vep", "oncokb", "civic", "cosmic"],
                         help="Which modules to run (default: all)")
     parser.add_argument("--output",  default=None,
                         help="Optional TSV output path (combined results from all modules)")
@@ -978,7 +1048,7 @@ def main():
 
     modules = set(args.modules)
     if "all" in modules:
-        modules = {"vep", "oncokb", "civic"}
+        modules = {"vep", "oncokb", "civic", "cosmic"}
 
     if "oncokb" in modules and not args.token:
         print("ERROR: --token is required when running the oncokb module", file=sys.stderr)
@@ -1009,6 +1079,9 @@ def main():
 
     if "civic" in modules:
         all_results.extend(run_civic(df))
+
+    if "cosmic" in modules:
+        all_results.extend(run_cosmic(df))
 
     # Combined summary
     total_pass     = sum(1 for r in all_results if r["Result"] == "PASS")

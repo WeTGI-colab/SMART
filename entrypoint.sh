@@ -214,6 +214,7 @@ CLINVAR_VCF="$REF_DIR/ClinVar/clinvar.vcf.gz"
 CIVIC_VCF="$REF_DIR/CIVIC/civic_grch38.vcf.gz"
 LOEUF_FILE="$REF_DIR/gnomAD_constraints/loeuf_dataset_grch38.tsv.gz"
 CANCER_HOTSPOTS_VCF="$REF_DIR/CancerHotSpots/hg38.hotspots_changv2_gao_nc.vcf.gz"
+COSMIC_VCF="$REF_DIR/COSMIC/cosmic_cmc_grch38.vcf.gz"   # optional, licence-gated (build with utils/cosmic_cmc_to_vcf.py)
 
 # Validate reference files
 REQUIRED_PATHS=(
@@ -225,6 +226,14 @@ REQUIRED_PATHS=(
 for path in "${REQUIRED_PATHS[@]}"; do
     [[ ! -e "$path" ]] && { echo "ERROR: Required resource not found: $path"; exit 2; }
 done
+
+# COSMIC Cancer Mutation Census is OPTIONAL — it requires a COSMIC licence so it is
+# not shipped. If the user has built and mounted the VCF (utils/cosmic_cmc_to_vcf.py),
+# add it as a VEP --custom annotation; otherwise annotation runs unchanged without it.
+COSMIC_CUSTOM=""
+if [[ -e "$COSMIC_VCF" ]]; then
+    COSMIC_CUSTOM="--custom $COSMIC_VCF,COSMIC,vcf,exact,0,GENE,CNT,TESTED,TIER,ONC_TSG,CGC_TIER,DNDS"
+fi
 
 # Fetch OncoKB version info only when a token is available
 if [[ $VEP_ONLY -eq 0 ]]; then
@@ -253,6 +262,7 @@ echo "Reference versions:"
 echo "  ClinVar:           $(basename "$CLINVAR_VCF")"
 echo "  CIViC:             $(basename "$CIVIC_VCF")"
 echo "  CancerHotSpots:    $(basename "$CANCER_HOTSPOTS_VCF")"
+echo "  COSMIC CMC:        $([[ -e "$COSMIC_VCF" ]] && basename "$COSMIC_VCF" || echo '(not provided — optional, licence-gated)')"
 echo "  SpliceAI SNV:      $(basename "$SPLICEAI_SNV")"
 echo "  SpliceAI INDEL:    $(basename "$SPLICEAI_INDEL")"
 echo "  REVEL:             $(basename "$REVEL_FILE")"
@@ -404,7 +414,8 @@ process_sample() {
         --custom "$CLINVAR_VCF",ClinVar,vcf,exact,0,AF_ESP,AF_EXAC,AF_TGP,ALLELEID,CLNDN,CLNDNINCL,CLNDISDB,CLNDISDBINCL,CLNHGVS,CLNREVSTAT,CLNSIG,CLNSIGCONF,CLNSIGINCL,CLNSIGSCV,CLNVC,CLNVCSO,CLNVI,DBVARID,GENEINFO,MC,ONCDN,ONCDNINCL,ONCDISDB,ONCDISDBINCL,ONC,ONCINCL,ONCREVSTAT,ONCSCV,ONCCONF,ORIGIN,RS,SCIDN,SCIDNINCL,SCIDISDB,SCIDISDBINCL,SCIREVSTAT,SCI,SCIINCL,SCISCV \
         --custom "$CIVIC_VCF",CIViC,vcf,exact,0,GN,VT,CSQ \
         --plugin LOEUF,file="$LOEUF_FILE",match_by=transcript \
-        --custom "$CANCER_HOTSPOTS_VCF",CancerHotspots,vcf,exact,0,HOTSPOT,HOTSPOT_GENE,HOTSPOT_HGVSp,HOTSPOT3D,HOTSPOT3D_GENE,HOTSPOT3D_HGVSp,HOTSPOTNC,HOTSPOTNC_GENE,HOTSPOTNC_HGVSc
+        --custom "$CANCER_HOTSPOTS_VCF",CancerHotspots,vcf,exact,0,HOTSPOT,HOTSPOT_GENE,HOTSPOT_HGVSp,HOTSPOT3D,HOTSPOT3D_GENE,HOTSPOT3D_HGVSp,HOTSPOTNC,HOTSPOTNC_GENE,HOTSPOTNC_HGVSc \
+        $COSMIC_CUSTOM
 
     # --- Early exit when --vep-only is set ---
     if [[ $VEP_ONLY -eq 1 ]]; then

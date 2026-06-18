@@ -386,11 +386,29 @@ SMART is treated as **positive** when it calls a variant (Likely) Oncogenic, wit
 - **TN — true negative:** SMART did **not** call it oncogenic *and* neither did the geneticist → a correctly *not*-flagged variant.
 - **FN — false negative:** SMART did not call it oncogenic but the geneticist did → a **missed** actionable variant, the most clinically important error.
 
-| Analysis | TP | TN | FP | FN | N |
-|----------|---:|---:|---:|---:|---:|
-| OncoKB-only, all variants | 486 | 498 | 46 | 24 | 1,054 |
-| OncoKB-only, evaluable (OncoKB had data) | 486 | 4 | 46 | 3 | 539 |
-| Multi-evidence, all variants | 478 | 505 | 39 | 32 | 1,054 |
+**OncoKB-only, all variants (N = 1,054)**
+
+| | Expert **+** | Expert **−** | |
+|---|---|---|---|
+| **Test +** | TP = 486 | FP = 46 | PPV = 486/(486+46) = **0.914** |
+| **Test −** | FN = 24 | TN = 498 | NPV = 498/(24+498) = **0.954** |
+| | Sens = 486/(486+24) = **0.953** | Spec = 498/(498+46) = **0.915** | |
+
+**OncoKB-only, evaluable — OncoKB had data (N = 539)**
+
+| | Expert **+** | Expert **−** | |
+|---|---|---|---|
+| **Test +** | TP = 486 | FP = 46 | PPV = 486/(486+46) = **0.914** |
+| **Test −** | FN = 3 | TN = 4 | NPV = 4/(3+4) = **0.571** |
+| | Sens = 486/(486+3) = **0.994** | Spec = 4/(4+46) = **0.080** | |
+
+**Multi-evidence, all variants (N = 1,054)**
+
+| | Expert **+** | Expert **−** | |
+|---|---|---|---|
+| **Test +** | TP = 478 | FP = 39 | PPV = 478/(478+39) = **0.925** |
+| **Test −** | FN = 32 | TN = 505 | NPV = 505/(32+505) = **0.940** |
+| | Sens = 478/(478+32) = **0.937** | Spec = 505/(505+39) = **0.928** | |
 
 **The TN caveat — why the "evaluable" row matters.** The TN column of the first row (498) looks like a strong negative class, but it is misleading. **515 of the 1,054 variants have no OncoKB data at all** and default to VUS, i.e. "not oncogenic" — so almost all of those 498 TN are *abstentions*, not genuine "this is benign" judgements. When the count is restricted to the **539 variants OncoKB actually has data for**, the TN collapses to **4**: OncoKB almost never makes a confident non-oncogenic call, so its negative class is essentially untested. A high TN (and therefore high specificity) in the all-variants row is largely an artefact of OncoKB's missing data, not evidence that it discriminates benign variants. The multi-evidence scorer instead reaches **505 TN** by *actively* classifying those data-less variants, which is exactly where its specificity gain (0.92 → 0.93) comes from.
 
@@ -398,9 +416,11 @@ Key findings:
 
 - **Coverage drives the headline numbers.** 48.9% (515/1,054) of variants have no OncoKB data and default to VUS. Those abstentions count as "true negatives" in the all-variants row, inflating specificity. On the 539 variants OncoKB *actually* has data for, specificity collapses to **0.08** — OncoKB almost never calls a variant non-oncogenic, so its negative class is essentially untested. Always report coverage alongside accuracy.
 - **Multi-evidence adds value on the benign side.** Per-class agreement with the geneticist for benign variants rises from 0% (OncoKB-only) to 98% (multi-evidence), lifting specificity (0.92 → 0.93) and weighted kappa (0.63 → 0.74).
-- **It does not recover missed oncogenic calls.** The false negatives are dominated by OncoKB-blind variants with high REVEL but no somatic-frequency evidence. Adding **O4 (GENIE/COSMIC somatic counts)** is the single change most likely to recover them.
+- **Missed oncogenic calls are recovered by COSMIC (O4).** The false negatives are dominated by OncoKB-blind variants that are nonetheless recurrent in tumours. Enabling the optional COSMIC somatic-recurrence track (evidence code O4) is the single change that recovers them — see *Impact of COSMIC* below.
 
 ![Sensitivity and specificity of each classifier against the geneticist](Files4ThisProject/validation/fig1_sens_spec.png)
+
+**Impact of COSMIC (O4).** With the optional COSMIC Cancer Mutation Census track enabled, the multi-evidence scorer gains a somatic-recurrence signal (code O4). On this set it recovers **5 expert-oncogenic variants** the scorer otherwise missed (TET2 ×2, U2AF1, BTK, PHF6 — all recurrent in COSMIC, sample counts 14–57) at a cost of **2 new false positives**, lifting **sensitivity 0.937 → 0.951** and **weighted kappa 0.74 → 0.754** with specificity essentially unchanged (0.928 → 0.925). This is precisely the evidence OncoKB lacks: of the variants OncoKB has no data for, COSMIC covers ~40% — and ~70% of the *oncogenic* ones. (COSMIC is licence-gated and optional; see [utils/cosmic_cmc_to_vcf.py](utils/cosmic_cmc_to_vcf.py).)
 
 The SVIG-UK multi-evidence scorer used here is included as methodology in `data/jack_list_validation/validation_report/` (`score_multievidence_inplace.py`, `smart_multievidence.py`). The curated variant set itself was constructed by the reference laboratory and is **not redistributed** with this repository; it is available on request.
 
@@ -439,6 +459,9 @@ exclusive **within** an axis (only the strongest tier of each axis fires).
 | Ultra-rare (gnomAD MAX_AF ≤ 1e-5) | O3 | +1 |
 | In-silico damaging (REVEL ≥ 0.7 **or** SpliceAI ≥ 0.2) | O6 | +1 |
 | Constrained gene (LOEUF < 0.6) | O8 | +1 |
+| COSMIC recurrence — tier 1 / ≥50 samples *(optional)* | O4 | +4 |
+| COSMIC recurrence — tier 2 / ≥20 samples *(optional)* | O4 | +3 |
+| COSMIC recurrence — ≥10 / ≥5 samples *(optional)* | O4 | +2 / +1 |
 | OncoKB `Likely Neutral` | B6 | −4 |
 | OncoKB `Neutral` | B6 | −7 |
 | ClinVar `Benign` | B6 | −5 |
@@ -464,11 +487,11 @@ The summed score maps to a 5-class verdict:
 column so the score is auditable by eye.
 
 This is a **v1 approximation** of SVIG-UK: it implements O2 (conservatively, no
-tumour-suppressor mode-of-action check), O3, O6, O7, O8, O10, B1, B3, B4 and B6. Codes
-needing data not present in the MAF are **not** implemented — most importantly **O4**
-(GENIE / COSMIC somatic counts, the strongest discriminator for recovering oncogenic
-calls), plus O5, O9, O11, B2, B5 and B7. Thresholds follow the documented framework;
-calibration is not independently validated against the certified WGLS pipeline.
+tumour-suppressor mode-of-action check), O3, O6, O7, O8, O10, B1, B3, B4 and B6, plus
+**O4** (somatic recurrence, scored from COSMIC sample counts / significance tier) when
+the optional COSMIC track is enabled. Codes needing data not present in the MAF are
+still **not** implemented — O5, O9, O11, B2, B5 and B7. Thresholds follow the documented
+framework; calibration is not independently validated against the certified WGLS pipeline.
 
 > The point values in the **Evidence / Code / Points** table above were assigned by a bioinformatician, not a geneticist, and were fixed *before* this validation was run — the numbers have **not** been adapted to fit the geneticist's classifications. They are a reasonable first pass rather than a calibrated model, and there is clear room for improvement: with further work (ideally geneticist-led) the weights could be refined to track real-world classification more closely. It should also be kept in mind that SMART's annotation is tumour-agnostic, whereas the geneticists' classification is tumour-specific, so the two are not expected to align perfectly. Even with these limitations, this validation meets its objective: to gauge, in broad terms, how closely SMART's output approximates the reality represented by the geneticist's classification — and the encouraging result is that OncoKB alone, supplemented by a handful of additional annotation columns, already yields a good approximation.
 

@@ -133,6 +133,25 @@ def svig_score(r):
     if loeuf is not None and loeuf < 0.6:
         codes.append("O8:constrained_LOEUF(+1)")
 
+    # --- O4 somatic recurrence (COSMIC CMC) --------------------------------
+    # COSMIC's curated significance tier is the strongest signal; otherwise scale
+    # by how many tumours carry the exact mutation (sample count). Take the max.
+    ctier = r.get("COSMIC_TIER", "")
+    ccnt = fnum(r.get("COSMIC_CNT", ""))
+    o4 = 0
+    if ctier == "1":
+        o4 = 4
+    elif ctier == "2":
+        o4 = 3
+    if ccnt is not None:
+        if ccnt >= 50:   o4 = max(o4, 4)
+        elif ccnt >= 20: o4 = max(o4, 3)
+        elif ccnt >= 10: o4 = max(o4, 2)
+        elif ccnt >= 5:  o4 = max(o4, 1)
+    if o4:
+        codes.append(f"O4:COSMIC_recurrent_cnt{'' if ccnt is None else int(ccnt)}"
+                     f"_tier{ctier or '-'}(+{o4})")
+
     # --- B4 synonymous / low impact ----------------------------------------
     if "synonymous_variant" in cons and "missense" not in cons:
         codes.append("B4:synonymous(-4)")
