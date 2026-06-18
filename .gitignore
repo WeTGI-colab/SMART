@@ -190,6 +190,13 @@ cython_debug/
 
 # local run scripts (replaced by tests/run_all_verifications.sh)
 
+# --- verification test outputs: regenerated on every run, not source ---
+# Inputs (Config.yaml, *.vcf.gz, transcripts) stay tracked; only generated
+# pipeline outputs and result TSVs are excluded.
+tests/verification*/output/
+tests/verification*/output_*/
+tests/verification*/results.tsv
+
 # --- jack_list_validation: the reference lab's curated variant data (kept local, NOT published) ---
 # Ignore the WHOLE directory so no variant-level data is ever committed. The methodology
 # scripts and run config that are already tracked stay tracked (gitignore does not untrack
