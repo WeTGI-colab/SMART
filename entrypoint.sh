@@ -215,6 +215,8 @@ CIVIC_VCF="$REF_DIR/CIVIC/civic_grch38.vcf.gz"
 LOEUF_FILE="$REF_DIR/gnomAD_constraints/loeuf_dataset_grch38.tsv.gz"
 CANCER_HOTSPOTS_VCF="$REF_DIR/CancerHotSpots/hg38.hotspots_changv2_gao_nc.vcf.gz"
 COSMIC_VCF="$REF_DIR/COSMIC/cosmic_cmc_grch38.vcf.gz"   # optional, licence-gated (build with utils/cosmic_cmc_to_vcf.py)
+CADD_SNV="$REF_DIR/CADD/whole_genome_SNVs.tsv.gz"         # optional, very large (~80GB) — install with INSTALL_CADD=1 utils/get_ref_files.sh
+CADD_INDEL="$REF_DIR/CADD/gnomad.genomes.r4.0.indel.tsv.gz"  # optional
 
 # Validate reference files
 REQUIRED_PATHS=(
@@ -233,6 +235,14 @@ done
 COSMIC_CUSTOM=""
 if [[ -e "$COSMIC_VCF" ]]; then
     COSMIC_CUSTOM="--custom $COSMIC_VCF,COSMIC,vcf,exact,0,GENE,CNT,TESTED,TIER,ONC_TSG,CGC_TIER,DNDS"
+fi
+
+# CADD is OPTIONAL — the GRCh38 score files are very large (~80 GB for whole-genome
+# SNVs) so they are not shipped. If both the SNV and indel files are mounted, add the
+# CADD plugin (adds CADD_PHRED/CADD_RAW); otherwise annotation runs unchanged without it.
+CADD_PLUGIN=""
+if [[ -e "$CADD_SNV" && -e "$CADD_INDEL" ]]; then
+    CADD_PLUGIN="--plugin CADD,$CADD_SNV,$CADD_INDEL"
 fi
 
 # Fetch OncoKB version info only when a token is available
@@ -266,6 +276,7 @@ echo "  COSMIC CMC:        $([[ -e "$COSMIC_VCF" ]] && basename "$COSMIC_VCF" ||
 echo "  SpliceAI SNV:      $(basename "$SPLICEAI_SNV")"
 echo "  SpliceAI INDEL:    $(basename "$SPLICEAI_INDEL")"
 echo "  REVEL:             $(basename "$REVEL_FILE")"
+echo "  CADD:              $([[ -e "$CADD_SNV" && -e "$CADD_INDEL" ]] && basename "$CADD_SNV" || echo '(not provided — optional, ~80GB)')"
 echo "  LOEUF:             $(basename "$LOEUF_FILE")"
 echo "  OncoKB data:       $ONCOKB_DATA_VERSION ($ONCOKB_DATA_DATE)"
 
@@ -415,7 +426,8 @@ process_sample() {
         --custom "$CIVIC_VCF",CIViC,vcf,exact,0,GN,VT,CSQ \
         --plugin LOEUF,file="$LOEUF_FILE",match_by=transcript \
         --custom "$CANCER_HOTSPOTS_VCF",CancerHotspots,vcf,exact,0,HOTSPOT,HOTSPOT_GENE,HOTSPOT_HGVSp,HOTSPOT3D,HOTSPOT3D_GENE,HOTSPOT3D_HGVSp,HOTSPOTNC,HOTSPOTNC_GENE,HOTSPOTNC_HGVSc \
-        $COSMIC_CUSTOM
+        $COSMIC_CUSTOM \
+        $CADD_PLUGIN
 
     # --- Early exit when --vep-only is set ---
     if [[ $VEP_ONLY -eq 1 ]]; then

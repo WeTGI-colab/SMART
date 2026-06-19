@@ -26,10 +26,10 @@ SMART (Somatic Mutation Annotation and Reporting Tool) integrates sequential pro
 
 | Step | Tool | What happens |
 |------|------|-------------|
-| 1. PASS Filter | bcftools / awk | Keep only PASS-filtered variants |
-| 2. LiftOver | GATK 4.6 | hg19 → hg38 coordinate conversion (optional) |
-| 3. VEP Annotation | Ensembl VEP 114 | Functional annotation with SpliceAI, REVEL, ClinVar, CIViC, CancerHotspots, LOEUF plugins |
-| 4. OncoKB Annotation | oncokb2.0.py | Per-variant clinical annotation via OncoKB REST API (mutations + CNAs) |
+| 1. PASS Filter _(optional)_ | bcftools / awk | Keep only PASS-filtered variants — disable with `--no-pass` |
+| 2. LiftOver _(optional)_ | GATK 4.6 | hg19 → hg38 coordinate conversion — disable with `--no-liftover` |
+| 3. VEP Annotation | Ensembl VEP 114 | Functional annotation with SpliceAI, REVEL, ClinVar, CIViC, CancerHotspots, LOEUF plugins (+ COSMIC, CADD if provided) |
+| 4. OncoKB Annotation _(optional)_ | oncokb2.0.py | Per-variant clinical annotation via OncoKB REST API (mutations + CNAs). Skipped in VEP-only mode (`--vep-only`, or when no OncoKB token is given), which also stops steps 5–7 |
 | 5. VCF → Table | vcf2table.py | Transcript-prioritised CSV with all VEP + OncoKB fields |
 | 6. MAF Annotation | MafAnnotator | OncoKB MafAnnotator for standardised MAF output |
 | 7. Post-Analysis | post_analysis.py | Merge samples, expand JSON fields, apply tier filtering, produce final outputs |
@@ -77,12 +77,13 @@ This logic applies to both SNV/indel and CNA variants, ensuring consistent gene 
 | Ensembl VEP | 114.2 | Functional annotation |
 | SpliceAI plugin | 1.3 | Splice-site impact prediction |
 | REVEL plugin | 1.3 | Missense pathogenicity scoring |
+| CADD plugin | v1.7 | Genome-wide deleteriousness scoring (optional — score files not shipped) |
 | bcftools / samtools / tabix | System | VCF manipulation |
 | Python 3.10 | + pandas, cyvcf2, requests | Pipeline scripts |
 | OncoKB Annotator | Latest | MafAnnotator for MAF output |
 
 > **The container ships only _software_ — the annotation tools, VEP plugins, and pipeline scripts. It does _not_ contain the annotation databases.**
-> The reference/annotation data (VEP cache, ClinVar, CIViC, COSMIC, SpliceAI, REVEL, gnomAD constraints, Cancer Hotspots, liftover chain + genome) are large, separately-licensed datasets that you download once and provide at runtime via the mounted reference directory — see [Reference Files Setup](#reference-files-setup). This keeps the image small and lets each database be updated independently of the SMART code.
+> The reference/annotation data (VEP cache, ClinVar, CIViC, COSMIC, SpliceAI, REVEL, CADD, gnomAD constraints, Cancer Hotspots, liftover chain + genome) are large, separately-licensed datasets that you download once and provide at runtime via the mounted reference directory — see [Reference Files Setup](#reference-files-setup). This keeps the image small and lets each database be updated independently of the SMART code.
 
 ---
 
@@ -119,6 +120,9 @@ SMART expects a reference directory with the following structure:
 │   └── hg38.hotspots_changv2_gao_nc.vcf.gz      (+.tbi)
 ├── COSMIC/                          # OPTIONAL — enables COSMIC recurrence annotation
 │   └── cosmic_cmc_grch38.vcf.gz                 (+.tbi)
+├── CADD/                            # OPTIONAL — genome-wide deleteriousness (~80 GB)
+│   ├── whole_genome_SNVs.tsv.gz                 (+.tbi)
+│   └── gnomad.genomes.r4.0.indel.tsv.gz         (+.tbi)
 └── homo_sapiens/                    # VEP cache directory
     └── 114_GRCh38/
 ```
@@ -126,6 +130,8 @@ SMART expects a reference directory with the following structure:
 All reference files can be downloaded using the provided `utils/get_ref_files.sh` script (see [utils/README.md](utils/README.md)).
 
 COSMIC is **optional** and not redistributable: if the `COSMIC/` directory is present SMART adds Cancer Mutation Census recurrence columns, otherwise it is skipped. Build the file from your own COSMIC download with `utils/cosmic_cmc_to_vcf.py` (see [utils/README.md](utils/README.md)).
+
+CADD is also **optional**. The GRCh38 score files are very large (whole-genome SNVs ~80 GB + indels), so they are not downloaded by default. If both files are present under `CADD/`, SMART adds the `CADD_PHRED` / `CADD_RAW` columns; otherwise it is skipped. Install them by re-running the downloader with the opt-in flag: `INSTALL_CADD=1 utils/get_ref_files.sh <base_dir>`.
 
 ---
 

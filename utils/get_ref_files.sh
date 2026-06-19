@@ -582,9 +582,42 @@ else
 fi
 
 # -------------------------
-# STEP 11: Write config file
+# STEP 11: CADD (OPTIONAL — very large; opt-in)
 # -------------------------
-log_step "[STEP 11] Writing pipeline configuration file"
+log_step "[STEP 11] CADD genome-wide deleteriousness scores (OPTIONAL)"
+
+# CADD GRCh38 score files are very large (whole-genome SNVs ~80 GB + indels), so
+# they are NOT downloaded by default. CADD is optional in SMART: the pipeline adds
+# the CADD_PHRED / CADD_RAW columns only if both files are present at runtime.
+# To install them, re-run this script with:  INSTALL_CADD=1 <script> <base_dir>
+if [[ "${INSTALL_CADD:-0}" != "1" ]]; then
+  echo "[SKIP] CADD not requested (optional)."
+  echo "       The GRCh38 CADD files are very large (whole-genome SNVs ~80 GB + indels)."
+  echo "       To install them, re-run with:"
+  echo "           INSTALL_CADD=1 $0 ${BASE_DIR}"
+  echo "       SMART adds CADD_PHRED/CADD_RAW only when these files are mounted."
+else
+  mkdir_if_missing "${REF_ROOT}/CADD"
+  CADD_BASE="https://kircherlab.bihealth.org/download/CADD/v1.7/GRCh38"
+  CADD_SNV="${REF_ROOT}/CADD/whole_genome_SNVs.tsv.gz"
+  CADD_INDEL="${REF_ROOT}/CADD/gnomad.genomes.r4.0.indel.tsv.gz"
+
+  echo "[INFO] Downloading CADD v1.7 GRCh38 (this is large and will take a while)..."
+  download_if_missing "${CADD_BASE}/whole_genome_SNVs.tsv.gz"             "$CADD_SNV"
+  download_if_missing "${CADD_BASE}/whole_genome_SNVs.tsv.gz.tbi"         "${CADD_SNV}.tbi"
+  download_if_missing "${CADD_BASE}/gnomad.genomes.r4.0.indel.tsv.gz"     "$CADD_INDEL"
+  download_if_missing "${CADD_BASE}/gnomad.genomes.r4.0.indel.tsv.gz.tbi" "${CADD_INDEL}.tbi"
+
+  # The .tbi files ship with CADD; rebuild only if a download left one missing.
+  [[ -f "${CADD_SNV}.tbi" ]]   || { echo "[RUN] Indexing CADD SNVs...";   $TABIX -s 1 -b 2 -e 2 "$CADD_SNV"; }
+  [[ -f "${CADD_INDEL}.tbi" ]] || { echo "[RUN] Indexing CADD indels..."; $TABIX -s 1 -b 2 -e 2 "$CADD_INDEL"; }
+  echo "[OK] CADD ready: ${REF_ROOT}/CADD"
+fi
+
+# -------------------------
+# STEP 12: Write config file
+# -------------------------
+log_step "[STEP 12] Writing pipeline configuration file"
 
 CONFIG_FILE="pipeline_config.sh"
 
@@ -652,6 +685,11 @@ VEP_PLUGINS_VERSION="${VEP_PLUGINS_VERSION}"
 
 CANCER_HOTSPOTS_VCF="\${REF_ROOT}/CancerHotSpots/hg38.hotspots_changv2_gao_nc.vcf.gz"
 CANCER_HOTSPOTS_VERSION="${CANCER_HOTSPOTS_VERSION}"
+
+# CADD is optional (installed only when get_ref_files.sh is run with INSTALL_CADD=1)
+CADD_SNV="\${REF_ROOT}/CADD/whole_genome_SNVs.tsv.gz"
+CADD_INDEL="\${REF_ROOT}/CADD/gnomad.genomes.r4.0.indel.tsv.gz"
+CADD_VERSION="v1.7_GRCh38"
 EOF
 
 echo "[OK] Configuration file created: $CONFIG_FILE"
