@@ -453,6 +453,16 @@ fields:
     source: REVEL
     version: 1.3
     tier: 3
+  CADD_PHRED:
+    description: 'CADD Phred-scaled deleteriousness score; higher = more deleterious (~10 = top 10%, ~20 = top 1%, ~30 = top 0.1% of all possible SNVs). Genome-wide, all variant types. Ref: https://cadd.bihealth.org/'
+    source: CADD
+    version: v1.7_GRCh38
+    tier: 3
+  CADD_RAW:
+    description: 'CADD raw combined annotation-dependent depletion score (unscaled; use CADD_PHRED for interpretation/ranking). Ref: https://cadd.bihealth.org/'
+    source: CADD
+    version: v1.7_GRCh38
+    tier: 2
   LOEUF:
     description: Loss-of-function observed/expected upper bound fraction indicating
       gene intolerance

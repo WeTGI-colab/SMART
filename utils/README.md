@@ -25,6 +25,7 @@ Run this once before building or running the Docker container.
 | VEP cache | Ensembl FTP | `homo_sapiens_merged_vep_114_GRCh38` (~15 GB) |
 | VEP plugins | GitHub | Clones `Ensembl/VEP_plugins` |
 | Cancer Hotspots | GitHub | bgzip VCF + tabix index |
+| CADD | Kircher lab | **Optional, opt-in** (`INSTALL_CADD=1`) — very large (~80 GB) |
 
 ### Requirements
 
@@ -57,6 +58,23 @@ automatically. Before running the script, log into BaseSpace and download:
 - INDEL scores: `spliceai_scores.raw.indel.hg38.vcf.gz`
 
 Place both files in `<base_dir>/spliceai_staging/` then run the script.
+
+### CADD (optional, opt-in)
+
+CADD adds genome-wide deleteriousness scores (`CADD_PHRED` / `CADD_RAW`) covering
+all variant types, not just missense (unlike REVEL). The GRCh38 score files are
+**very large** (whole-genome SNVs ~80 GB + indels), so they are **not** downloaded
+by default. To install them, re-run the downloader with the opt-in flag:
+
+```bash
+INSTALL_CADD=1 bash utils/get_ref_files.sh /path/to/install/root
+```
+
+This populates `<base_dir>/refs/CADD/` with `whole_genome_SNVs.tsv.gz` and
+`gnomad.genomes.r4.0.indel.tsv.gz` (+ tabix indexes) from CADD v1.7. CADD is
+optional: if the directory is present the entrypoint adds the `--plugin CADD`
+track automatically; if absent, annotation runs unchanged. Source and licence:
+<https://cadd.bihealth.org/> (free for non-commercial use).
 
 ---
 

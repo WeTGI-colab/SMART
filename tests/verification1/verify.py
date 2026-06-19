@@ -1028,6 +1028,68 @@ def run_cosmic(df: pd.DataFrame) -> list:
     return results
 
 
+# Canonical pathogenic hotspots in the verification1 panel. CADD scores are precomputed
+# and stable per release, so we assert a plausible *floor* on the Phred score for known
+# deleterious drivers rather than an exact value (which varies slightly by CADD version).
+CADD_EXPECTED = {
+    "IDH1_R132H": {"min_phred": 20.0},
+    "BRAF_V600E": {"min_phred": 20.0},
+}
+
+
+def run_cadd(df: pd.DataFrame) -> list:
+    """Validate the optional CADD annotation columns on canonical pathogenic hotspots."""
+    results = []
+    print(f"\n{'#'*60}\nMODULE: CADD\n{'#'*60}")
+    print("NOTE: CADD score files are very large (~80GB) and optional; these are")
+    print("      version-robust floor checks on canonical drivers in the panel.")
+
+    def res(sample, vid, gene, hgvsp, field, expected, got, status):
+        return {"Module": "CADD", "Sample": sample, "Variant_ID": vid,
+                "Gene": gene, "HGVSp": hgvsp, "MAF_Field": field,
+                "API_Field": "expected", "MAF_Value": got, "API_Value": expected,
+                "Result": status, "Note": ""}
+
+    # CADD is optional — if the score files were not mounted the columns won't exist.
+    if "CADD_PHRED" not in df.columns:
+        print("  SKIP: CADD columns absent — optional CADD files not mounted.")
+        results.append(res("", "", "", "", "CADD_PHRED", "populated", "",
+                           "SKIP: CADD not annotated (optional ref absent)"))
+        return results
+
+    by_id = {}
+    for _, row in df.iterrows():
+        by_id.setdefault(str(row.get("ID", "")).strip(), row)
+
+    for vid, exp in CADD_EXPECTED.items():
+        row = by_id.get(vid)
+        if row is None:
+            print(f"\n  {vid}: not in MAF — SKIP")
+            results.append(res("", vid, "", "", "CADD_PHRED", "populated", "",
+                               f"SKIP: {vid} not in MAF"))
+            continue
+
+        gene   = str(row.get("Hugo_Symbol", "")).strip()
+        hgvsp  = str(row.get("HGVSp_Short", "")).strip()
+        sample = str(row.get("Tumor_Sample_Barcode", "")).strip()
+        phred  = maf_value(row, "CADD_PHRED")
+        print(f"\n  {vid}: CADD_PHRED={phred!r}")
+
+        try:
+            phred_ok = float(phred) >= exp["min_phred"]
+        except (ValueError, TypeError):
+            phred_ok = False
+        results.append(res(sample, vid, gene, hgvsp, "CADD_PHRED",
+                           f">={exp['min_phred']}", phred,
+                           "PASS" if phred_ok else "MISMATCH"))
+
+    p = sum(1 for r in results if r["Result"] == "PASS")
+    m = sum(1 for r in results if r["Result"] == "MISMATCH")
+    s = sum(1 for r in results if r["Result"].startswith("SKIP"))
+    print(f"\n  CADD: PASS={p}  MISMATCH={m}  SKIP={s}")
+    return results
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Verify VEP and/or OncoKB fields in SMART MAF output.",
@@ -1038,7 +1100,7 @@ def main():
     parser.add_argument("--token",   default=None,
                         help="OncoKB API bearer token (required when running oncokb module)")
     parser.add_argument("--modules", default=["all"], nargs="+",
-                        choices=["all", "vep", "oncokb", "civic", "cosmic"],
+                        choices=["all", "vep", "oncokb", "civic", "cosmic", "cadd"],
                         help="Which modules to run (default: all)")
     parser.add_argument("--output",  default=None,
                         help="Optional TSV output path (combined results from all modules)")
@@ -1048,7 +1110,7 @@ def main():
 
     modules = set(args.modules)
     if "all" in modules:
-        modules = {"vep", "oncokb", "civic", "cosmic"}
+        modules = {"vep", "oncokb", "civic", "cosmic", "cadd"}
 
     if "oncokb" in modules and not args.token:
         print("ERROR: --token is required when running the oncokb module", file=sys.stderr)
@@ -1082,6 +1144,9 @@ def main():
 
     if "cosmic" in modules:
         all_results.extend(run_cosmic(df))
+
+    if "cadd" in modules:
+        all_results.extend(run_cadd(df))
 
     # Combined summary
     total_pass     = sum(1 for r in all_results if r["Result"] == "PASS")
