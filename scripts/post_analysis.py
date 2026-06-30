@@ -97,6 +97,9 @@ import json
 import yaml
 import pandas as pd
 import argparse
+import tempfile
+import shutil
+from contextlib import nullcontext
 
 
 COLS_TO_REMOVE = []
@@ -697,86 +700,38 @@ def split_by_tier(df, field_config, field_patterns):
 
 
 # === Main merge function ===
-def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown"):
+def _apply_oncokb_fixes(df):
+    """Per-sample OncoKB / CNA fixes (all row-wise within one sample).
+    Returns (df, n_highestfda_filled, n_cna_rows)."""
+    n_filled = 0
+    # Fix 1: fill empty ONCOKB_highestFdaLevel from ONCOKB_FDA_LVL
+    if "ONCOKB_highestFdaLevel" in df.columns and "ONCOKB_FDA_LVL" in df.columns:
+        mask = df["ONCOKB_highestFdaLevel"].fillna("").eq("")
+        df.loc[mask, "ONCOKB_highestFdaLevel"] = df.loc[mask, "ONCOKB_FDA_LVL"].fillna("")
+        n_filled = int(mask.sum())
 
-    field_config, field_patterns = load_field_config(yaml_config)
-
-    maf_files = [f for f in os.listdir(input_dir) if f.lower().endswith(".maf")]
-
-    if not maf_files:
-        raise ValueError("No MAF files found in the directory.")
-
-    dfs = []
-
-    for maf in maf_files:
-
-        path = os.path.join(input_dir, maf)
-
-        print(f"Reading: {path}")
-
-        df = pd.read_csv(path, sep="\t", dtype=str)
-
-        df = standardize_format_column(df)
-
-        dfs.append(df)
-
-    merged = pd.concat(dfs, axis=0, ignore_index=True, sort=False)
-
-    merged = calculate_end_position(merged)
-    merged = normalize_format_fields(merged)
-    merged = expand_structured_columns(merged, field_config)
-    print("\n=== Expanding OncoKB JSON array columns ===")
-    merged = expand_oncokb_json_arrays(merged)
-    merged = clean_column_values(merged)
-    merged = add_vaf_column(merged)
-    # NOTE: drop_columns(merged, COLS_TO_REMOVE) is intentionally deferred until
-    # AFTER the CNA fixes below, because source columns such as ONCOKB_treatments,
-    # ONCOKB_FDA_LVL, ONCOKB_SENS_LVL are tier=drop and must still be present
-    # when we populate LEVEL_* and HIGHEST_*_LEVEL for CNA rows.
-
-    # Bug fix 1: ONCOKB_highestFdaLevel is empty because MafAnnotator
-    # does not populate it for UNKNOWN tumor type. Fill from ONCOKB_FDA_LVL
-    # which was written by oncokb2.0.py directly from the API response.
-    # --------------------------------------------------------
-    if "ONCOKB_highestFdaLevel" in merged.columns and "ONCOKB_FDA_LVL" in merged.columns:
-        mask = merged["ONCOKB_highestFdaLevel"].fillna("").eq("")
-        merged.loc[mask, "ONCOKB_highestFdaLevel"] = merged.loc[mask, "ONCOKB_FDA_LVL"].fillna("")
-        filled = mask.sum()
-        if filled:
-            print(f"\nFilled {filled} empty ONCOKB_highestFdaLevel values from ONCOKB_FDA_LVL")
-
-    # --------------------------------------------------------
-    # Bug fix 2: MafAnnotator cannot handle CNA rows — it sets
-    # VARIANT_IN_ONCOKB=False, ONCOGENIC=Unknown, MUTATION_EFFECT=Unknown
-    # for all CNAs even when oncokb2.0.py got correct values.
-    # For CNA rows, overwrite those three columns from the oncokb2.0.py
-    # source columns (ONCOKB_variantExist, ONCOKB_oncogenic,
-    # ONCOKB_mutationEffect.knownEffect, ONCOKB_mutationEffect.citations.pmids).
-    # --------------------------------------------------------
-    cna_mask = merged.get("ONCOKB_QUERY_TYPE", pd.Series("", index=merged.index)).fillna("").eq("CNA")
+    # Fix 2: CNA rows — MafAnnotator cannot annotate CNAs; overwrite from the
+    # oncokb2.0.py source columns.
+    cna_mask = df.get("ONCOKB_QUERY_TYPE", pd.Series("", index=df.index)).fillna("").eq("CNA")
+    n_cna = int(cna_mask.sum())
     if cna_mask.any():
-        if "VARIANT_IN_ONCOKB" in merged.columns and "ONCOKB_variantExist" in merged.columns:
-            merged.loc[cna_mask, "VARIANT_IN_ONCOKB"] = merged.loc[cna_mask, "ONCOKB_variantExist"].fillna("")
-        if "ONCOGENIC" in merged.columns and "ONCOKB_oncogenic" in merged.columns:
-            merged.loc[cna_mask, "ONCOGENIC"] = merged.loc[cna_mask, "ONCOKB_oncogenic"].fillna("")
-        if "MUTATION_EFFECT" in merged.columns and "ONCOKB_mutationEffect.knownEffect" in merged.columns:
-            merged.loc[cna_mask, "MUTATION_EFFECT"] = merged.loc[cna_mask, "ONCOKB_mutationEffect.knownEffect"].fillna("")
-        if "MUTATION_EFFECT_CITATIONS" in merged.columns and "ONCOKB_mutationEffect.citations.pmids" in merged.columns:
-            # oncokb2.0.py stores as Python list repr; normalise to semicolon-separated PMIDs
+        if "VARIANT_IN_ONCOKB" in df.columns and "ONCOKB_variantExist" in df.columns:
+            df.loc[cna_mask, "VARIANT_IN_ONCOKB"] = df.loc[cna_mask, "ONCOKB_variantExist"].fillna("")
+        if "ONCOGENIC" in df.columns and "ONCOKB_oncogenic" in df.columns:
+            df.loc[cna_mask, "ONCOGENIC"] = df.loc[cna_mask, "ONCOKB_oncogenic"].fillna("")
+        if "MUTATION_EFFECT" in df.columns and "ONCOKB_mutationEffect.knownEffect" in df.columns:
+            df.loc[cna_mask, "MUTATION_EFFECT"] = df.loc[cna_mask, "ONCOKB_mutationEffect.knownEffect"].fillna("")
+        if "MUTATION_EFFECT_CITATIONS" in df.columns and "ONCOKB_mutationEffect.citations.pmids" in df.columns:
             def _norm_pmids(v):
                 v = str(v).strip()
                 if not v or v in ("[]", "nan", ""):
                     return ""
-                # strip brackets and quotes, split on comma
                 v = v.strip("[]").replace("'", "").replace('"', "")
-                return ";".join(p.strip() for p in v.split(",") if p.strip())
-            merged.loc[cna_mask, "MUTATION_EFFECT_CITATIONS"] = (
-                merged.loc[cna_mask, "ONCOKB_mutationEffect.citations.pmids"].fillna("").apply(_norm_pmids)
+                return ";".join(x.strip() for x in v.split(",") if x.strip())
+            df.loc[cna_mask, "MUTATION_EFFECT_CITATIONS"] = (
+                df.loc[cna_mask, "ONCOKB_mutationEffect.citations.pmids"].fillna("").apply(_norm_pmids)
             )
-        # ---- Treatment levels from ONCOKB_treatments JSON ----
-        # MafAnnotator leaves LEVEL_1..LEVEL_R2, HIGHEST_SENSITIVE_LEVEL,
-        # HIGHEST_RESISTANCE_LEVEL empty for CNAs. Populate from oncokb2.0.py JSON.
-        if "ONCOKB_treatments" in merged.columns:
+        if "ONCOKB_treatments" in df.columns:
             _level_cols = ["LEVEL_1", "LEVEL_2", "LEVEL_3A", "LEVEL_3B",
                            "LEVEL_4", "LEVEL_R1", "LEVEL_R2"]
 
@@ -800,90 +755,138 @@ def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown")
                                 out[lvl].append(name)
                 return {k: ",".join(v) for k, v in out.items()}
 
-            for cna_idx in merged.index[cna_mask]:
-                tx_json = merged.at[cna_idx, "ONCOKB_treatments"]
-                levels = _extract_levels(tx_json)
+            for cna_idx in df.index[cna_mask]:
+                levels = _extract_levels(df.at[cna_idx, "ONCOKB_treatments"])
                 for lc, val in levels.items():
-                    if lc in merged.columns and val:
-                        merged.at[cna_idx, lc] = val
+                    if lc in df.columns and val:
+                        df.at[cna_idx, lc] = val
+        if "HIGHEST_SENSITIVE_LEVEL" in df.columns and "ONCOKB_SENS_LVL" in df.columns:
+            hs_empty = cna_mask & df["HIGHEST_SENSITIVE_LEVEL"].fillna("").eq("")
+            df.loc[hs_empty, "HIGHEST_SENSITIVE_LEVEL"] = df.loc[hs_empty, "ONCOKB_SENS_LVL"].fillna("")
+        if "HIGHEST_RESISTANCE_LEVEL" in df.columns and "ONCOKB_RESIST_LVL" in df.columns:
+            hr_empty = cna_mask & df["HIGHEST_RESISTANCE_LEVEL"].fillna("").eq("")
+            df.loc[hr_empty, "HIGHEST_RESISTANCE_LEVEL"] = df.loc[hr_empty, "ONCOKB_RESIST_LVL"].fillna("")
+    return df, n_filled, n_cna
 
-        # ---- HIGHEST_SENSITIVE_LEVEL / HIGHEST_RESISTANCE_LEVEL from oncokb2.0.py ----
-        if "HIGHEST_SENSITIVE_LEVEL" in merged.columns and "ONCOKB_SENS_LVL" in merged.columns:
-            hs_empty = cna_mask & merged["HIGHEST_SENSITIVE_LEVEL"].fillna("").eq("")
-            merged.loc[hs_empty, "HIGHEST_SENSITIVE_LEVEL"] = merged.loc[hs_empty, "ONCOKB_SENS_LVL"].fillna("")
-        if "HIGHEST_RESISTANCE_LEVEL" in merged.columns and "ONCOKB_RESIST_LVL" in merged.columns:
-            hr_empty = cna_mask & merged["HIGHEST_RESISTANCE_LEVEL"].fillna("").eq("")
-            merged.loc[hr_empty, "HIGHEST_RESISTANCE_LEVEL"] = merged.loc[hr_empty, "ONCOKB_RESIST_LVL"].fillna("")
 
-        n_cna = int(cna_mask.sum())
-        print(f"\nApplied CNA overwrite fix for {n_cna} CNA rows "
-              f"(VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION_EFFECT, treatment levels, highest levels)")
+def _transform_sample(df, field_config):
+    """All per-row transformations for a single sample's MAF (no cross-sample state)."""
+    df = standardize_format_column(df)
+    df = calculate_end_position(df)
+    df = normalize_format_fields(df)
+    df = expand_structured_columns(df, field_config)
+    df = expand_oncokb_json_arrays(df)
+    df = clean_column_values(df)
+    df = add_vaf_column(df)
+    df, n_filled, n_cna = _apply_oncokb_fixes(df)
+    df = drop_columns(df, COLS_TO_REMOVE)
+    return df, n_filled, n_cna
 
-    # Now safe to drop COLS_TO_REMOVE (source columns already consumed above)
-    merged = drop_columns(merged, COLS_TO_REMOVE)
 
-    report_undocumented_columns(merged, field_config, field_patterns)
+def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown"):
+    """Merge per-sample MAFs into the three tiered outputs with a streaming,
+    two-pass strategy: peak memory stays at ~one sample regardless of cohort size.
 
-    # --------------------------------------------------------
-    # Remove all columns marked as "drop" in the YAML config.
-    # These are redundant or duplicate fields and are excluded
-    # from every output file without exception.
-    # --------------------------------------------------------
-    drop_cols = [
-        col for col in merged.columns
-        if resolve_field_meta(col, field_config, field_patterns).get("tier") == "drop"
-    ]
+    Pass 1 transforms each sample independently, caches it to a temp pickle, and
+    accumulates the global ordered union of column names. Pass 2 streams each
+    cached sample, aligns it to that schema, and appends its rows to the outputs.
+    """
+    field_config, field_patterns = load_field_config(yaml_config)
 
-    print(f"\nDropped columns (tier=drop): {len(drop_cols)}")
-    if drop_cols:
-        for c in drop_cols:
-            print(f"  - {c}")
-
-    merged = merged.drop(columns=drop_cols, errors="ignore")
+    maf_files = sorted(f for f in os.listdir(input_dir) if f.lower().endswith(".maf"))
+    if not maf_files:
+        raise ValueError("No MAF files found in the directory.")
 
     os.makedirs(output_dir, exist_ok=True)
+    tmp_dir = tempfile.mkdtemp(prefix="smart_merge_")
 
-    tier1_maf  = os.path.join(output_dir, "Final_result_tier1.maf")
-    tier2_file = os.path.join(output_dir, "Final_result_tier2.tsv")
-    tier3_file = os.path.join(output_dir, "Final_result_tier3.tsv")
+    try:
+        # ---- PASS 1: per-sample transform + cache; accumulate column union ----
+        global_cols, seen, tmp_files = [], set(), []
+        total_filled = total_cna = total_rows = 0
+        for i, maf in enumerate(maf_files):
+            path = os.path.join(input_dir, maf)
+            print(f"[pass 1] transforming: {path}")
+            df = pd.read_csv(path, sep="\t", dtype=str)
+            df, nf, nc = _transform_sample(df, field_config)
+            total_filled += nf
+            total_cna += nc
+            total_rows += len(df)
+            for c in df.columns:
+                if c not in seen:
+                    seen.add(c)
+                    global_cols.append(c)
+            tmp = os.path.join(tmp_dir, f"part_{i:06d}.pkl")
+            df.to_pickle(tmp)
+            tmp_files.append(tmp)
+            del df
 
-    # --------------------------------------------------------
-    # Tier 1 MAF: all remaining non-drop columns, single header.
-    # Standard MAF format — no metadata second row.
-    # --------------------------------------------------------
-    print(f"\nTier1 columns: {len(merged.columns)}")
-    print(f"Writing Tier1 MAF (all non-drop columns, no metadata header): {tier1_maf}")
-    with open(tier1_maf, "w") as fh:
-        fh.write(f"#SMART_VERSION {smart_version}\n")
-        merged.to_csv(fh, sep="\t", index=False)
+        if total_filled:
+            print(f"\nFilled {total_filled} empty ONCOKB_highestFdaLevel values from ONCOKB_FDA_LVL")
+        if total_cna:
+            print(f"Applied CNA overwrite fix for {total_cna} CNA rows "
+                  "(VARIANT_IN_ONCOKB, ONCOGENIC, MUTATION_EFFECT, treatment levels, highest levels)")
 
-    # --------------------------------------------------------
-    # Split into Tier 2 and Tier 3 subsets.
-    # Tier assignments come from Config.yaml — to change which
-    # fields appear in each file, edit build_config.py and
-    # re-run it to regenerate Config.yaml.
-    # --------------------------------------------------------
-    tier2_df, tier3_df = split_by_tier(merged, field_config, field_patterns)
+        report_undocumented_columns(pd.DataFrame(columns=global_cols), field_config, field_patterns)
 
-    # --------------------------------------------------------
-    # Tier 2 TSV: bioinformatician fields, two-row header.
-    # --------------------------------------------------------
-    tier2_df = build_multiindex_header(tier2_df, field_config, field_patterns)
+        # ---- Resolve final column sets from the global union (by name) ----
+        n_drop = 0
+        final_cols, tier2_cols, tier3_cols = [], [], []
+        for col in global_cols:
+            tier = resolve_field_meta(col, field_config, field_patterns).get("tier")
+            if tier == "drop":
+                n_drop += 1
+                continue
+            final_cols.append(col)
+            if tier == 2:
+                tier2_cols.append(col)
+            elif tier == 3:
+                tier3_cols.append(col)
+                tier2_cols.append(col)
 
-    print(f"Writing Tier2 TSV (bioinformaticians, two-row header): {tier2_file}")
-    tier2_df.to_csv(tier2_file, sep="\t", index=False)
+        print(f"\nDropped columns (tier=drop): {n_drop}")
+        print(f"Tier1 columns: {len(final_cols)}")
+        print(f"Tier2 columns: {len(tier2_cols)}")
+        print(f"Tier3 columns: {len(tier3_cols)}")
+        print(f"Total rows across {len(maf_files)} sample(s): {total_rows}")
 
-    # --------------------------------------------------------
-    # Tier 3 TSV: clinical scientist fields, two-row header.
-    # --------------------------------------------------------
-    if tier3_df.empty or len(tier3_df.columns) == 0:
-        print("\nWARNING: No Tier 3 columns found in data.")
-        print("To populate Final_result_tier3.tsv, add fields to TIER3_FIELDS")
-        print("in build_config.py and re-run it to regenerate Config.yaml.")
-    else:
-        tier3_df = build_multiindex_header(tier3_df, field_config, field_patterns)
-        print(f"Writing Tier3 TSV (clinical scientists, two-row header): {tier3_file}")
-        tier3_df.to_csv(tier3_file, sep="\t", index=False)
+        def _meta_row(cols):
+            row = []
+            for col in cols:
+                m = resolve_field_meta(col, field_config, field_patterns)
+                row.append(f"{m.get('description', 'UNKNOWN')} | "
+                           f"{m.get('source', 'UNKNOWN')} | {m.get('version', 'UNKNOWN')}")
+            return row
+
+        tier1_maf  = os.path.join(output_dir, "Final_result_tier1.maf")
+        tier2_file = os.path.join(output_dir, "Final_result_tier2.tsv")
+        tier3_file = os.path.join(output_dir, "Final_result_tier3.tsv")
+        write_t3 = len(tier3_cols) > 0
+
+        # ---- PASS 2: stream each cached sample, align to schema, append ----
+        print(f"\nWriting tiered outputs (streaming): {output_dir}")
+        with open(tier1_maf, "w") as f1, open(tier2_file, "w") as f2, \
+                (open(tier3_file, "w") if write_t3 else nullcontext()) as f3:
+
+            f1.write(f"#SMART_VERSION {smart_version}\n")
+            pd.DataFrame(columns=final_cols).to_csv(f1, sep="\t", index=False)
+            pd.DataFrame([_meta_row(tier2_cols)], columns=tier2_cols).to_csv(f2, sep="\t", index=False)
+            if write_t3:
+                pd.DataFrame([_meta_row(tier3_cols)], columns=tier3_cols).to_csv(f3, sep="\t", index=False)
+
+            for tmp in tmp_files:
+                df = pd.read_pickle(tmp).reindex(columns=final_cols, fill_value="")
+                df.to_csv(f1, sep="\t", index=False, header=False)
+                df[tier2_cols].to_csv(f2, sep="\t", index=False, header=False)
+                if write_t3:
+                    df[tier3_cols].to_csv(f3, sep="\t", index=False, header=False)
+                del df
+
+        if not write_t3:
+            print("\nWARNING: No Tier 3 columns found in data.")
+            print("To populate Final_result_tier3.tsv, add tier-3 fields to Config.yaml.")
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
 # === Entry point ===
