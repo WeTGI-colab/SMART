@@ -459,30 +459,47 @@ Each variant accrues points from independent evidence axes; the codes (`O*`/`B*`
 the ACGS / SVIG-UK 2025 framework. Points are additive **across** axes but mutually
 exclusive **within** an axis (only the strongest tier of each axis fires).
 
-| Evidence | Code | Points |
-|----------|------|-------:|
-| OncoKB `Oncogenic` | O10 | +10 |
-| OncoKB `Likely Oncogenic` / `Resistance` | O10 | +6 |
-| ClinVar `Pathogenic` | O10 | +5 |
-| ClinVar oncogenicity flag = `Oncogenic` | O10 | +4 |
-| ClinVar `Likely pathogenic` | O10 | +3 |
-| Loss-of-function (frameshift / stop-gain / splice, `HIGH` impact) | O2 | +4 |
-| Mutational hotspot (OncoKB **or** CancerHotspots) | O7 | +2 |
-| Absent from gnomAD | O3 | +2 |
-| Ultra-rare (gnomAD MAX_AF ≤ 1e-5) | O3 | +1 |
-| In-silico damaging (REVEL ≥ 0.7 **or** SpliceAI ≥ 0.2) | O6 | +1 |
-| Constrained gene (LOEUF < 0.6) | O8 | +1 |
-| COSMIC recurrence — tier 1 / ≥50 samples *(optional)* | O4 | +4 |
-| COSMIC recurrence — tier 2 / ≥20 samples *(optional)* | O4 | +3 |
-| COSMIC recurrence — ≥10 / ≥5 samples *(optional)* | O4 | +2 / +1 |
-| OncoKB `Likely Neutral` | B6 | −4 |
-| OncoKB `Neutral` | B6 | −7 |
-| ClinVar `Benign` | B6 | −5 |
-| ClinVar `Likely benign` | B6 | −3 |
-| Common (gnomAD MAX_AF ≥ 1%) | B1 | −8 |
-| Sub-common (gnomAD MAX_AF ≥ 0.1%) | B1 | −4 |
-| In-silico benign (REVEL < 0.7 **and** SpliceAI < 0.1) | B3 | −1 |
-| Synonymous change | B4 | −4 |
+The two right-hand columns map each SMART rule to the corresponding SVIG-UK evidence
+code: **what a geneticist does under the SOP**, and the **official point range** the SOP
+assigns to that code (which the SMART weight does not always match — see the note below).
+
+| Evidence | Code | SMART pts | What the geneticist does (SVIG-UK SOP) | SOP points |
+|----------|------|----------:|----------------------------------------|------------|
+| OncoKB `Oncogenic` | O10 | +10 | Reviews well-validated functional / MAVE studies showing the variant abnormally alters protein function (Brnich 2019); strength set by assay validation | +8 / +4 / +2 / +1 |
+| OncoKB `Likely Oncogenic` / `Resistance` | O10 | +6 | — same O10 functional-evidence review (weaker assay support) | +8 / +4 / +2 / +1 |
+| ClinVar `Pathogenic` | O10 | +5 | — O10 used as a curated functional-evidence proxy from the ClinVar assertion | +8 / +4 / +2 / +1 |
+| ClinVar oncogenicity flag = `Oncogenic` | O10 | +4 | — O10 (ClinVar somatic oncogenicity assertion) | +8 / +4 / +2 / +1 |
+| ClinVar `Likely pathogenic` | O10 | +3 | — O10 (weaker ClinVar assertion) | +8 / +4 / +2 / +1 |
+| Loss-of-function (frameshift / stop-gain / splice, `HIGH` impact) | O2 | +4 | Confirms a null variant (frameshift, stop-gain, canonical ±1/2 splice, start-loss) **in a tumour-suppressor gene** and applies the PVS1 decision tree | +8 / +4 / +2 / +1 |
+| Mutational hotspot (OncoKB **or** CancerHotspots) | O7 | +2 | Checks cancerhotspots.org: ≥50 samples at the AA position **and** ≥10 with the same AA change (+4); <50 but ≥10 same (+2); 2–9 same change (+1) | +4 / +2 / +1 |
+| Absent from gnomAD | O3 | +2 | Confirms absence from gnomAD v4.1 across **all** populations | +2 / +1 |
+| Ultra-rare (gnomAD MAX_AF ≤ 1e-5) | O3 | +1 | ≤0.001 % AF in a sub-population with >100k alleles | +2 / +1 |
+| In-silico damaging (REVEL ≥ 0.7 **or** SpliceAI ≥ 0.2) | O6 | +1 | Notes computational support (REVEL ≥0.7 or SpliceAI ≥0.2) — **supporting strength only, never higher** | +1 (max) |
+| Constrained gene (LOEUF < 0.6) | O8 | +1 | Notes low missense-variation tolerance in the gene/domain (constraint) | +1 (max) |
+| COSMIC recurrence — tier 1 / ≥50 samples *(optional)* | O4 | +4 | Counts somatic occurrences in a somatic database (**GENIE** in the SOP); thresholds by variant class — **only if O3 (rarity) applies and B1/B2 do not** | +4 / +2 / +1 |
+| COSMIC recurrence — tier 2 / ≥20 samples *(optional)* | O4 | +3 | — same O4 (medium recurrence) | +4 / +2 / +1 |
+| COSMIC recurrence — ≥10 / ≥5 samples *(optional)* | O4 | +2 / +1 | — same O4 (low recurrence) | +4 / +2 / +1 |
+| OncoKB `Likely Neutral` | B6 | −4 | Reviews well-validated functional studies showing **no** functional impact | −4 / −2 / −1 |
+| OncoKB `Neutral` | B6 | −7 | — same B6 (stronger no-effect assay) | −4 / −2 / −1 |
+| ClinVar `Benign` | B6 | −5 | — B6 used as a no-effect proxy from the ClinVar assertion | −4 / −2 / −1 |
+| ClinVar `Likely benign` | B6 | −3 | — B6 (weaker ClinVar benign assertion) | −4 / −2 / −1 |
+| Common (gnomAD MAX_AF ≥ 1%) | B1 | −8 | Confirms high population frequency in gnomAD → **standalone Benign** (B1 alone classifies the variant) | Standalone Benign (or −4) |
+| Sub-common (gnomAD MAX_AF ≥ 0.1%) | B1 | −4 | — B1 as supporting strength | Standalone Benign (or −4) |
+| In-silico benign (REVEL < 0.7 **and** SpliceAI < 0.1) | B3 | −1 | Notes computational evidence of no effect (REVEL <0.7 **and** all SpliceAI <0.1) | −1 (max) |
+| Synonymous change | B4 | −4 | Confirms a synonymous change with no predicted splicing impact (or deep-intronic ≥+7 / ≤−21) | −4 / −1 |
+
+**How SMART's weights relate to the SVIG-UK SOP.** SMART's points are a bioinformatician's
+first-pass approximation, not the certified SOP scoring, and several weights deliberately
+diverge from the official ranges:
+
+- **O10 (SMART up to +10 vs SOP max +8):** SMART gives OncoKB `Oncogenic` more weight than the official maximum for functional evidence, and repurposes O10 — which in the SOP means *experimental functional studies* — as a proxy for OncoKB/ClinVar assertions.
+- **B6 (SMART −7 / −5 vs SOP max −4):** SMART's benign functional weights exceed the official B6 range.
+- **B1 (SMART −8):** the SOP does not assign −8; B1 is a *standalone Benign* call (or −4 supporting). SMART encodes it as −8 to reach the ≤ −7 benign threshold.
+- **O4:** SMART scores recurrence from **COSMIC**, whereas the SOP uses **GENIE**; the SOP also requires the **O3 (rarity) prerequisite** and is voided when B1/B2 apply — constraints SMART does not enforce.
+- **O7:** SMART fires a flat +2, whereas the SOP graduates +4 / +2 / +1 by hotspot count.
+
+These divergences are consistent with the caveat below: the weights were fixed by a
+bioinformatician before validation and have not been calibrated against the certified SOP scoring.
 
 The summed score maps to a 5-class verdict:
 
@@ -506,7 +523,7 @@ the optional COSMIC track is enabled. Codes needing data not present in the MAF 
 still **not** implemented — O5, O9, O11, B2, B5 and B7. Thresholds follow the documented
 framework; calibration is not independently validated against the certified WGLS pipeline.
 
-> The point values in the **Evidence / Code / Points** table above were assigned by a bioinformatician, not a geneticist, and were fixed *before* this validation was run — the numbers have **not** been adapted to fit the geneticist's classifications. They are a reasonable first pass rather than a calibrated model, and there is clear room for improvement: with further work (ideally geneticist-led) the weights could be refined to track real-world classification more closely. It should also be kept in mind that SMART's annotation is tumour-agnostic, whereas the geneticists' classification is tumour-specific, so the two are not expected to align perfectly. Even with these limitations, this validation meets its objective: to gauge, in broad terms, how closely SMART's output approximates the reality represented by the geneticist's classification — and the encouraging result is that OncoKB alone, supplemented by a handful of additional annotation columns, already yields a good approximation.
+> The point values in the **scoring table** above were assigned by a bioinformatician, not a geneticist, and were fixed *before* this validation was run — the numbers have **not** been adapted to fit the geneticist's classifications. They are a reasonable first pass rather than a calibrated model, and there is clear room for improvement: with further work (ideally geneticist-led) the weights could be refined to track real-world classification more closely. It should also be kept in mind that SMART's annotation is tumour-agnostic, whereas the geneticists' classification is tumour-specific, so the two are not expected to align perfectly. Even with these limitations, this validation meets its objective: to gauge, in broad terms, how closely SMART's output approximates the reality represented by the geneticist's classification — and the encouraging result is that OncoKB alone, supplemented by a handful of additional annotation columns, already yields a good approximation.
 
 ---
 
