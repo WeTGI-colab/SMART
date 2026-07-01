@@ -188,6 +188,15 @@ cython_debug/
 *.err
 *.out
 
+# macOS
+.DS_Store
+
+# generated at install time (contains machine-local paths)
+pipeline_config.sh
+
+# stray verification output at repo root
+/results.tsv
+
 # local run scripts (replaced by tests/run_all_verifications.sh)
 
 # --- verification test outputs: regenerated on every run, not source ---

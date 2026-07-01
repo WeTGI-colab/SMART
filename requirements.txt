@@ -1,5 +1,5 @@
 # SMART — Somatic Mutation Annotation and Reporting Tool
-# Python Dependencies (derived from TSO500_environment.yml)
+# Python Dependencies (derived from environment.yml)
 
 pandas>=2.0
 numpy>=1.24
