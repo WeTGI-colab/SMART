@@ -1,4 +1,4 @@
-# SMART — Somatic Mutation Annotation and Reporting Tool <a href="#"><img src="Files4ThisProject/SMART_logo_docker.png" align="right" height="120"/></a>
+# SMART — Somatic Mutation Annotation and Reporting Tool <a href="#"><img src="assets/SMART_logo_docker.png" align="right" height="120"/></a>
 
 <p align="center"><em>A Dockerised pipeline for somatic variant annotation, filtration, and clinical reporting.</em></p>
 
@@ -18,7 +18,7 @@ Everything runs inside a single Docker container.
 ## Workflow
 
 <p align="center">
-  <img src="Files4ThisProject/Diagram_logo.png" alt="SMART pipeline workflow" width="820"/>
+  <img src="assets/Diagram_logo.png" alt="SMART pipeline workflow" width="820"/>
 </p>
 
 A streamlined framework for somatic variant annotation and clinical reporting.
@@ -431,7 +431,7 @@ Key findings:
 - **Multi-evidence adds value on the benign side.** Per-class agreement with the geneticist for benign variants rises from 0% (OncoKB-only) to 98% (multi-evidence), lifting specificity (0.92 → 0.93) and weighted kappa (0.63 → 0.74).
 - **Missed oncogenic calls are recovered by COSMIC (O4).** The false negatives are dominated by OncoKB-blind variants that are nonetheless recurrent in tumours. Enabling the optional COSMIC somatic-recurrence track (evidence code O4) is the single change that recovers them — see *Impact of COSMIC* below.
 
-![Sensitivity and specificity of each classifier against the geneticist](Files4ThisProject/validation/fig1_sens_spec.png)
+![Sensitivity and specificity of each classifier against the geneticist](assets/fig1_sens_spec.png)
 
 **Impact of COSMIC (O4).** With the optional COSMIC Cancer Mutation Census track enabled, the multi-evidence scorer gains a somatic-recurrence signal (code O4). On this set it recovers **5 expert-oncogenic variants** the scorer otherwise missed (TET2 ×2, U2AF1, BTK, PHF6 — all recurrent in COSMIC, sample counts 14–57) at a cost of **2 new false positives**, lifting **sensitivity 0.937 → 0.951** and **weighted kappa 0.74 → 0.754** with specificity essentially unchanged (0.928 → 0.925). This is precisely the evidence OncoKB lacks: of the variants OncoKB has no data for, COSMIC covers ~40% — and ~70% of the *oncogenic* ones. (COSMIC is licence-gated and optional; see [utils/cosmic_cmc_to_vcf.py](utils/cosmic_cmc_to_vcf.py).)
 
