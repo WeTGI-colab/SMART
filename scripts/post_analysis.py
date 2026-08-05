@@ -769,6 +769,19 @@ def _apply_oncokb_fixes(df):
     return df, n_filled, n_cna
 
 
+def strip_embedded_whitespace(df):
+    """Replace embedded newlines / carriage returns / tabs with a single space in
+    every cell.
+
+    A MAF/TSV is one record per physical line, tab-delimited. OncoKB free-text
+    fields (citation abstracts, mutation-effect descriptions) can contain literal
+    newlines or tabs; if written verbatim they split a record into a phantom row
+    with a blank Tumor_Sample_Barcode and every column shifted, which corrupts the
+    MAF. Collapsing these characters to a space keeps each record on one clean line.
+    """
+    return df.replace({r"[\r\n\t]+": " "}, regex=True)
+
+
 def _transform_sample(df, field_config):
     """All per-row transformations for a single sample's MAF (no cross-sample state)."""
     df = standardize_format_column(df)
@@ -780,6 +793,7 @@ def _transform_sample(df, field_config):
     df = add_vaf_column(df)
     df, n_filled, n_cna = _apply_oncokb_fixes(df)
     df = drop_columns(df, COLS_TO_REMOVE)
+    df = strip_embedded_whitespace(df)   # guard: no \n / \t / \r in any cell -> one clean MAF row per record
     return df, n_filled, n_cna
 
 

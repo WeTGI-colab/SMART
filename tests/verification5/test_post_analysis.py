@@ -242,6 +242,39 @@ class TestCleanColumnValues:
         assert result["ONCOGENIC"].iloc[0] == "Oncogenic"
 
 
+class TestStripEmbeddedWhitespace:
+    def test_newline_replaced_with_space(self):
+        df = pd.DataFrame({"ONCOKB_EFFECT_DESC": ["damaging.\nIn silico predicts (PMID: 1)."]})
+        result = post.strip_embedded_whitespace(df)
+        assert "\n" not in result["ONCOKB_EFFECT_DESC"].iloc[0]
+        assert result["ONCOKB_EFFECT_DESC"].iloc[0] == "damaging. In silico predicts (PMID: 1)."
+
+    def test_tab_and_cr_replaced(self):
+        df = pd.DataFrame({"FIELD": ["a\tb\r\nc"]})
+        result = post.strip_embedded_whitespace(df)
+        assert result["FIELD"].iloc[0] == "a b c"
+
+    def test_normal_values_unchanged(self):
+        df = pd.DataFrame({"SYMBOL": ["BRAF"], "HGVSp_Short": ["p.V600E"]})
+        result = post.strip_embedded_whitespace(df)
+        assert result["SYMBOL"].iloc[0] == "BRAF"
+        assert result["HGVSp_Short"].iloc[0] == "p.V600E"
+
+    def test_row_does_not_split_when_written(self):
+        # The actual bug: an embedded newline splits a MAF record into a phantom
+        # row with a blank Tumor_Sample_Barcode. After sanitising, N records must
+        # still write as exactly N physical lines.
+        import io
+        df = pd.DataFrame({
+            "Tumor_Sample_Barcode": ["S1", "S2"],
+            "ONCOKB_EFFECT_DESC": ["ok", "text.\nIn silico (PMID: 1).\t['1']"],
+        })
+        clean = post.strip_embedded_whitespace(df)
+        buf = io.StringIO()
+        clean.to_csv(buf, sep="\t", index=False, header=False)
+        assert buf.getvalue().rstrip("\n").count("\n") + 1 == 2
+
+
 # ===========================================================================
 # calculate_end_position
 # ===========================================================================
