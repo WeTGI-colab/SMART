@@ -2,3 +2,13 @@ title: SMART
 description: Somatic Mutation Annotation and Reporting Tool
 theme: jekyll-theme-cayman
 show_downloads: false
+
+# Files kept in docs/ for the repo but NOT part of the published website.
+# Excluding them keeps the Jekyll build light and avoids web-publishing
+# internal notes and third-party (SVIG-UK) PDFs.
+exclude:
+  - SMART_pipeline_metadata.md
+  - SMART_pipeline_metadata.docx
+  - SMART_presentation_notes.md
+  - gen_example_output.py
+  - guidelines/
