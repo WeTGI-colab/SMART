@@ -380,6 +380,8 @@ Because MafAnnotator does not correctly annotate CNA rows, the pipeline's post-a
 
 ## Validation against expert classification
 
+> **These results were obtained with the earlier heuristic multi-evidence scorer (v1)**, whose point values were not taken from the SVIG-UK guideline. It has been replaced by the guideline-based [SVIG-UK oncogenicity classifier](#svig-uk-oncogenicity-classifier); re-validation against the same expert classification is pending and these figures will be updated.
+
 SMART's calls were benchmarked against an independent expert classification: the WGLS oncology team manually classified **1,054 onco-related variants across 58 genes** following SVIG-UK. Two classifiers were compared: the current OncoKB-only verdict and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
 
 Binary task, positive = geneticist (Likely) Oncogenic:
@@ -437,7 +439,7 @@ Key findings:
 
 **Impact of COSMIC (O4).** With the optional COSMIC Cancer Mutation Census track enabled, the multi-evidence scorer gains a somatic-recurrence signal (code O4). On this set it recovers **5 expert-oncogenic variants** the scorer otherwise missed (TET2 ×2, U2AF1, BTK, PHF6 — all recurrent in COSMIC, sample counts 14–57) at a cost of **2 new false positives**, lifting **sensitivity 0.937 → 0.951** and **weighted kappa 0.74 → 0.754** with specificity essentially unchanged (0.928 → 0.925). This is precisely the evidence OncoKB lacks: of the variants OncoKB has no data for, COSMIC covers ~40% — and ~70% of the *oncogenic* ones. (COSMIC is licence-gated and optional; see [utils/cosmic_cmc_to_vcf.py](utils/cosmic_cmc_to_vcf.py).)
 
-The SVIG-UK multi-evidence scorer used here is included as methodology in `data/jack_list_validation/validation_report/` (`score_multievidence_inplace.py`, `smart_multievidence.py`). The curated variant set itself was constructed by the reference laboratory and is **not redistributed** with this repository; it is available on request.
+The v1 multi-evidence scorer used here is kept for reference in `data/jack_list_validation/validation_report/` (`score_multievidence_inplace.py`, `smart_multievidence.py`). The curated variant set itself was constructed by the reference laboratory and is **not redistributed** with this repository; it is available on request.
 
 > The geneticist labels are tumour-type specific while SMART/OncoKB is tumour-agnostic, so some "false positives" are defensible rather than errors. This caveat affects the false-positive count more than the false-negative count.
 
@@ -455,77 +457,105 @@ scale before comparison:
 
 For the binary metrics, **positive = (Likely) Oncogenic** on both sides.
 
-### Multi-evidence scoring scheme (SVIG-UK v1)
+### SVIG-UK oncogenicity classifier
 
-Each variant accrues points from independent evidence axes; the codes (`O*`/`B*`) follow
-the ACGS / SVIG-UK 2025 framework. Points are additive **across** axes but mutually
-exclusive **within** an axis (only the strongest tier of each axis fires).
+`scripts/svig_uk_classifier.py` classifies each variant in a SMART MAF following the
+**ACGS / SVIG-UK 2025** guidelines ([main guideline](docs/guidelines/svig-uk_guidelines_v10.pdf),
+[supplementary material](docs/guidelines/svig-uk_supplementary_material.pdf)). It replaces the
+earlier heuristic multi-evidence scorer, whose point values were not taken from the guideline.
 
-The two right-hand columns map each SMART rule to the corresponding SVIG-UK evidence
-code: **what a geneticist does under the SOP**, and the **official point range** the SOP
-assigns to that code (which the SMART weight does not always match — see the note below).
+**Design principles**
 
-| Evidence | Code | SMART pts | What the geneticist does (SVIG-UK SOP) | SOP points |
-|----------|------|----------:|----------------------------------------|------------|
-| OncoKB `Oncogenic` | O10 | +10 | Reviews well-validated functional / MAVE studies showing the variant abnormally alters protein function (Brnich 2019); strength set by assay validation | +8 / +4 / +2 / +1 |
-| OncoKB `Likely Oncogenic` / `Resistance` | O10 | +6 | — same O10 functional-evidence review (weaker assay support) | +8 / +4 / +2 / +1 |
-| ClinVar `Pathogenic` | O10 | +5 | — O10 used as a curated functional-evidence proxy from the ClinVar assertion | +8 / +4 / +2 / +1 |
-| ClinVar oncogenicity flag = `Oncogenic` | O10 | +4 | — O10 (ClinVar somatic oncogenicity assertion) | +8 / +4 / +2 / +1 |
-| ClinVar `Likely pathogenic` | O10 | +3 | — O10 (weaker ClinVar assertion) | +8 / +4 / +2 / +1 |
-| Loss-of-function (frameshift / stop-gain / splice, `HIGH` impact) | O2 | +4 | Confirms a null variant (frameshift, stop-gain, canonical ±1/2 splice, start-loss) **in a tumour-suppressor gene** and applies the PVS1 decision tree | +8 / +4 / +2 / +1 |
-| Mutational hotspot (OncoKB **or** CancerHotspots) | O7 | +2 | Checks cancerhotspots.org: ≥50 samples at the AA position **and** ≥10 with the same AA change (+4); <50 but ≥10 same (+2); 2–9 same change (+1) | +4 / +2 / +1 |
-| Absent from gnomAD | O3 | +2 | Confirms absence from gnomAD v4.1 across **all** populations | +2 / +1 |
-| Ultra-rare (gnomAD MAX_AF ≤ 1e-5) | O3 | +1 | ≤0.001 % AF in a sub-population with >100k alleles | +2 / +1 |
-| In-silico damaging (REVEL ≥ 0.7 **or** SpliceAI ≥ 0.2) | O6 | +1 | Notes computational support (REVEL ≥0.7 or SpliceAI ≥0.2) — **supporting strength only, never higher** | +1 (max) |
-| Constrained gene (LOEUF < 0.6) | O8 | +1 | Notes low missense-variation tolerance in the gene/domain (constraint) | +1 (max) |
-| COSMIC recurrence — tier 1 / ≥50 samples *(optional)* | O4 | +4 | Counts somatic occurrences in a somatic database (**GENIE** in the SOP); thresholds by variant class — **only if O3 (rarity) applies and B1/B2 do not** | +4 / +2 / +1 |
-| COSMIC recurrence — tier 2 / ≥20 samples *(optional)* | O4 | +3 | — same O4 (medium recurrence) | +4 / +2 / +1 |
-| COSMIC recurrence — ≥10 / ≥5 samples *(optional)* | O4 | +2 / +1 | — same O4 (low recurrence) | +4 / +2 / +1 |
-| OncoKB `Likely Neutral` | B6 | −4 | Reviews well-validated functional studies showing **no** functional impact | −4 / −2 / −1 |
-| OncoKB `Neutral` | B6 | −7 | — same B6 (stronger no-effect assay) | −4 / −2 / −1 |
-| ClinVar `Benign` | B6 | −5 | — B6 used as a no-effect proxy from the ClinVar assertion | −4 / −2 / −1 |
-| ClinVar `Likely benign` | B6 | −3 | — B6 (weaker ClinVar benign assertion) | −4 / −2 / −1 |
-| Common (gnomAD MAX_AF ≥ 1%) | B1 | −8 | Confirms high population frequency in gnomAD → **standalone Benign** (B1 alone classifies the variant) | Standalone Benign (or −4) |
-| Sub-common (gnomAD MAX_AF ≥ 0.1%) | B1 | −4 | — B1 as supporting strength | Standalone Benign (or −4) |
-| In-silico benign (REVEL < 0.7 **and** SpliceAI < 0.1) | B3 | −1 | Notes computational evidence of no effect (REVEL <0.7 **and** all SpliceAI <0.1) | −1 (max) |
-| Synonymous change | B4 | −4 | Confirms a synonymous change with no predicted splicing impact (or deep-intronic ≥+7 / ≤−21) | −4 / −1 |
+1. Every rule follows the guideline text; each is cited in the code (`[G §x]` main guideline,
+   `[S Tn]` / `[S Fn]` supplementary tables and figures).
+2. Only the official strengths are used — **+8 / +4 / +2 / +1** and **−8 / −4 / −2 / −1** —
+   plus the stand-alone outcomes of O1, B1 and B2.
+3. Where the guideline needs a judgement that annotation data cannot supply, the rule is
+   either omitted or replaced by a labelled **SMART proxy**: an automatable approximation that is
+   never stronger than the guideline would allow.
+4. Each code is applied once, the code-combination restrictions of Supplementary Figures 1 and 2
+   are enforced, and the **minimum-two-codes rule** is applied: a (likely) oncogenic or (likely)
+   benign class needs at least two codes in the same direction, otherwise the variant is a VUS.
+5. Weights were fixed from the guideline alone, before evaluation against expert-classified variants.
 
-**How SMART's weights relate to the SVIG-UK SOP.** SMART's points are a bioinformatician's
-first-pass approximation, not the certified SOP scoring, and several weights deliberately
-diverge from the official ranges:
+**Evidence codes**
 
-- **O10 (SMART up to +10 vs SOP max +8):** SMART gives OncoKB `Oncogenic` more weight than the official maximum for functional evidence, and repurposes O10 — which in the SOP means *experimental functional studies* — as a proxy for OncoKB/ClinVar assertions.
-- **B6 (SMART −7 / −5 vs SOP max −4):** SMART's benign functional weights exceed the official B6 range.
-- **B1 (SMART −8):** the SOP does not assign −8; B1 is a *standalone Benign* call (or −4 supporting). SMART encodes it as −8 to reach the ≤ −7 benign threshold.
-- **O4:** SMART scores recurrence from **COSMIC**, whereas the SOP uses **GENIE**; the SOP also requires the **O3 (rarity) prerequisite** and is voided when B1/B2 apply — constraints SMART does not enforce.
-- **O7:** SMART fires a flat +2, whereas the SOP graduates +4 / +2 / +1 by hotspot count.
+| Code | Guideline rule (strength) | SMART implementation | Data | Status |
+|------|---------------------------|----------------------|------|--------|
+| O1 | SVIG-UK canonical variants list — stand-alone, with the list's Oncogenic / Likely Oncogenic assessment | Protein match (frameshift tail ignored); genomic match for TERT promoter; FLT3 exon-14 in-frame duplication for ITD | [`reference_lists/svig_uk_canonical_variants.tsv`](reference_lists/svig_uk_canonical_variants.tsv) (Supplementary Table 3) | As written |
+| O2 | Null variant in a tumour suppressor, PVS1 decision tree (+8/+4/+2/+1) | Stop/frameshift predicted to trigger NMD +8; final exon or first 100 bp of exon 1 +2; canonical ±1/2 splice +2 (+2T>C only if SpliceAI ≥ 0.8; +2C>T never); start-loss +1 | VEP consequence, EXON, CDS position, SpliceAI; gene role | Proxy — exon boundaries and protein length are not in the MAF, so the tree falls back to its lowest reachable strength |
+| O3 | Absent from gnomAD v4.1 (+2); ≤0.001% in a sub-population of ≥100,000 alleles (+1), not if >1 allele in a smaller sub-population | As written; allele counts estimated from allele frequency and gnomAD v4 sample sizes. Not applied if it would lift otherwise likely-benign evidence into VUS | gnomAD v4.1 exomes + genomes (VEP) | As written |
+| O4 | Enriched in a somatic database (GENIE thresholds by variant class, +4/+2/+1); needs O3; not with B1/B2 | COSMIC Cancer Mutation Census sample counts at protein level, all tissues, with every GENIE threshold ×5 — the guideline requires "much higher thresholds" for COSMIC and gives >50 (vs GENIE >10) for strong missense. Missense >50 / 25–50; truncating (same position or downstream) and in-frame >250 / 100–250 / 50–99 | COSMIC CMC (optional, user-licensed) | Proxy — on-target tumour-type counting is not possible because the CMC tissue breakdown is empty for ~99.5% of mutations |
+| O5 | Different (likely) oncogenic change at the same residue, compared by REVEL | — | Needs the REVEL score of the reference variant | Not automated |
+| O6 | REVEL ≥ 0.7 or SpliceAI Δ ≥ 0.2 (+1 max); in gain-of-function genes only within functional regions | As written; "functional region" = curated protein domain or Cancer Hotspots residue | REVEL, SpliceAI, VEP DOMAINS | As written |
+| O7 | Cancer Hotspots: ≥50 at residue and ≥10 same change (+4); <50 and ≥10 (+2); 2–9 same change (+1) | Cancer Hotspots route as written; the functional-domain routes (which need judgement on local benign variation) are not used | Cancer Hotspots counts | As written (hotspot route) |
+| O8 | Missense constraint, gnomAD missense Z ≥ 3.09 (+1) | As written, on the transcript SMART selected (MANE fallback) | gnomAD constraint | As written |
+| O9 | In-frame change in a functional domain (>1 residue +2, single residue +1); truncation in the final exon of an oncogene (+2) | "Functional domain" = Pfam, SMART, PROSITE, CDD, PRINTS, HAMAP, NCBIFAM or PIRSF entry from VEP | VEP DOMAINS | Proxy |
+| O10 | Well-established functional studies (+8/+4/+2/+1) | OncoKB variant-level mutation effect (Gain/Switch-of-function in an oncogene, Loss-of-function in a TSG) at **supporting** strength only | OncoKB | Proxy |
+| O11 | Tumour phenotype | — | IHC, MSI, TMB, LOH | Not automated |
+| B1 | gnomAD >1% stand-alone benign; >0.1% (−4) | Overall or highest of AFR/EAS/NFE/AMR/SAS, exomes or genomes | gnomAD v4.1 | As written |
+| B2 | Variant does not fit the gene's mode of action — stand-alone VUS | Null variant in a gene with an oncogene role and no tumour-suppressor role (final-exon truncations go to O9 instead). Activating variants in TSGs are not detected | COSMIC Cancer Gene Census (OncoKB fallback) | Proxy |
+| B3 | REVEL ≤ 0.4 (not for activating variants) or all SpliceAI Δ ≤ 0.1 (−1) | REVEL route only in genes with a tumour-suppressor role | REVEL, SpliceAI | As written |
+| B4 | Synonymous / intronic (≥+7 or ≤−21) / UTR with no predicted splicing impact (−1 in silico; −4 needs an RNA assay) | In silico route (−1); synonymous variants in the splice region excluded | VEP consequence, HGVSc, SpliceAI | As written |
+| B5 | In-frame indel in a repetitive region of unknown function (−1) | Low-complexity sequence outside any functional domain | VEP DOMAINS | Proxy |
+| B6 | Functional studies showing no effect (−4/−2/−1) | OncoKB variant-level mutation effect "Neutral" at supporting strength only | OncoKB | Proxy |
+| B7 | Tumour phenotype | — | — | Not automated |
 
-These divergences are consistent with the caveat below: the weights were fixed by a
-bioinformatician before validation and have not been calibrated against the certified SOP scoring.
+**Mode of action and tumour type.** Gene roles come from the COSMIC Cancer Gene Census, as the
+guideline recommends, with OncoKB gene roles as fallback. Where the guideline states a
+tumour-type-specific role it is applied explicitly (EZH2: tumour suppressor in myeloid,
+activating in lymphoid). The tumour type is read from a `TUMOUR_TYPE` column or `--tumour-type`.
 
-The summed score maps to a 5-class verdict:
+**Combination rules enforced** (Supplementary Figures 1–2 and code guidance): O6, O7 and O9 are
+removed when O2 applies; O10 is removed with null variants; O6 is removed with O9; O8 is removed
+with O7; O6 + O7 are capped at 4 points; O4 needs O3 and is removed with B1; O7 is removed when B1
+applies; B6 is removed when SpliceAI predicts a splicing impact.
 
-| Score | Verdict |
-|-------|---------|
-| ≥ 10 | Oncogenic |
-| 6 … 9 | Likely Oncogenic |
-| 0 … 5 | VUS |
-| −6 … −1 | Likely Benign |
-| ≤ −7 | Benign |
+**Output columns**
 
-*Example — DNMT3A R882H (a canonical hotspot):* OncoKB `Oncogenic` (+10) + ClinVar
-`Pathogenic` (+5) + ClinVar oncogenic flag (+4) + hotspot (+2) + in-silico damaging (+1)
-= **22 → Oncogenic**. Each variant's fired codes are written to an `EVIDENCE_CODES`
-column so the score is auditable by eye.
+| Column | Content |
+|--------|---------|
+| `SVIG_UK_CLASS` | Oncogenic / Likely Oncogenic / VUS / Likely Benign / Benign |
+| `SVIG_UK_SCORE` | Sum of points (empty for stand-alone O1, B1, B2) |
+| `SVIG_UK_CODES` | Every code applied, e.g. `O2_VSTR(+8) [premature stop predicted to trigger NMD]; O3_MOD(+2) [absent from gnomAD v4.1 exomes and genomes]` |
+| `SVIG_UK_NOTES` | Codes removed by combination rules, minimum-two-codes downgrades and resources not provided |
 
-This is a **v1 approximation** of SVIG-UK: it implements O2 (conservatively, no
-tumour-suppressor mode-of-action check), O3, O6, O7, O8, O10, B1, B3, B4 and B6, plus
-**O4** (somatic recurrence, scored from COSMIC sample counts / significance tier) when
-the optional COSMIC track is enabled. Codes needing data not present in the MAF are
-still **not** implemented — O5, O9, O11, B2, B5 and B7. Thresholds follow the documented
-framework; calibration is not independently validated against the certified WGLS pipeline.
+**Usage**
 
-> The point values in the **scoring table** above were assigned by a bioinformatician, not a geneticist, and were fixed *before* this validation was run — the numbers have **not** been adapted to fit the geneticist's classifications. They are a reasonable first pass rather than a calibrated model, and there is clear room for improvement: with further work (ideally geneticist-led) the weights could be refined to track real-world classification more closely. It should also be kept in mind that SMART's annotation is tumour-agnostic, whereas the geneticists' classification is tumour-specific, so the two are not expected to align perfectly. Even with these limitations, this validation meets its objective: to gauge, in broad terms, how closely SMART's output approximates the reality represented by the geneticist's classification — and the encouraging result is that OncoKB alone, supplemented by a handful of additional annotation columns, already yields a good approximation.
+```bash
+# once: build the COSMIC-derived lookups from your licensed COSMIC downloads
+python3 utils/build_svig_uk_resources.py \
+    --cgc-tar /refs/COSMIC/Cosmic_CancerGeneCensus_Tsv_v104_GRCh38.tar \
+    --cmc-tar /refs/COSMIC/CancerMutationCensus_AllData_Tsv_v104_GRCh37.tar \
+    --out-dir /refs/SVIG_UK
+
+# classify a SMART MAF
+python3 scripts/svig_uk_classifier.py \
+    --maf output/Final_result_tier1.maf \
+    --out output/Final_result_tier1.svig_uk.maf \
+    --refs /refs --tumour-type myeloid
+```
+
+Resources are resolved against `--refs` (`SVIG_UK/cgc_gene_roles.tsv`,
+`SVIG_UK/cosmic_o4_counts.tsv.gz`, `oncokb_gene_roles.tsv`,
+`CancerHotSpots/cancerhotspots_counts.json`, `gnomAD_constraints/loeuf_dataset_grch38.tsv.gz`).
+Each is optional; when one is missing the dependent codes are listed as not evaluated in
+`SVIG_UK_NOTES` rather than silently skipped.
+
+**Known limitations**
+
+- O5, O11 and B7 are not automated, and the RNA-assay forms of O2 and B4 are not used.
+- O2 cannot check the last 50 bp of the penultimate exon or the ">10% of the protein" criterion.
+- O3 does not apply the CHIP allele-balance correction the guideline describes for DNMT3A,
+  ASXL1, TET2 and TP53, and cannot check gnomAD read depth.
+- O4 uses COSMIC rather than GENIE, counts all tissues rather than on-target tumour types, and
+  matches amino-acid changes by gene, so transcript numbering differences between SMART and
+  COSMIC can hide counts.
+- The guideline states that professional judgement must always be applied; this classifier is
+  decision support, not a replacement for scientist review.
+
+The classifier's rules are covered by 63 unit tests whose expectations are taken from the
+guideline text ([tests/verification5/test_svig_uk_classifier.py](tests/verification5/test_svig_uk_classifier.py)).
 
 ---
 

@@ -7,6 +7,15 @@ to the entry below.
 
 Docker images are published as `monkiky/smart:<version>`.
 
+## [Unreleased] — SMART 2.0 (in development)
+
+### Added
+- SVIG-UK oncogenicity classifier (`scripts/svig_uk_classifier.py`), O1 canonical
+  variants list and COSMIC resource builder. Planned as a separate Tier 4 output with a
+  two-row header documenting the classification system. Validation against the WGLS
+  expert classification in progress.
+- Planned: optional dbNSFP annotation (user-built, academic licence).
+
 ## [1.0.8] — 2026-09-17
 
 ### Fixed

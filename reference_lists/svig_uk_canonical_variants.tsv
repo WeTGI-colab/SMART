@@ -1,0 +1,161 @@
+gene	transcript	hgvsc	protein	assessment	match_rule
+ALK	NM_004304.5	c.3520T>C/c.3522C>G/A	p.Phe1174Leu	Oncogenic	protein
+ALK	NM_004304.5	c.3824G>A	p.Arg1275Gln	Oncogenic	protein
+BRAF	NM_004333.6	c.1406G>C	p.Gly469Ala	Oncogenic	protein
+BRAF	NM_004333.6	c.1781A>G	p.Asp594Gly	Oncogenic	protein
+BRAF	NM_004333.6	c.1798G>A	p.Val600Met	Oncogenic	protein
+BRAF	NM_004333.6	c.1798_1799delinsAA	p.Val600Lys	Oncogenic	protein
+BRAF	NM_004333.6	c.1798_1799delinsAG	p.Val600Arg	Oncogenic	protein
+BRAF	NM_004333.6	c.1799T>A/c.1799_1800delinsAA	p.Val600Glu	Oncogenic	protein
+BRAF	NM_004333.6	c.1801A>G	p.Lys601Glu	Oncogenic	protein
+CALR	NM_004343.4	c.1099_1150del	p.Leu367ThrfsTer46	Likely Oncogenic	protein
+CALR	NM_004343.4	c.1154_1155insTTGTC	p.Lys385AsnfsTer47	Likely Oncogenic	protein
+CD79B	NM_000626.4	c.586T>A	p.Tyr196Asn	Likely Oncogenic	protein
+CD79B	NM_000626.4	c.586T>C	p.Tyr196His	Likely Oncogenic	protein
+CD79B	NM_000626.4	c.586T>G	p.Tyr196Asp	Likely Oncogenic	protein
+CD79B	NM_000626.4	c.587A>C	p.Tyr196Ser	Likely Oncogenic	protein
+CD79B	NM_000626.4	c.587A>G	p.Tyr196Cys	Likely Oncogenic	protein
+CD79B	NM_000626.4	c.587A>T	p.Tyr196Phe	Likely Oncogenic	protein
+CSF3R	NM_000760.4	c.1853C>T	p.Thr618Ile	Oncogenic	protein
+CXCR4	NM_003467.3	c.1013C>A/G	p.Ser338Ter	Likely Oncogenic	protein
+DDX41	NM_016222.4	c.1574G>A	p.Arg525His	Oncogenic	protein
+DNMT3A	NM_022552.5	c.2644C>T	p.Arg882Cys	Oncogenic	protein
+DNMT3A	NM_022552.5	c.2645G>A	p.Arg882His	Oncogenic	protein
+EGFR	NM_005228.5	c.2155G>A	p.Gly719Ser	Oncogenic	protein
+EGFR	NM_005228.5	c.2155G>T	p.Gly719Cys	Oncogenic	protein
+EGFR	NM_005228.5	c.2156G>C	p.Gly719Ala	Oncogenic	protein
+EGFR	NM_005228.5	c.2303G>T	p.Ser768Ile	Oncogenic	protein
+EGFR	NM_005228.5	c.2369C>T	p.Thr790Met	Oncogenic	protein
+EGFR	NM_005228.5	c.2573T>G	p.Leu858Arg	Oncogenic	protein
+EGFR	NM_005228.5	c.2582T>A	p.Leu861Gln	Oncogenic	protein
+EZH2	NM_004456.5	c.1936T>A	p.Tyr646Asn	Oncogenic	protein
+EZH2	NM_004456.5	c.1936T>C	p.Tyr646His	Oncogenic	protein
+EZH2	NM_004456.5	c.1937A>C	p.Tyr646Ser	Oncogenic	protein
+EZH2	NM_004456.5	c.1937A>G	p.Tyr646Cys	Oncogenic	protein
+EZH2	NM_004456.5	c.1937A>T	p.Tyr646Phe	Oncogenic	protein
+FLT3	NM_004119.3	Exon 14 region IF-dup (ITD)		Oncogenic	flt3_itd
+FLT3	NM_004119.3	c.2503G>C	p.Asp835His	Oncogenic	protein
+FLT3	NM_004119.3	c.2503G>T	p.Asp835Tyr	Oncogenic	protein
+FLT3	NM_004119.3	c.2504A>T	p.Asp835Val	Oncogenic	protein
+FLT3	NM_004119.3	c.2505T>A/G	p.Asp835Glu	Oncogenic	protein
+FLT3	NM_004119.3	c.2508_2510del	p.Ile836del	Oncogenic	protein
+GNAS	NM_000516.7	c.601C>T	p.Arg201Cys	Oncogenic	protein
+GNAS	NM_000516.7	c.602G>A	p.Arg201His	Oncogenic	protein
+H3-3A	NM_002107.7	c.83A>T	p.Lys28Met	Oncogenic	protein
+H3-3A	NM_002107.7	c.103G>A/C	p.Gly35Arg	Oncogenic	protein
+H3-3A	NM_002107.7	c.103G>T	p.Gly35Trp	Oncogenic	protein
+H3-3B	NM_005324.5	c.110A>T/c.111G>C	p.Lys37Met	Oncogenic	protein
+HRAS	NM_005343.4	c.34G>A	p.Gly12Ser	Oncogenic	protein
+HRAS	NM_005343.4	c.34G>T	p.Gly12Cys	Oncogenic	protein
+HRAS	NM_005343.4	c.35G>A	p.Gly12Asp	Oncogenic	protein
+HRAS	NM_005343.4	c.35G>T	p.Gly12Val	Oncogenic	protein
+HRAS	NM_005343.4	c.37G>A	p.Gly13Ser	Oncogenic	protein
+HRAS	NM_005343.4	c.37G>C	p.Gly13Arg	Oncogenic	protein
+HRAS	NM_005343.4	c.37G>T	p.Gly13Cys	Oncogenic	protein
+HRAS	NM_005343.4	c.38G>A	p.Gly13Asp	Oncogenic	protein
+HRAS	NM_005343.4	c.38G>T	p.Gly13Val	Oncogenic	protein
+HRAS	NM_005343.4	c.181C>A	p.Gln61Lys	Oncogenic	protein
+HRAS	NM_005343.4	c.182A>G	p.Gln61Arg	Oncogenic	protein
+HRAS	NM_005343.4	c.182A>T	p.Gln61Leu	Oncogenic	protein
+HRAS	NM_005343.4	c.183G>C/T	p.Gln61His	Oncogenic	protein
+IDH1	NM_005896.4	c.394C>A	p.Arg132Ser	Oncogenic	protein
+IDH1	NM_005896.4	c.394C>G	p.Arg132Gly	Oncogenic	protein
+IDH1	NM_005896.4	c.394C>T	p.Arg132Cys	Oncogenic	protein
+IDH1	NM_005896.4	c.395G>A	p.Arg132His	Oncogenic	protein
+IDH1	NM_005896.4	c.395G>T	p.Arg132Leu	Oncogenic	protein
+IDH2	NM_002168.4	c.418C>T	p.Arg140Trp	Oncogenic	protein
+IDH2	NM_002168.4	c.419G>A	p.Arg140Gln	Oncogenic	protein
+IDH2	NM_002168.4	c.419G>T	p.Arg140Leu	Oncogenic	protein
+IDH2	NM_002168.4	c.515G>A	p.Arg172Lys	Oncogenic	protein
+IDH2	NM_002168.4	c.515G>T	p.Arg172Met	Oncogenic	protein
+IDH2	NM_002168.4	c.516G>C/T	p.Arg172Ser	Oncogenic	protein
+JAK2	NM_004972.4	c.1849G>T	p.Val617Phe	Oncogenic	protein
+KIT	NM_000222.3	c.1727T>C	p.Leu576Pro	Oncogenic	protein
+KIT	NM_000222.3	c.2446G>C	p.Asp816His	Oncogenic	protein
+KIT	NM_000222.3	c.2446G>T	p.Asp816Tyr	Oncogenic	protein
+KIT	NM_000222.3	c.2447A>T	p.Asp816Val	Oncogenic	protein
+KIT	NM_000222.3	c.2466T>A/G	p.Asn822Lys	Likely Oncogenic	protein
+KRAS	NM_004985.5	c.34G>A	p.Gly12Ser	Oncogenic	protein
+KRAS	NM_004985.5	c.34G>C	p.Gly12Arg	Oncogenic	protein
+KRAS	NM_004985.5	c.34G>T	p.Gly12Cys	Oncogenic	protein
+KRAS	NM_004985.5	c.34_35delinsTT	p.Gly12Phe	Oncogenic	protein
+KRAS	NM_004985.5	c.35G>A	p.Gly12Asp	Oncogenic	protein
+KRAS	NM_004985.5	c.35G>C	p.Gly12Ala	Oncogenic	protein
+KRAS	NM_004985.5	c.35G>T	p.Gly12Val	Oncogenic	protein
+KRAS	NM_004985.5	c.37G>A	p.Gly13Ser	Oncogenic	protein
+KRAS	NM_004985.5	c.37G>C	p.Gly13Arg	Oncogenic	protein
+KRAS	NM_004985.5	c.37G>T	p.Gly13Cys	Oncogenic	protein
+KRAS	NM_004985.5	c.38G>A	p.Gly13Asp	Oncogenic	protein
+KRAS	NM_004985.5	c.38G>T	p.Gly13Val	Oncogenic	protein
+KRAS	NM_004985.5	c.181C>A	p.Gln61Lys	Oncogenic	protein
+KRAS	NM_004985.5	c.182A>T	p.Gln61Leu	Oncogenic	protein
+KRAS	NM_004985.5	c.182A>G	p.Gln61Arg	Oncogenic	protein
+KRAS	NM_004985.5	c.183A>C/T	p.Gln61His	Oncogenic	protein
+KRAS	NM_004985.5	c.436G>A	p.Ala146Thr	Oncogenic	protein
+MPL	NM_005373.3	c.1514G>A	p.Ser505Asn	Oncogenic	protein
+MPL	NM_005373.3	c.1543_1544delinsAA/c.1543_1545delinsAAA	p.Trp515Lys	Oncogenic	protein
+MPL	NM_005373.3	c.1544G>T	p.Trp515Leu	Oncogenic	protein
+MYD88	NM_002468.5	c.755T>C	p.Leu252Pro	Oncogenic	protein
+NPM1	NM_002520.7	c.860_863dup/c.863_864ins(4 bases)	p.Trp288CysfsTer12	Oncogenic	protein
+NRAS	NM_002524.5	c.34G>A	p.Gly12Ser	Oncogenic	protein
+NRAS	NM_002524.5	c.34G>C	p.Gly12Arg	Oncogenic	protein
+NRAS	NM_002524.5	c.34G>T	p.Gly12Cys	Oncogenic	protein
+NRAS	NM_002524.5	c.35G>A	p.Gly12Asp	Oncogenic	protein
+NRAS	NM_002524.5	c.35G>C	p.Gly12Ala	Oncogenic	protein
+NRAS	NM_002524.5	c.35G>T	p.Gly12Val	Oncogenic	protein
+NRAS	NM_002524.5	c.37G>A	p.Gly13Ser	Oncogenic	protein
+NRAS	NM_002524.5	c.37G>C	p.Gly13Arg	Oncogenic	protein
+NRAS	NM_002524.5	c.37G>T	p.Gly13Cys	Oncogenic	protein
+NRAS	NM_002524.5	c.38G>A	p.Gly13Asp	Oncogenic	protein
+NRAS	NM_002524.5	c.38G>T	p.Gly13Val	Oncogenic	protein
+NRAS	NM_002524.5	c.181C>A	p.Gln61Lys	Oncogenic	protein
+NRAS	NM_002524.5	c.182A>G	p.Gln61Arg	Oncogenic	protein
+NRAS	NM_002524.5	c.182A>T	p.Gln61Leu	Oncogenic	protein
+NRAS	NM_002524.5	c.183A>C/T	p.Gln61His	Oncogenic	protein
+NRAS	NM_002524.5	c.436G>A	p.Ala146Thr	Oncogenic	protein
+PAX5	NM_016734.3	c.239C>G	p.Pro80Arg	Oncogenic	protein
+PIK3CA	NM_006218.4	c.1035T>A	p.Asn345Lys	Oncogenic	protein
+PIK3CA	NM_006218.4	c.1624G>A	p.Glu542Lys	Oncogenic	protein
+PIK3CA	NM_006218.4	c.1633G>A	p.Glu545Lys	Oncogenic	protein
+PIK3CA	NM_006218.4	c.3140A>T	p.His1047Leu	Oncogenic	protein
+PIK3CA	NM_006218.4	c.3140A>G	p.His1047Arg	Oncogenic	protein
+PDGFRA	NM_006206.6	c.2525A>T	p.Asp842Val	Likely Oncogenic	protein
+POLE	NM_006231.4	c.857C>G	p.Pro286Arg	Oncogenic	protein
+POLE	NM_006231.4	c.1231G>C/T	p.Val411Leu	Oncogenic	protein
+RET	NM_020975.6	c.2753T>C	p.Met918Thr	Likely Oncogenic	protein
+RHOA	NM_001664.4	c.50G>T	p.Gly17Val	Oncogenic	protein
+RUNX1	NM_001754.5	c.601C>T	p.Arg201Ter	Oncogenic	protein
+RUNX1	NM_001754.5	c.601G>A	p.Arg201Gln	Oncogenic	protein
+SETBP1	NM_015559.3	c.2602G>A	p.Asp868Asn	Oncogenic	protein
+SETBP1	NM_015559.3	c.2608G>A	p.Gly870Ser	Oncogenic	protein
+SF3B1	NM_012433.4	c.1866G>C/T	p.Glu622Asp	Oncogenic	protein
+SF3B1	NM_012433.4	c.1873C>T	p.Arg625Cys	Oncogenic	protein
+SF3B1	NM_012433.4	c.1874G>A	p.Arg625His	Oncogenic	protein
+SF3B1	NM_012433.4	c.1986C>A/G	p.His662Gln	Oncogenic	protein
+SF3B1	NM_012433.4	c.1997A>C	p.Lys666Thr	Oncogenic	protein
+SF3B1	NM_012433.4	c.1997A>G	p.Lys666Arg	Oncogenic	protein
+SF3B1	NM_012433.4	c.1998G>C/T	p.Lys666Asn	Oncogenic	protein
+SF3B1	NM_012433.4	c.2098A>G	p.Lys700Glu	Oncogenic	protein
+SF3B1	NM_012433.4	c.2225G>A	p.Gly742Asp	Oncogenic	protein
+SRSF2	NM_001195427.2	c.284C>A	p.Pro95His	Oncogenic	protein
+SRSF2	NM_001195427.2	c.284C>G	p.Pro95Arg	Oncogenic	protein
+SRSF2	NM_001195427.2	c.284C>T	p.Pro95Leu	Oncogenic	protein
+SRSF2	NM_001195427.2	c.284_307del	p.Pro95_Arg102del	Oncogenic	protein
+STAT3	NM_139276.3	c.1919A>T	p.Tyr640Phe	Oncogenic	protein
+STAT3	NM_139276.3	c.1981G>T	p.Asp661Tyr	Oncogenic	protein
+STAT3	NM_139276.3	c.1982A>T	p.Asp661Val	Oncogenic	protein
+TERT	NM_198253.3	c.-124C>T		Oncogenic	genomic:chr5:1295113:G:A
+TERT	NM_198253.3	c.-146C>T		Oncogenic	genomic:chr5:1295135:G:A
+TP53	NM_000546.6	c.524G>A	p.Arg175His	Oncogenic	protein
+TP53	NM_000546.6	c.659A>G	p.Tyr220Cys	Oncogenic	protein
+TP53	NM_000546.6	c.733G>A	p.Gly245Ser	Oncogenic	protein
+TP53	NM_000546.6	c.742C>T	p.Arg248Trp	Oncogenic	protein
+TP53	NM_000546.6	c.743G>A	p.Arg248Gln	Oncogenic	protein
+TP53	NM_000546.6	c.817C>T	p.Arg273Cys	Oncogenic	protein
+TP53	NM_000546.6	c.818G>A	p.Arg273His	Oncogenic	protein
+TP53	NM_000546.6	c.844C>T	p.Arg282Trp	Oncogenic	protein
+U2AF1	NM_006758.3	c.101C>A	p.Ser34Tyr	Oncogenic	protein
+U2AF1	NM_006758.3	c.101C>T	p.Ser34Phe	Oncogenic	protein
+U2AF1	NM_006758.3	c.470A>C	p.Gln157Pro	Oncogenic	protein
+U2AF1	NM_006758.3	c.470A>G	p.Gln157Arg	Oncogenic	protein
+XPO1	NM_003400.4	c.1711G>A	p.Glu571Lys	Oncogenic	protein
