@@ -110,6 +110,24 @@ class TestConvertHgvspShort:
         result = vcf2table.convert_hgvsp_short("p.V600E")
         assert result == "p.V600E"
 
+    @pytest.mark.parametrize("hgvsp,expected", [
+        # Previously broken: frameshifts kept 3-letter codes and lost the stop position
+        ("ENSP00000347948.4:p.Thr15GlufsTer55", "p.T15Efs*55"),
+        ("p.Trp288CysfsTer12",                  "p.W288Cfs*12"),   # NPM1 type A
+        ("p.Leu367ThrfsTer46",                  "p.L367Tfs*46"),   # CALR type 1
+        # Previously broken: multi-residue in-frame changes were left in 3-letter form
+        ("p.Met1673_Leu1676del",                "p.M1673_L1676del"),
+        ("p.His24_Ser37delinsPro",              "p.H24_S37delinsP"),
+        ("p.Ala767_Val769dup",                  "p.A767_V769dup"),
+        ("p.Lys745_Glu746insIlePro",            "p.K745_E746insIP"),
+        ("p.Ile836del",                         "p.I836del"),      # FLT3 I836del
+        # Synonymous and stop-loss extension
+        ("p.Thr477%3D",                         "p.T477="),
+        ("p.Ter403TrpextTer?",                  "p.*403Wext*?"),
+    ])
+    def test_non_substitution_forms(self, hgvsp, expected):
+        assert vcf2table.convert_hgvsp_short(hgvsp) == expected
+
     def test_empty_string_returns_empty(self):
         assert vcf2table.convert_hgvsp_short("") == ""
 

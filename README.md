@@ -543,12 +543,12 @@ Supported filename-inferred types: brain, breast, cholangiocarcinoma, colon, end
 
 ## Versioning
 
-The pipeline version is recorded in the `VERSION` file at the repository root. It is printed in the terminal banner at the start of every run and written as the first line of every output MAF file (`#SMART_VERSION x.y.z`), making each result file self-describing and traceable to a specific release.
+The pipeline version is recorded in the `VERSION` file at the repository root. It is printed in the terminal banner at the start of every run and written as the first line of every output MAF file (`#SMART_VERSION x.y.z`), making each result file self-describing and traceable to a specific release. What changed in each release, and why a new version was published, is recorded in the [CHANGELOG](CHANGELOG.md).
 
 To check the version bundled in a Docker image:
 
 ```bash
-docker run --rm monkiky/smart:latest cat /app/VERSION
+docker run --rm --entrypoint cat monkiky/smart:latest /opt/smart/VERSION
 ```
 
 ---

@@ -26,3 +26,6 @@ __pycache__/
 *.pyc
 .env
 README.md
+
+# Local benchmarking tools and licensed data (never part of the image)
+external_tools/

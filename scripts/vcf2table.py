@@ -343,12 +343,25 @@ aa_dict = {
     "Ter": "*",
 }
 
+AA3_RE = re.compile("|".join(aa_dict))
+
+
 def convert_hgvsp_short(hgvsp):
     """
     Convert long HGVSp notation to short protein change format.
 
-    Example:
-        p.Val600Glu → p.V600E
+    Every three-letter amino-acid code is replaced by its one-letter code, so the
+    conversion works for all HGVS protein forms, not only substitutions:
+
+        p.Val600Glu               → p.V600E
+        p.Arg248Ter               → p.R248*
+        p.Thr15GlufsTer55         → p.T15Efs*55
+        p.Met1673_Leu1676del      → p.M1673_L1676del
+        p.His24_Ser37delinsPro    → p.H24_S37delinsP
+        p.Thr477%3D               → p.T477=
+
+    Lower-case HGVS keywords (del, ins, dup, fs, ext) never match a three-letter
+    code, which always starts with a capital letter.
 
     Parameters
     ----------
@@ -362,11 +375,8 @@ def convert_hgvsp_short(hgvsp):
     """
     if not isinstance(hgvsp, str) or "p." not in hgvsp:
         return ""
-    match = re.search(r"p\.([A-Za-z]+)(\d+)([A-Za-z\*]+)", hgvsp)
-    if match:
-        ref, pos, alt = match.groups()
-        return f"p.{aa_dict.get(ref, ref)}{pos}{aa_dict.get(alt, alt)}"
-    return hgvsp.split(":")[-1]
+    protein = hgvsp.split(":")[-1].replace("%3D", "=")
+    return AA3_RE.sub(lambda m: aa_dict[m.group(0)], protein)
 
 
 def final_requiretments(df, output_csv):

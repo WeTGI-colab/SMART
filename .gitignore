@@ -211,3 +211,6 @@ tests/verification*/results.tsv
 # scripts and run config that are already tracked stay tracked (gitignore does not untrack
 # existing files); only new/derived data files are excluded.
 data/jack_list_validation/
+
+# --- external third-party tools installed locally for benchmarking (NOT part of SMART) ---
+external_tools/

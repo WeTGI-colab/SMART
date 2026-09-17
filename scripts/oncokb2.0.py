@@ -28,6 +28,7 @@ import os
 import re
 import json
 import sys
+import time
 import argparse
 from typing import Optional
 import requests
@@ -106,6 +107,40 @@ ONCOKB_BASE = "https://www.oncokb.org/api/v1"
 API_MUT_BY_PROTEIN = f"{ONCOKB_BASE}/annotate/mutations/byProteinChange"
 API_CNA = f"{ONCOKB_BASE}/annotate/copyNumberAlterations"
 REFERENCE_GENOME = "GRCh38"
+
+# Transient OncoKB API failures (dropped connections, timeouts, rate limiting,
+# gateway errors) are retried with exponential backoff: 2, 4, 8, 16 s between
+# attempts. A single dropped connection used to abort the whole sample.
+API_MAX_ATTEMPTS = 5
+API_RETRY_STATUS = {429, 500, 502, 503, 504}
+
+
+def _get_with_retry(url: str, params: dict, headers: dict):
+    """GET with retries on transient failures.
+
+    Returns the final response (which may still carry a non-200 status for the
+    caller to handle). If the connection itself keeps failing, raises
+    RuntimeError after the last attempt: failing loudly is safer than silently
+    writing variants without OncoKB annotation.
+    """
+    for attempt in range(1, API_MAX_ATTEMPTS + 1):
+        try:
+            resp = requests.get(url, params=params, headers=headers, timeout=15)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+            if attempt == API_MAX_ATTEMPTS:
+                raise RuntimeError(
+                    f"OncoKB API unreachable after {API_MAX_ATTEMPTS} attempts: {exc}"
+                ) from exc
+            reason = type(exc).__name__
+        else:
+            if resp.status_code not in API_RETRY_STATUS or attempt == API_MAX_ATTEMPTS:
+                return resp
+            reason = f"HTTP {resp.status_code}"
+        wait = 2 ** attempt
+        sys.stderr.write(
+            f"OncoKB API {reason} (attempt {attempt}/{API_MAX_ATTEMPTS}); retrying in {wait}s\n"
+        )
+        time.sleep(wait)
 
 
 # ---------------------------------------------------------
@@ -398,7 +433,7 @@ def query_oncokb_mutation(gene: str, alteration: str, tumor_type: str, token: st
         params["tumorType"] = tumor_type
     headers = {"Authorization": f"Bearer {token}", "accept": "application/json"}
 
-    resp = requests.get(API_MUT_BY_PROTEIN, params=params, headers=headers, timeout=15)
+    resp = _get_with_retry(API_MUT_BY_PROTEIN, params, headers)
     if resp.status_code != 200:
         if resp.status_code != 404:
             sys.stderr.write(
@@ -434,7 +469,7 @@ def query_oncokb_cna(gene: str, cna_type: str, tumor_type: str, token: str, cach
         params["tumorType"] = tumor_type
     headers = {"Authorization": f"Bearer {token}", "accept": "application/json"}
 
-    resp = requests.get(API_CNA, params=params, headers=headers, timeout=15)
+    resp = _get_with_retry(API_CNA, params, headers)
     if resp.status_code != 200:
         if resp.status_code != 404:
             sys.stderr.write(

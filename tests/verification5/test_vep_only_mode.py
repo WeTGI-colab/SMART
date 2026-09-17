@@ -197,3 +197,50 @@ class TestOncokbRequiresToken:
         assert result == expected
         # Result is cached for next call
         assert ("mut", "BRAF", "V600E", "") in cache
+
+
+# ===========================================================================
+# OncoKB API retries on transient failures
+# ===========================================================================
+
+class TestOncokbRetry:
+    """A dropped connection used to abort the whole sample; transient failures
+    are now retried with backoff, and persistent ones fail loudly."""
+
+    @staticmethod
+    def _resp(status_code, payload=None):
+        resp = MagicMock()
+        resp.status_code = status_code
+        resp.json.return_value = payload or {}
+        return resp
+
+    def test_recovers_after_dropped_connection(self):
+        import requests
+        ok = self._resp(200, {"oncogenic": "Oncogenic"})
+        with patch("requests.get", side_effect=[requests.exceptions.ConnectionError("reset"), ok]), \
+             patch("time.sleep") as sleep:
+            result = oncokb.query_oncokb_mutation("BRAF", "V600E", "", "t", cache={})
+        assert result == {"oncogenic": "Oncogenic"}
+        sleep.assert_called_once_with(2)
+
+    def test_retries_on_gateway_error_then_succeeds(self):
+        ok = self._resp(200, {"oncogenic": "Oncogenic"})
+        with patch("requests.get", side_effect=[self._resp(503), self._resp(502), ok]) as get, \
+             patch("time.sleep"):
+            result = oncokb.query_oncokb_cna("CDKN2A", "DELETION", "", "t", cache={})
+        assert result == {"oncogenic": "Oncogenic"}
+        assert get.call_count == 3
+
+    def test_persistent_connection_failure_raises(self):
+        import requests
+        with patch("requests.get", side_effect=requests.exceptions.ConnectionError("reset")) as get, \
+             patch("time.sleep"):
+            with pytest.raises(RuntimeError, match="unreachable"):
+                oncokb.query_oncokb_mutation("BRAF", "V600E", "", "t", cache={})
+        assert get.call_count == oncokb.API_MAX_ATTEMPTS
+
+    def test_client_errors_are_not_retried(self):
+        with patch("requests.get", return_value=self._resp(401)) as get, patch("time.sleep") as sleep:
+            assert oncokb.query_oncokb_mutation("BRAF", "V600E", "", "", cache={}) is None
+        assert get.call_count == 1
+        sleep.assert_not_called()
