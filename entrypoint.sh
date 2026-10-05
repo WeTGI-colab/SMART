@@ -36,6 +36,7 @@ Optional (full pipeline):
     DIR/CIVIC/civic_grch38.vcf.gz
     DIR/gnomAD_constraints/loeuf_dataset_grch38.tsv.gz
     DIR/CancerHotSpots/hg38.hotspots_changv2_gao_nc.vcf.gz
+    Optional: DIR/COSMIC/cosmic_cmc_grch38.vcf.gz, DIR/CADD/*, DIR/dbNSFP/dbNSFP5.0a_grch38.smart.gz
 
 Options:
   --pass / --no-pass               Enable/disable PASS filtering (default: ON)
@@ -45,6 +46,13 @@ Options:
   --jobs N                         Number of samples to process in parallel on this
                                    machine (default: 1 = sequential). Each job is one
                                    sample; all jobs share the same CPU and RAM.
+  --tumour-type TYPE               Tumour type for the Tier 4 SVIG-UK classification: an
+                                   OncoTree code (e.g. AML, MDS, LUAD) or myeloid | lymphoid |
+                                   haem | solid | unknown (default: unknown). A per-variant
+                                   TUMOUR_TYPE column in the input takes precedence.
+  --o4-on-target LEVEL             GENIE entries counted for O4: code | tissue | lineage | all
+                                   (default: lineage)
+  --no-classification              Do not write the Tier 4 classification
   --vep-only                       Stop after VEP annotation. Skips OncoKB,
                                    vcf2table, MafAnnotator, and post-analysis.
                                    Annotated VCFs are written to AnnotatedVcf/.
@@ -80,6 +88,9 @@ CLEAN_TMP=1
 CLEAN_TABLES=1
 JOBS=1
 VEP_ONLY=0
+TUMOUR_TYPE="unknown"
+O4_ON_TARGET="lineage"
+DO_CLASSIFICATION=1
 
 # The OncoKB token is the first positional argument.
 # If it is absent (first arg is a flag) or an empty string, automatically
@@ -143,6 +154,21 @@ while [[ $# -gt 0 ]]; do
             ;;
         --vep-only)
             VEP_ONLY=1
+            shift
+            ;;
+        --tumour-type)
+            [[ $# -lt 2 ]] && { echo "ERROR: --tumour-type requires a value"; exit 2; }
+            TUMOUR_TYPE="$2"
+            shift 2
+            ;;
+        --o4-on-target)
+            [[ $# -lt 2 ]] && { echo "ERROR: --o4-on-target requires a value"; exit 2; }
+            O4_ON_TARGET="$2"
+            [[ "$O4_ON_TARGET" =~ ^(code|tissue|lineage|all)$ ]] || { echo "ERROR: --o4-on-target must be code, tissue, lineage or all"; exit 2; }
+            shift 2
+            ;;
+        --no-classification)
+            DO_CLASSIFICATION=0
             shift
             ;;
         --input-dir)
@@ -217,6 +243,8 @@ CANCER_HOTSPOTS_VCF="$REF_DIR/CancerHotSpots/hg38.hotspots_changv2_gao_nc.vcf.gz
 COSMIC_VCF="$REF_DIR/COSMIC/cosmic_cmc_grch38.vcf.gz"   # optional, licence-gated (build with utils/cosmic_cmc_to_vcf.py)
 CADD_SNV="$REF_DIR/CADD/whole_genome_SNVs.tsv.gz"         # optional, very large (~80GB) — install with INSTALL_CADD=1 utils/get_ref_files.sh
 CADD_INDEL="$REF_DIR/CADD/gnomad.genomes.r4.0.indel.tsv.gz"  # optional
+DBNSFP_FILE="$REF_DIR/dbNSFP/dbNSFP5.0a_grch38.smart.gz"   # optional, academic licence (build with utils/build_dbnsfp.py)
+GENIE_COUNTS="$REF_DIR/GENIE/genie_o4_counts.tsv.gz"       # optional, GENIE data-use agreement (build with utils/build_genie_o4.py)
 
 # Validate reference files
 REQUIRED_PATHS=(
@@ -243,6 +271,15 @@ fi
 CADD_PLUGIN=""
 if [[ -e "$CADD_SNV" && -e "$CADD_INDEL" ]]; then
     CADD_PLUGIN="--plugin CADD,$CADD_SNV,$CADD_INDEL"
+fi
+
+# dbNSFP is OPTIONAL — academic releases (CC BY-NC-ND 4.0) must be downloaded by each
+# user and cannot be shipped. If the file built with utils/build_dbnsfp.py is mounted, add
+# the dbNSFP plugin (in silico predictors not otherwise annotated, e.g. AlphaMissense,
+# MetaRNN, BayesDel); otherwise annotation runs unchanged without it.
+DBNSFP_PLUGIN=""
+if [[ -e "$DBNSFP_FILE" && -e "${DBNSFP_FILE}.tbi" ]]; then
+    DBNSFP_PLUGIN="--plugin dbNSFP,$DBNSFP_FILE,ALL"
 fi
 
 # Fetch OncoKB version info only when a token is available
@@ -277,6 +314,8 @@ echo "  SpliceAI SNV:      $(basename "$SPLICEAI_SNV")"
 echo "  SpliceAI INDEL:    $(basename "$SPLICEAI_INDEL")"
 echo "  REVEL:             $(basename "$REVEL_FILE")"
 echo "  CADD:              $([[ -e "$CADD_SNV" && -e "$CADD_INDEL" ]] && basename "$CADD_SNV" || echo '(not provided — optional, ~80GB)')"
+echo "  dbNSFP:            $([[ -e "$DBNSFP_FILE" ]] && basename "$DBNSFP_FILE" || echo '(not provided — optional, academic licence)')"
+echo "  GENIE counts:      $([[ -e "$GENIE_COUNTS" ]] && basename "$GENIE_COUNTS" || echo '(not provided — optional, GENIE data-use agreement)')"
 echo "  LOEUF:             $(basename "$LOEUF_FILE")"
 echo "  OncoKB data:       $ONCOKB_DATA_VERSION ($ONCOKB_DATA_DATE)"
 
@@ -427,7 +466,8 @@ process_sample() {
         --plugin LOEUF,file="$LOEUF_FILE",match_by=transcript \
         --custom "$CANCER_HOTSPOTS_VCF",CancerHotspots,vcf,exact,0,HOTSPOT,HOTSPOT_GENE,HOTSPOT_HGVSp,HOTSPOT3D,HOTSPOT3D_GENE,HOTSPOT3D_HGVSp,HOTSPOTNC,HOTSPOTNC_GENE,HOTSPOTNC_HGVSc \
         $COSMIC_CUSTOM \
-        $CADD_PLUGIN
+        $CADD_PLUGIN \
+        $DBNSFP_PLUGIN
 
     # --- Early exit when --vep-only is set ---
     if [[ $VEP_ONLY -eq 1 ]]; then
@@ -471,10 +511,44 @@ process_sample() {
     # --- MafAnnotator ---
     echo ">>> MafAnnotator: $sample"
     local ANNOTATED_MAF="$FINAL_TABLE_DIR/${sample}.oncoKB.maf"
+    # Variants whose selected transcript is not OncoKB's curated transcript are queried by
+    # genomic change, so different protein numbering does not hide known variants.
+    local MAF_BY_PROTEIN="$TABLE_DIR/${sample}.oncokb_by_protein.tsv"
+    local MAF_BY_GENOMIC="$TABLE_DIR/${sample}.oncokb_by_genomic.tsv"
+    python3 "$SCRIPT_DIR/oncokb_maf_query.py" split \
+        --table "$TABLE_CSV" --token "$ONCOKB_TOKEN" \
+        --protein "$MAF_BY_PROTEIN" --genomic "$MAF_BY_GENOMIC"
     python3 /opt/oncokb-annotator/MafAnnotator.py \
-        -i "$TABLE_CSV" \
-        -o "$ANNOTATED_MAF" \
+        -i "$MAF_BY_PROTEIN" \
+        -o "${MAF_BY_PROTEIN%.tsv}.maf" \
         -b "$ONCOKB_TOKEN"
+    local GENOMIC_FAILED=""
+    if [[ $(tail -n +2 "$MAF_BY_GENOMIC" | wc -l) -gt 0 ]]; then
+        if ! python3 /opt/oncokb-annotator/MafAnnotator.py \
+            -i "$MAF_BY_GENOMIC" \
+            -o "${MAF_BY_GENOMIC%.tsv}.maf" \
+            -q Genomic_Change -r GRCh38 \
+            -b "$ONCOKB_TOKEN"; then
+            echo "WARNING: OncoKB genomic-change query failed for $sample — querying those variants by protein change"
+            GENOMIC_FAILED="--genomic-failed"
+            python3 /opt/oncokb-annotator/MafAnnotator.py \
+                -i "$MAF_BY_GENOMIC" \
+                -o "${MAF_BY_GENOMIC%.tsv}.maf" \
+                -b "$ONCOKB_TOKEN"
+        fi
+    fi
+    python3 "$SCRIPT_DIR/oncokb_maf_query.py" merge \
+        --protein "${MAF_BY_PROTEIN%.tsv}.maf" --genomic "${MAF_BY_GENOMIC%.tsv}.maf" \
+        $GENOMIC_FAILED --out "$ANNOTATED_MAF" \
+        || { echo "ERROR: OncoKB MafAnnotator outputs incomplete for $sample"; return 1; }
+    rm -f "$MAF_BY_PROTEIN" "$MAF_BY_GENOMIC" "${MAF_BY_PROTEIN%.tsv}.maf" "${MAF_BY_GENOMIC%.tsv}.maf"
+
+    # --- GENIE case counts (optional annotation; user-built, licence-restricted table) ---
+    if [[ -e "$GENIE_COUNTS" ]]; then
+        echo ">>> GENIE annotation: $sample"
+        python3 "$SCRIPT_DIR/genie_annotation.py" --maf "$ANNOTATED_MAF" --refs "$REF_DIR" \
+            || { echo "ERROR: GENIE annotation failed for $sample"; return 1; }
+    fi
 
     # --- Variant counts (written to per-sample temp file to avoid concurrent writes) ---
     local ORIGINAL_COUNT PASS_COUNT LIFTED_COUNT ANNOTATED_COUNT ONCOKB_COUNT TABLE_COUNT
@@ -574,6 +648,22 @@ cd "$OUTPUT_DIR_BASE"
 python3 "$SCRIPT_DIR/post_analysis.py" --config "$CONFIG_FILE" \
     --smart-version "$SMART_VERSION" \
     || { echo "ERROR: post_analysis.py failed — aborting"; exit 1; }
+
+# --- Tier 4: SVIG-UK oncogenicity classification ---
+# Separate from annotation (Tiers 1-3): reads the Tier 1 MAF and writes Final_result_tier4.tsv.
+# Classifier resources under the reference directory are optional; codes whose resource is
+# missing are reported as not evaluated in SVIG_UK_NOTES.
+if [[ $DO_CLASSIFICATION -eq 1 ]]; then
+    echo "###################### Tier 4 classification (SVIG-UK) ##########################"
+    python3 "$SCRIPT_DIR/svig_uk_classifier.py" \
+        --maf output/Final_result_tier1.maf \
+        --tier4 output/Final_result_tier4.tsv \
+        --tier4-json output/Final_result_tier4.json \
+        --refs "$REF_DIR" \
+        --tumour-type "$TUMOUR_TYPE" \
+        --o4-on-target "$O4_ON_TARGET" \
+        || { echo "ERROR: SVIG-UK classification failed — aborting"; exit 1; }
+fi
 
 if [[ $CLEAN_TABLES -eq 1 ]]; then
     echo ">>> Cleaning table files after post_analysis"

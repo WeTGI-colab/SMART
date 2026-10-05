@@ -2019,6 +2019,13 @@ fields:
     version: Refer to the ONCOKB_DATA_VERSION column and datetime of the last update
       of the variant
     tier: 2
+  ONCOKB_MAF_QUERY:
+    description: How OncoKB's MafAnnotator was queried for this variant. HGVSp_Short when the
+      selected transcript is OncoKB's curated transcript (or the gene is not curated); Genomic_Change
+      when it is a different transcript, whose protein numbering may differ from OncoKB's
+    source: SMART
+    version: SMART 2.0.0
+    tier: 2
   ONCOKB_SENS_LVL:
     description: Highest therapeutic sensitivity level reported by OncoKB for the
       queried variant
@@ -2026,6 +2033,415 @@ fields:
     version: Refer to the ONCOKB_DATA_VERSION column and datetime of the last update
       of the variant
     tier: 3
+  MutationTaster_score:
+    description: MutationTaster p-value (MTori), ranges from 0 to 1. Multiple scores are separated by ";".
+      Information on corresponding transcript(s) can be found by querying http://www.mutationtaster.org/ChrPos.html
+      In SMART, multiple values are separated by '&'.
+    source: dbNSFP (MutationTaster)
+    version: dbNSFP 5.0a
+    tier: 2
+  MutationTaster_pred:
+    description: MutationTaster prediction, "A" ("disease_causing_automatic"), "D" ("disease_causing"),
+      "N" ("polymorphism") or "P" ("polymorphism_automatic"). The score cutoff between "D" and "N" is 0.5
+      for MTnew and 0.31733 for the rankscore.
+    source: dbNSFP (MutationTaster)
+    version: dbNSFP 5.0a
+    tier: 2
+  MutationAssessor_score:
+    description: MutationAssessor functional impact combined score (MAori). The score ranges from -5.17
+      to 6.49 in dbNSFP. Multiple entries are separated by ";", corresponding to Uniprot_entry. In SMART,
+      multiple values are separated by ','.
+    source: dbNSFP (MutationAssessor)
+    version: dbNSFP 5.0a
+    tier: 2
+  MutationAssessor_pred:
+    description: MutationAssessor's functional impact of a variant - predicted functional, i.e. high ("H")
+      or medium ("M"), or predicted non-functional, i.e. low ("L") or neutral ("N"). The MAori score cutoffs
+      between "H" and "M", "M" and "L", and "L" and "N", are 3.5, 1.935 and 0.8, respectively. The rankscore
+      cutoffs between "H" and "M", "M" and "L", and "L" and "N", are 0.9307, 0.52043 and 0.19675, respectively.
+    source: dbNSFP (MutationAssessor)
+    version: dbNSFP 5.0a
+    tier: 2
+  PROVEAN_score:
+    description: PROVEAN score (PROVEANori). Scores range from -14 to 14. The smaller the score the more
+      likely the SNP has damaging effect. Multiple scores separated by ";", corresponding to Ensembl_proteinid.
+      In SMART, multiple values are separated by '&'.
+    source: dbNSFP (PROVEAN)
+    version: dbNSFP 5.0a
+    tier: 2
+  PROVEAN_pred:
+    description: If PROVEANori <= -2.5 (rankscore>=0.54382) the corresponding nsSNV is predicted as "D(amaging)";
+      otherwise it is predicted as "N(eutral)". Multiple predictions separated by ";", corresponding to
+      Ensembl_proteinid. In SMART, multiple values are separated by '&'.
+    source: dbNSFP (PROVEAN)
+    version: dbNSFP 5.0a
+    tier: 2
+  VEST4_score:
+    description: VEST 4.0 score. Score ranges from 0 to 1. The larger the score the more likely the mutation
+      may cause functional change. Multiple scores separated by ";", corresponding to Ensembl_transcriptid.
+      Please note this score is free for non-commercial use. For more details please refer to http://wiki.chasmsoftware.org/index.php/SoftwareLicense.
+      Commercial users should contact the Johns Hopkins Technology Transfer office. In SMART, multiple values
+      are separated by ','.
+    source: dbNSFP (VEST4)
+    version: dbNSFP 5.0a
+    tier: 2
+  MetaSVM_score:
+    description: Our support vector machine (SVM) based ensemble prediction score, which incorporated 10
+      scores (SIFT, PolyPhen-2 HDIV, PolyPhen-2 HVAR, GERP++, MutationTaster, Mutation Assessor, FATHMM,
+      LRT, SiPhy, PhyloP) and the maximum frequency observed in the 1000 genomes populations. Larger value
+      means the SNV is more likely to be damaging. Scores range from -2 to 3 in dbNSFP.
+    source: dbNSFP (MetaSVM)
+    version: dbNSFP 5.0a
+    tier: 2
+  MetaSVM_pred:
+    description: Prediction of our SVM based ensemble prediction score,"T(olerated)" or "D(amaging)". The
+      score cutoff between "D" and "T" is 0. The rankscore cutoff between "D" and "T" is 0.82257.
+    source: dbNSFP (MetaSVM)
+    version: dbNSFP 5.0a
+    tier: 2
+  MetaLR_score:
+    description: Our logistic regression (LR) based ensemble prediction score, which incorporated 10 scores
+      (SIFT, PolyPhen-2 HDIV, PolyPhen-2 HVAR, GERP++, MutationTaster, Mutation Assessor, FATHMM, LRT, SiPhy,
+      PhyloP) and the maximum frequency observed in the 1000 genomes populations. Larger value means the
+      SNV is more likely to be damaging. Scores range from 0 to 1.
+    source: dbNSFP (MetaLR)
+    version: dbNSFP 5.0a
+    tier: 2
+  MetaLR_pred:
+    description: Prediction of our MetaLR based ensemble prediction score,"T(olerated)" or "D(amaging)".
+      The score cutoff between "D" and "T" is 0.5. The rankscore cutoff between "D" and "T" is 0.81101.
+    source: dbNSFP (MetaLR)
+    version: dbNSFP 5.0a
+    tier: 2
+  MetaRNN_score:
+    description: Our recurrent neural network (RNN) based ensemble prediction score, which incorporated
+      16 scores (SIFT, Polyphen2_HDIV, Polyphen2_HVAR, MutationAssessor, PROVEAN, VEST4, M-CAP, REVEL, MutPred,
+      MVP, PrimateAI, DEOGEN2, CADD, fathmm-XF, Eigen and GenoCanyon), 8 conservation scores (GERP, phyloP100way_vertebrate,
+      phyloP30way_mammalian, phyloP17way_primate, phastCons100way_vertebrate, phastCons30way_mammalian,
+      phastCons17way_primate and SiPhy), and allele frequency information from the 1000 Genomes Project
+      (1000GP), ExAC, and gnomAD. Larger value means the SNV is more likely to be damaging. Scores range
+      from 0 to 1.
+    source: dbNSFP (MetaRNN)
+    version: dbNSFP 5.0a
+    tier: 2
+  MetaRNN_pred:
+    description: Prediction of our MetaRNN based ensemble prediction score,"T(olerated)" or "D(amaging)".
+      The score cutoff between "D" and "T" is 0.5. The rankscore cutoff between "D" and "T" is 0.6149.
+    source: dbNSFP (MetaRNN)
+    version: dbNSFP 5.0a
+    tier: 2
+  M-CAP_score:
+    description: 'M-CAP is hybrid ensemble score (details in DOI: 10.1038/ng.3703). Scores range from 0
+      to 1. The larger the score the more likely the SNP has damaging effect.'
+    source: dbNSFP (M-CAP)
+    version: dbNSFP 5.0a
+    tier: 2
+  M-CAP_pred:
+    description: Prediction of M-CAP score based on the authors' recommendation, "T(olerated)" or "D(amaging)".
+      The score cutoff between "D" and "T" is 0.025.
+    source: dbNSFP (M-CAP)
+    version: dbNSFP 5.0a
+    tier: 2
+  MutPred_score:
+    description: General MutPred score. Scores range from 0 to 1. The larger the score the more likely the
+      SNP has damaging effect.
+    source: dbNSFP (MutPred)
+    version: dbNSFP 5.0a
+    tier: 2
+  MVP_score:
+    description: 'A pathogenicity prediction score for missense variants using deep learning approach. The
+      range of MVP score is from 0 to 1. The larger the score, the more likely the variant is pathogenic.
+      The authors suggest thresholds of 0.7 and 0.75 for separating damaging vs tolerant variants in constrained
+      genes (ExAC pLI >=0.5) and non-constrained genes (ExAC pLI<0.5), respectively. Details see doi: http://dx.doi.org/10.1101/259390
+      Multiple entries are separated by ";", corresponding to Ensembl_transcriptid. In SMART, multiple values
+      are separated by '',''.'
+    source: dbNSFP (MVP)
+    version: dbNSFP 5.0a
+    tier: 2
+  gMVP_score:
+    description: 'A pathogenicity prediction score for missense variants using a graph attention neural
+      network model. The range of gMVP score is from 0 to 1. The larger the score, the more likely the variant
+      is pathogenic. Details see doi: https://www.nature.com/articles/s42256-022-00561-w Multiple entries
+      are separated by ";", corresponding to Ensembl_transcriptid. In SMART, multiple values are separated
+      by '',''.'
+    source: dbNSFP (gMVP)
+    version: dbNSFP 5.0a
+    tier: 2
+  MPC_score:
+    description: 'A deleteriousness prediction score for missense variants based on regional missense constraint.
+      The range of MPC score is 0 to 5. The larger the score, the more likely the variant is pathogenic.
+      Details see doi: http://dx.doi.org/10.1101/148353. Multiple entries are separated by ";", corresponding
+      to Ensembl_transcriptid. In SMART, multiple values are separated by '',''.'
+    source: dbNSFP (MPC)
+    version: dbNSFP 5.0a
+    tier: 2
+  PrimateAI_score:
+    description: A pathogenicity prediction score for missense variants based on common variants of non-human
+      primate species using a deep neural network. The range of PrimateAI score is 0 to 1. The larger the
+      score, the more likely the variant is pathogenic. The authors suggest a threshold of 0.803 for separating
+      damaging vs tolerant variants. Details see https://doi.org/10.1038/s41588-018-0167-z
+    source: dbNSFP (PrimateAI)
+    version: dbNSFP 5.0a
+    tier: 2
+  PrimateAI_pred:
+    description: Prediction of PrimateAI score based on the authors' recommendation, "T(olerated)" or "D(amaging)".
+      The score cutoff between "D" and "T" is 0.803.
+    source: dbNSFP (PrimateAI)
+    version: dbNSFP 5.0a
+    tier: 2
+  DEOGEN2_score:
+    description: A deleteriousness prediction score "which incorporates heterogeneous information about
+      the molecular effects of the variants, the domains involved, the relevance of the gene and the interactions
+      in which it participates". It ranges from 0 to 1. The larger the score, the more likely the variant
+      is deleterious. The authors suggest a threshold of 0.5 for separating damaging vs tolerant variants.
+    source: dbNSFP (DEOGEN2)
+    version: dbNSFP 5.0a
+    tier: 2
+  DEOGEN2_pred:
+    description: Prediction of DEOGEN2 score based on the authors' recommendation, "T(olerated)" or "D(amaging)".
+      The score cutoff between "D" and "T" is 0.5.
+    source: dbNSFP (DEOGEN2)
+    version: dbNSFP 5.0a
+    tier: 2
+  BayesDel_noAF_score:
+    description: A deleteriousness preidction meta-score for SNVs and indels without inclusion of MaxAF.
+      See https://doi.org/10.1002/humu.23158 for details. The range of the score in dbNSFP is from -1.31914
+      to 0.840878. The higher the score, the more likely the variant is pathogenic. The author suggested
+      cutoff between deleterious ("D") and tolerated ("T") is -0.0570105.
+    source: dbNSFP (BayesDel_noAF)
+    version: dbNSFP 5.0a
+    tier: 2
+  BayesDel_noAF_pred:
+    description: Prediction of BayesDel_noAF score based on the authors' recommendation, "T(olerated)" or
+      "D(amaging)". The score cutoff between "D" and "T" is -0.0570105.
+    source: dbNSFP (BayesDel_noAF)
+    version: dbNSFP 5.0a
+    tier: 2
+  ClinPred_score:
+    description: A deleteriousness preidction meta-score for nonsynonymous SNVs. See https://doi.org/10.1016/j.ajhg.2018.08.005.
+      for details. The range of the score in dbNSFP is from 0 to 1. The higher the score, the more likely
+      the variant is pathogenic. The author suggested cutoff between deleterious ("D") and tolerated ("T")
+      is 0.5.
+    source: dbNSFP (ClinPred)
+    version: dbNSFP 5.0a
+    tier: 2
+  ClinPred_pred:
+    description: Prediction of ClinPred score based on the authors' recommendation, "T(olerated)" or "D(amaging)".
+      The score cutoff between "D" and "T" is 0.5.
+    source: dbNSFP (ClinPred)
+    version: dbNSFP 5.0a
+    tier: 2
+  LIST-S2_score:
+    description: A deleteriousness preidction score for nonsynonymous SNVs. See https://doi.org/10.1093/nar/gkaa288.
+      for details. The range of the score in dbNSFP is from 0 to 1. The higher the score, the more likely
+      the variant is pathogenic. The author suggested cutoff between deleterious ("D") and tolerated ("T")
+      is 0.85.
+    source: dbNSFP (LIST-S2)
+    version: dbNSFP 5.0a
+    tier: 2
+  LIST-S2_pred:
+    description: Prediction of LIST-S2 score based on the authors' recommendation, "T(olerated)" or "D(amaging)".
+      The score cutoff between "D" and "T" is 0.85.
+    source: dbNSFP (LIST-S2)
+    version: dbNSFP 5.0a
+    tier: 2
+  VARITY_R_score:
+    description: 'VARITY_R scores are pathogenicity prediction scores for rare human missense variants.
+      The range of VARITY_R score is from 0 to 1. The larger the score, the more likely the variant is pathogenic.
+      Details see doi: https://doi.org/10.1016/j.ajhg.2021.08.012'
+    source: dbNSFP (VARITY_R)
+    version: dbNSFP 5.0a
+    tier: 2
+  ESM1b_score:
+    description: 'ESM1b scores are log-likelihood ratio (LLR) scores for predicting the pathogenic effects
+      of coding variants based on a 650-million-parameter protein language model, ESM1b. The range of ESM1b
+      score in dbNSFP is from -24.538 to 6.937. The smaller the score, the more likely the variant is pathogenic.
+      Details see doi: https://doi.org/10.1038/s41588-023-01465-0'
+    source: dbNSFP (ESM1b)
+    version: dbNSFP 5.0a
+    tier: 2
+  ESM1b_pred:
+    description: The authors do not recommend a threshold for separating deleterious (D) variants versus
+      tolerated (T) variants. This prediction is based on the threshold of -7.5 described in their paper
+      that yields a true-positive rate of 81% and a true-negative rate of 82% in their ClinVar and HGMD
+      test datasets.
+    source: dbNSFP (ESM1b)
+    version: dbNSFP 5.0a
+    tier: 2
+  AlphaMissense_score:
+    description: "AlphaMissense is a unsupervised model for predicting the pathogenicity of human missense\
+      \ variants by incorporating structural context of an AlphaFold-derived system. The AlphaMissense score\
+      \ ranges from 0 to 1. The larger the score, the more likely the variant is pathogenic. Details see\
+      \ https://doi.org/10.1126/science.adg7492. License information: Copyright (2023) DeepMind Technologies\
+      \ Limited. All materials are licensed under the Creative Commons Attribution 4.0 International License\
+      \ (CC-BY) (the â\x80\x9CLicenseâ\x80\x9D). You may obtain a copy of the License at: https://creativecommons.org/licenses/by/4.0/legalcode."
+    source: dbNSFP (AlphaMissense)
+    version: dbNSFP 5.0a
+    tier: 3
+  AlphaMissense_pred:
+    description: The AlphaMissense classification of likely (B)enign, (A)mbiguous, or likely (P)athogenic
+      with 90% expected precision estimated from ClinVar for likely benign and likely pathogenic classes.
+    source: dbNSFP (AlphaMissense)
+    version: dbNSFP 5.0a
+    tier: 3
+  PHACTboost_score:
+    description: '"PHACTboost is a gradiatent boosting tree based classifier that combines PHACT scores
+      with information from multiple sequence alignment, phylogenetic trees, and ancestral reconstruction."
+      The range of the score is from 0 to 1, the larger the score the more likely the variant is pathegenic.
+      Details see https://doi.org/10.1093/molbev/msae136. The authors recommend to use 0.62 as the cutoff
+      for binary prediction (personal communication).'
+    source: dbNSFP (PHACTboost)
+    version: dbNSFP 5.0a
+    tier: 2
+  MutFormer_score:
+    description: '"MutFormer is an application of the BERT (Bidirectional Encoder Representations from Transformers)
+      NLP (Natural Language Processing) model with an added adaptive vocabulary to protein context, for
+      the purpose of predicting the effect of missense mutations on protein function." The range of the
+      score is from 0 to 1, the larger the score the more likely the variant is pathegenic. Details see
+      https://doi.org/10.1016/j.xinn.2023.100487. The authors recommend to use 0.8838 as the cutoff for
+      binary prediction (personal communication).'
+    source: dbNSFP (MutFormer)
+    version: dbNSFP 5.0a
+    tier: 2
+  MutScore_score:
+    description: MutScore is an ensemble score which integerate multiple unsupervised scores for DNA substitutions
+      with additional positional clustering information. The range of the score is from 0 to 1, the larger
+      the score the more likely the variant is pathegenic. Details see https://doi.org/10.1016/j.ajhg.2022.01.006.
+      The authors recommend to use 0.5 as the cutoff for binary prediction (personal communication).
+    source: dbNSFP (MutScore)
+    version: dbNSFP 5.0a
+    tier: 2
+  Aloft_pred:
+    description: final classification predicted by ALoFT; values can be Tolerant, Recessive or Dominant
+      multiple values separated by ";", corresponding to Ensembl_proteinid. In SMART, multiple values are
+      separated by ','.
+    source: dbNSFP (Aloft)
+    version: dbNSFP 5.0a
+    tier: 2
+  Aloft_Confidence:
+    description: Confidence level of Aloft_pred; values can be "High Confidence" (p < 0.05) or "Low Confidence"
+      (p > 0.05) multiple values separated by ";", corresponding to Ensembl_proteinid. In SMART, multiple
+      values are separated by ','.
+    source: dbNSFP (Aloft)
+    version: dbNSFP 5.0a
+    tier: 2
+  DANN_score:
+    description: 'DANN is a functional prediction score retrained based on the training data of CADD using
+      deep neural network. Scores range from 0 to 1. A larger number indicate a higher probability to be
+      damaging. More information of this score can be found in doi: 10.1093/bioinformatics/btu703.'
+    source: dbNSFP (DANN)
+    version: dbNSFP 5.0a
+    tier: 2
+  fathmm-XF_coding_score:
+    description: 'fathmm-XF p-values. Scores range from 0 to 1. SNVs with scores >0.5 are predicted to be
+      deleterious, and those <0.5 are predicted to be neutral or benign. Scores close to 0 or 1 are with
+      the highest-confidence. Coding scores are trained using 10 groups of features. More details of the
+      score can be found in doi: 10.1093/bioinformatics/btx536.'
+    source: dbNSFP (fathmm-XF)
+    version: dbNSFP 5.0a
+    tier: 2
+  fathmm-XF_coding_pred:
+    description: If a fathmm-XF_coding_score is >0.5, the corresponding nsSNV is predicted as "D(AMAGING)";
+      otherwise it is predicted as "N(EUTRAL)". In SMART, multiple values are separated by '&'.
+    source: dbNSFP (fathmm-XF)
+    version: dbNSFP 5.0a
+    tier: 2
+  Eigen-phred_coding:
+    description: Eigen score in phred scale.
+    source: dbNSFP (Eigen)
+    version: dbNSFP 5.0a
+    tier: 2
+  GERP++_RS:
+    description: GERP++ RS score, the larger the score, the more conserved the site. Scores range from -12.3
+      to 6.17.
+    source: dbNSFP (GERP++_RS)
+    version: dbNSFP 5.0a
+    tier: 2
+  phyloP100way_vertebrate:
+    description: phyloP (phylogenetic p-values) conservation score based on the multiple alignments of 100
+      vertebrate genomes (including human). The larger the score, the more conserved the site. Scores range
+      from -20.0 to 10.003 in dbNSFP.
+    source: dbNSFP (phyloP100way_vertebrate)
+    version: dbNSFP 5.0a
+    tier: 2
+  phastCons100way_vertebrate:
+    description: phastCons conservation score based on the multiple alignments of 100 vertebrate genomes
+      (including human). The larger the score, the more conserved the site. Scores range from 0 to 1.
+    source: dbNSFP (phastCons100way_vertebrate)
+    version: dbNSFP 5.0a
+    tier: 2
+  GENIE_SAME_NUCLEOTIDE_ALL:
+    description: 'AACR Project GENIE: unique patients with the exact nucleotide change, all tumour types'
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 3
+  GENIE_SAME_NUCLEOTIDE_HAEM:
+    description: 'AACR Project GENIE: unique patients with the exact nucleotide change, haematological tumours
+      (myeloid or lymphoid)'
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 2
+  GENIE_SAME_NUCLEOTIDE_SOLID:
+    description: 'AACR Project GENIE: unique patients with the exact nucleotide change, solid tumours'
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 2
+  GENIE_O4_MATCH_TYPE:
+    description: 'What GENIE_O4_MATCH_* counts, following SVIG-UK O4 for the variant class: same amino acid
+      change (missense), exact change (canonical splice), frameshift/nonsense at the same residue or downstream
+      (truncating), exact insertion or deletions equal to or within the deleted region (in-frame)'
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 2
+  GENIE_O4_MATCH_ALL:
+    description: 'AACR Project GENIE: unique patients counted as for SVIG-UK O4 (see GENIE_O4_MATCH_TYPE),
+      all tumour types; residues on the transcript SMART selected'
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 3
+  GENIE_O4_MATCH_HAEM:
+    description: 'AACR Project GENIE: unique patients counted as for SVIG-UK O4, haematological tumours'
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 3
+  GENIE_O4_MATCH_SOLID:
+    description: 'AACR Project GENIE: unique patients counted as for SVIG-UK O4, solid tumours'
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 3
+  GENIE_TOP_TUMOUR_TYPES:
+    description: OncoTree codes with most GENIE patients for the O4 match (or the exact change when no O4
+      count applies)
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 2
+  GENIE_MULTI_TUMOUR_PATIENTS:
+    description: GENIE patients carrying the match in samples of more than one tumour type (counted once
+      in the ALL column, in each group they belong to)
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 2
+  GENIE_COHORT:
+    description: Unique patients in the GENIE release used (denominators for the GENIE_* counts)
+    source: AACR Project GENIE (user-built table, utils/build_genie_o4.py)
+    version: GENIE release used to build the table (see GENIE_COHORT)
+    tier: 2
+  Ensembl_geneid:
+    description: Ensembl gene IDs for the dbNSFP record; multiple values separated by '&'
+    source: dbNSFP
+    version: dbNSFP 5.0a
+    tier: 1
+  Ensembl_transcriptid:
+    description: Ensembl transcript IDs the transcript-specific dbNSFP scores refer to, in the same order;
+      multiple values separated by '&'
+    source: dbNSFP
+    version: dbNSFP 5.0a
+    tier: 1
+  Ensembl_proteinid:
+    description: Ensembl protein IDs for the dbNSFP record; multiple values separated by '&'
+    source: dbNSFP
+    version: dbNSFP 5.0a
+    tier: 1
 field_patterns:
 - pattern: ONCOKB_DIAG_*_levelOfEvidence
   description: OncoKB diagnostic implication level of evidence

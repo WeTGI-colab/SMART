@@ -2,7 +2,10 @@
 """
 Combined OncoKB annotator for VEP-annotated VCF files (v3.0 — SMART).
 
-- SNVs / indels / MantaINS  → /annotate/mutations/byProteinChange
+- SNVs / indels / MantaINS  → /annotate/mutations/byProteinChange, or
+                              /annotate/mutations/byGenomicChange when the selected
+                              transcript is not OncoKB's curated transcript for the gene
+                              (protein numbering may differ, e.g. NF1, CUX1)
 - CNVs (MantaDUP/DEL)       → /annotate/copyNumberAlterations
 
 Changes from v2.5:
@@ -105,6 +108,8 @@ CANCER_MAP = {
 
 ONCOKB_BASE = "https://www.oncokb.org/api/v1"
 API_MUT_BY_PROTEIN = f"{ONCOKB_BASE}/annotate/mutations/byProteinChange"
+API_MUT_BY_GENOMIC = f"{ONCOKB_BASE}/annotate/mutations/byGenomicChange"
+API_CURATED_GENES = f"{ONCOKB_BASE}/utils/allCuratedGenes"
 API_CNA = f"{ONCOKB_BASE}/annotate/copyNumberAlterations"
 REFERENCE_GENOME = "GRCh38"
 
@@ -452,6 +457,62 @@ def query_oncokb_mutation(gene: str, alteration: str, tumor_type: str, token: st
     return data
 
 
+def load_oncokb_transcripts(token: str) -> dict:
+    """OncoKB's GRCh38 RefSeq transcript per curated gene (unversioned), e.g. NF1 -> NM_000267.
+
+    OncoKB curates protein changes on these transcripts. When SMART's selected transcript
+    is a different one, residue numbering can differ (NF1 NM_001042492 p.R1769* is
+    NM_000267 p.R1748*), so those variants are queried by genomic change instead.
+    Returns {} if the list cannot be retrieved; all variants are then queried by protein change.
+    """
+    headers = {"Authorization": f"Bearer {token}", "accept": "application/json"}
+    params = {"referenceGenome": REFERENCE_GENOME, "includeEvidence": "false"}
+    try:
+        resp = _get_with_retry(API_CURATED_GENES, params, headers)
+        genes = resp.json() if resp.status_code == 200 else []
+    except (RuntimeError, ValueError):
+        genes = []
+    transcripts = {g["hugoSymbol"]: str(g.get("grch38RefSeq") or "").split(".")[0]
+                   for g in genes if g.get("hugoSymbol") and g.get("grch38RefSeq")}
+    if not transcripts:
+        sys.stderr.write("WARNING: OncoKB curated-gene transcripts unavailable; "
+                         "querying all mutations by protein change.\n")
+    return transcripts
+
+
+def use_genomic_query(gene: str, nm_id: str, oncokb_transcripts: dict) -> bool:
+    """True when the selected RefSeq transcript differs from OncoKB's for a curated gene."""
+    selected = str(nm_id or "").split(".")[0]
+    curated = oncokb_transcripts.get(gene or "")
+    return bool(curated and selected.startswith("NM_") and selected != curated)
+
+
+def query_oncokb_genomic(chrom: str, pos: int, ref: str, alt: str, tumor_type: str, token: str, cache: dict):
+    """OncoKB annotation by GRCh38 genomic change (VCF-style alleles are accepted)."""
+    if not chrom or not pos or not ref or not alt:
+        return None
+    location = f"{str(chrom).replace('chr', '')},{pos},{pos + len(ref) - 1},{ref},{alt}"
+    key = ("genomic", location, tumor_type)
+    if key in cache:
+        return cache[key]
+    params = {"referenceGenome": REFERENCE_GENOME, "genomicLocation": location}
+    if tumor_type and tumor_type.upper() != "UNKNOWN":
+        params["tumorType"] = tumor_type
+    headers = {"Authorization": f"Bearer {token}", "accept": "application/json"}
+    resp = _get_with_retry(API_MUT_BY_GENOMIC, params, headers)
+    if resp.status_code != 200:
+        if resp.status_code != 404:
+            sys.stderr.write(f"OncoKB genomic-change API ERROR {resp.status_code} for {location}\n")
+        cache[key] = None
+        return None
+    try:
+        data = resp.json()
+    except json.JSONDecodeError:
+        data = None
+    cache[key] = data
+    return data
+
+
 def query_oncokb_cna(gene: str, cna_type: str, tumor_type: str, token: str, cache: dict):
     if not gene or not cna_type:
         return None
@@ -686,7 +747,7 @@ def annotate_vcf(
         "ONCOKB_DATA_VERSION": "OncoKB data version",
         "ONCOKB_LAST_UPDATE": "OncoKB last update date",
         "ONCOKB_JSON": "Raw OncoKB JSON",
-        "ONCOKB_QUERY_TYPE": "OncoKB query type: MUTATION or CNA",
+        "ONCOKB_QUERY_TYPE": "OncoKB query type: MUTATION (by protein change), MUTATION_BY_GENOMIC_CHANGE (selected transcript differs from OncoKB's; protein change used if that query fails) or CNA",
     }
     for key, desc in fields_to_add.items():
         vcf.add_info_to_header({"ID": key, "Description": desc, "Type": "String", "Number": "1"})
@@ -730,6 +791,8 @@ def annotate_vcf(
     }
 
     writer = Writer(output_vcf, vcf)
+    oncokb_transcripts = load_oncokb_transcripts(token)
+    genomic_available = True  # set to False after the first failed genomic-change query
 
     total_variants = 0
     annotated_mut = 0
@@ -770,11 +833,27 @@ def annotate_vcf(
                 continue
 
             for match in valid_matches:
-                data = query_oncokb_mutation(match["gene"], match["protein_change"], tumor_type, token, mut_cache)
+                data = None
+                if use_genomic_query(match["gene"], match["nm_id"], oncokb_transcripts) and variant.ALT:
+                    if genomic_available:
+                        data = query_oncokb_genomic(variant.CHROM, variant.POS, variant.REF, variant.ALT[0],
+                                                    tumor_type, token, mut_cache)
+                    query_type = "MUTATION_BY_GENOMIC_CHANGE"
+                    if data is None:  # genomic-change service unavailable: fall back to protein change
+                        if genomic_available:
+                            sys.stderr.write("WARNING: OncoKB genomic-change query failed; remaining variants "
+                                             "on non-OncoKB transcripts are queried by protein change.\n")
+                        genomic_available = False
+                        data = query_oncokb_mutation(match["gene"], match["protein_change"], tumor_type,
+                                                     token, mut_cache)
+                        query_type = "MUTATION (genomic-change query failed)"
+                else:
+                    data = query_oncokb_mutation(match["gene"], match["protein_change"], tumor_type, token, mut_cache)
+                    query_type = "MUTATION"
                 summary = summarize_oncokb(data)
                 if data:
                     annotated_mut += 1
-                _apply_oncokb_info(variant, summary, match["nm_id"], "MUTATION", mapping)
+                _apply_oncokb_info(variant, summary, match["nm_id"], query_type, mapping)
                 writer.write_record(variant)
 
         # ------------------------------------------------------------------

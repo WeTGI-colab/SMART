@@ -211,6 +211,20 @@ tests/verification*/results.tsv
 # scripts and run config that are already tracked stay tracked (gitignore does not untrack
 # existing files); only new/derived data files are excluded.
 data/jack_list_validation/
+data/jack2_validation/
+jack2.csv
+jack*.csv
+jack_list*.txt
 
 # --- external third-party tools installed locally for benchmarking (NOT part of SMART) ---
 external_tools/
+SMART2_to_paper/
+
+# OncoKB API token, never committed
+.oncokb_token
+data/jack2_validation_unknown/
+
+# Local GitHub/Docker traffic history (utils/collect_github_traffic.py).
+# A symlink to ~/Library/Application Support/smart-traffic/metrics, so no trailing slash:
+# with one, the pattern would only match a real directory and the link would show up.
+metrics

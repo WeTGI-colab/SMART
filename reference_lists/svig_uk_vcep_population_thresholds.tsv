@@ -1,0 +1,18 @@
+# ClinGen VCEP population-frequency rules for hereditary cancer genes, from the CSpec registry (https://cspec.genome.network), retrieved 2026-09-17.
+# Used by svig_uk_classifier.py for O3 (PM2) and B1 (BA1 -> stand-alone, BS1 -> strong) as required by SVIG-UK v1.1 [S T1 O3; S T2 B1].
+gene	vcep_cspec_id	vcep_version	cspec_status	o3_max_af	o3_inclusive	o3_max_af_multiallelic_group	o3_max_af_single_allele	o3_absent_only	b1_standalone_af	b1_standalone_inclusive	b1_strong_af	b1_strong_inclusive	b1_min_alleles	source_summary
+TP53	GN009	2.4	Released	3e-05	no	4e-05			0.001	yes	0.0003	yes	2	PM2_Supporting AF <0.003% (<0.004% in a genetic ancestry group with multiple alleles; founder groups ignored); BA1 FAF >=0.1% and BS1 FAF >=0.03% in a continental group with >=2,000 alleles and >=2 alleles present
+RUNX1	GN008	3.1	Released	5e-05	yes				0.0015	yes	0.00015	yes	5	PM2_Supporting MAF <=0.00005 (GrpMax FAF); BA1 MAF >=0.15% and BS1 MAF 0.015-0.15% in a continental dataset with >=2,000 alleles and >=5 alleles present
+PTEN	GN003	3.2	Released	1e-05	no	2e-05			0.00056	no	4.3e-05	yes	2	PM2_Supporting AF <0.001% (<0.002% in a subpopulation with multiple alleles); BA1 FAF >0.056%; BS1 FAF 0.0043-0.056%
+CDH1	GN007	3.1	Released	1e-05	yes	2e-05			0.002	no	0.001	no	2	PM2_Supporting <=1/100,000 alleles (<=1/50,000 if >=2 individuals in a subpopulation); BA1 MAF cut-off 0.2%; BS1 MAF cut-off 0.1%
+ATM	GN020	1.5	Approved For Release	1e-05	yes				0.005	no	0.0005	no	2	PM2_Supporting <=0.001% in gnomAD v4 (n=1 in a single subpopulation is sufficiently rare); BA1 GrpMax FAF >0.5%; BS1 GrpMax FAF >0.05%
+PALB2	GN077	1.2	Approved For Release	3.33e-06	yes				0.001	no	0.0001	no	2	PM2_Supporting <=1/300,000 in gnomAD v4; BA1 GrpMax FAF >0.1%; BS1 GrpMax FAF >0.01%
+BRCA1	GN092	1.2	Released					yes	0.001	no	0.0001	no	2	PM2_Supporting absent from controls (gnomAD non-cancer); BA1 FAF >0.1%; BS1 FAF >0.01% (BS1_Supporting 0.002-0.01% has no SVIG-UK equivalent)
+BRCA2	GN097	1.2	Released					yes	0.001	no	0.0001	no	2	PM2_Supporting absent from controls (gnomAD non-cancer); BA1 FAF >0.1%; BS1 FAF >0.01% (BS1_Supporting 0.002-0.01% has no SVIG-UK equivalent)
+APC	GN089	2.1	Released	3e-06	yes		1e-05		0.001	yes	1e-05	yes	2	PM2_Supporting AF <=0.0003% if allele count >1, or <0.001% if allele count <=1; BA1 PopMax FAF >=0.1%; BS1 PopMax FAF >=0.001%
+MLH1	GN115	2.0	Approved For Release	2e-05	no				0.001	yes	0.0001	yes	2	PM2_Supporting AF <0.00002 in gnomAD v4; BA1 GrpMax FAF >=0.1%; BS1 GrpMax FAF 0.01-0.1% (founder pathogenic variants excluded)
+MSH2	GN137	2.0	Approved For Release	2e-05	no				0.001	yes	0.0001	yes	2	PM2_Supporting AF <0.00002 in gnomAD v4; BA1 GrpMax FAF >=0.1%; BS1 GrpMax FAF 0.01-0.1% (founder pathogenic variants excluded)
+MSH6	GN138	2.0	Approved For Release	2e-05	no				0.0022	yes	0.00022	yes	2	PM2_Supporting AF <0.00002 in gnomAD v4; BA1 GrpMax FAF >=0.22%; BS1 GrpMax FAF 0.022-0.22% (founder pathogenic variants excluded)
+PMS2	GN139	2.0	Approved For Release	2e-05	no				0.0028	yes	0.00028	yes	2	PM2_Supporting AF <0.00002 in gnomAD v4; BA1 GrpMax FAF >=0.28%; BS1 GrpMax FAF 0.028-0.28% (founder pathogenic variants excluded)
+VHL	GN078	1.1	Released	1.56e-06	yes				0.000156	yes	1.56e-05	yes	2	PM2_Supporting absent or GroupMax FAF <=0.000156%; BA1 GroupMax FAF >=0.0156%; BS1 GroupMax FAF >=0.00156% (gnomAD v4)
+DICER1	GN024	1.4	Released	5e-06	no	0			0.003	no	0.0003	no	5	PM2_Supporting AF <0.000005 with no more than one allele in any subpopulation; BA1 >0.3% and BS1 >0.03% in subpopulations with >2,000 alleles and >=5 alleles present

@@ -1,0 +1,15 @@
+# Functional-assay evidence for SVIG-UK O10 / B6 [S T1 O10 p.13; S T2 B6 p.17].
+#
+# The guideline's operative criterion is that a variant is functionally abnormal when protein
+# activity is <25% of the wild-type level (abnormal_max_pct). Strength is NOT fixed by the
+# guideline: it follows ClinGen SVI / CanVIG-UK calibration of the individual assay, with
+# gene-specific guidance taking precedence, so it is recorded per assay below together with the
+# justification. Permitted: VSTR, STR, MOD, SUPP.
+#
+# intermediate_max_pct and normal_min_pct are empty where the guideline fixes no boundary; the
+# corresponding behaviour (downgraded O10, and B6) is then not applied at all.
+#
+# Regenerate with utils/build_functional_assays.py. Scores are in
+# svig_uk_functional_assay_scores.tsv.
+assay_id	gene	transcript	applies_to	metric	abnormal_max_pct	intermediate_max_pct	normal_min_pct	strength	source	pmid	licence	urn
+TP53_transactivation_median	TP53	NM_000546.6	missense	median transcriptional activity, % of wild type, across eight promoter-specific yeast assays (p21WAF1, MDM2, BAX, GADD45, 14-3-3s, p53AIP1, Noxa, p53R2)	25			MOD	Fortuno et al. 2021, An updated quantitative model to classify missense variants in the TP53 gene (ClinGen TP53 VCEP); scores via MaveDB	34273903	CC0	urn:mavedb:00001234-0-1

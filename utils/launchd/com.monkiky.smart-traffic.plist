@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Weekly snapshot of GitHub traffic for WeTGI-colab/SMART.
+
+  GitHub keeps only 14 days of traffic, so a weekly run never loses a day even if the
+  machine is asleep on the scheduled day: launchd runs a missed StartCalendarInterval
+  job as soon as the machine wakes.
+
+  macOS protects ~/Desktop, ~/Documents and ~/Downloads: a launchd agent cannot read them
+  without Full Disk Access. So the collector and its data live in Application Support, and
+  the repository's metrics/ is a symlink to that directory.
+
+  __APP_DIR__ and the PATH are filled in by the installer, so this file holds no machine paths.
+
+  Install / update:  bash utils/launchd/install.sh
+  Run now:   launchctl kickstart -p gui/$(id -u)/com.monkiky.smart-traffic
+  Check:     launchctl print gui/$(id -u)/com.monkiky.smart-traffic | head -20
+  Remove:    launchctl bootout gui/$(id -u)/com.monkiky.smart-traffic
+             rm ~/Library/LaunchAgents/com.monkiky.smart-traffic.plist
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.monkiky.smart-traffic</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>__APP_DIR__/collect_github_traffic.py</string>
+        <string>--out</string>
+        <string>__APP_DIR__/metrics</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <!-- launchd starts with a bare PATH; the script shells out to the gh CLI -->
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key><integer>1</integer>   <!-- Monday -->
+        <key>Hour</key><integer>10</integer>
+        <key>Minute</key><integer>30</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>__APP_DIR__/collector.log</string>
+    <key>StandardErrorPath</key>
+    <string>__APP_DIR__/collector.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

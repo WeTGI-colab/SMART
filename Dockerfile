@@ -85,6 +85,7 @@ RUN git clone https://github.com/oncokb/oncokb-annotator.git /opt/oncokb-annotat
 
 # ---------- Pipeline scripts ----------
 COPY scripts/ /opt/smart/scripts/
+COPY reference_lists/svig_uk_canonical_variants.tsv reference_lists/svig_uk_vcep_population_thresholds.tsv /opt/smart/reference_lists/
 RUN chmod +x /opt/smart/scripts/*.sh /opt/smart/scripts/*.py 2>/dev/null || true
 
 # ---------- Working directory ----------

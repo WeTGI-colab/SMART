@@ -1,0 +1,20 @@
+# Gene-specific splice provisions of SVIG-UK that neither the canonical +/-1,2 definition nor
+# in silico predictors reliably capture.
+#
+# SVIG-UK v1.1 section 7.11 (Synonymous variants): "synonymous changes at the last base of
+# exon 4, exon 6 and exon 9 of TP53 should be classed as driver variants as they affect splicing
+# of these exons" (citing Malcikova et al., ERIC recommendations for TP53 mutation analysis).
+# Supplementary material p.16 gives the same variants as the example of why B4 must not be applied
+# to synonymous variants at the first base or last three bases of an exon.
+#
+# The classifier routes a matching variant through the O2 exon-skipping branch, so the strength
+# comes from the PVS1 tree (reading frame, NMD, fraction of protein lost) rather than a fixed
+# weight, and raises a review flag: the guideline's "driver" wording is not a code or a strength,
+# so the final call stays with the scientist.
+#
+# cds_position is the last coding base of that exon in the stated transcript, verified against the
+# UCSC ncbiRefSeq exon structure.
+gene	transcript	exon	cds_position	applies_to	assessment	source
+TP53	NM_000546.6	4	375	synonymous	driver	SVIG-UK v1.1 7.11 and Suppl. p.16: last base of exon 4
+TP53	NM_000546.6	6	672	synonymous	driver	SVIG-UK v1.1 7.11 and Suppl. p.16: last base of exon 6
+TP53	NM_000546.6	9	993	synonymous	driver	SVIG-UK v1.1 7.11 and Suppl. p.16: last base of exon 9

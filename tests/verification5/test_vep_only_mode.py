@@ -244,3 +244,46 @@ class TestOncokbRetry:
             assert oncokb.query_oncokb_mutation("BRAF", "V600E", "", "", cache={}) is None
         assert get.call_count == 1
         sleep.assert_not_called()
+
+
+# ===========================================================================
+# OncoKB query by genomic change when the selected transcript is not OncoKB's
+# ===========================================================================
+
+class TestOncokbGenomicQuery:
+    """NF1 NM_001042492 p.R1769* is NM_000267 p.R1748*: a protein-change query on the
+    lab transcript is not recognised, so such variants are queried by genomic change."""
+
+    TRANSCRIPTS = {"NF1": "NM_000267", "BRAF": "NM_004333"}
+
+    @pytest.mark.parametrize("gene,nm,expected", [
+        ("NF1", "NM_001042492.3", True),    # lab transcript differs from OncoKB's
+        ("NF1", "NM_000267", False),        # same transcript
+        ("BRAF", "NM_004333.6", False),     # version ignored
+        ("GENE1", "NM_000001", False),      # gene not curated by OncoKB
+        ("NF1", "ENST00000358273", False),  # no RefSeq transcript selected
+        ("NF1", "", False),
+    ])
+    def test_use_genomic_query(self, gene, nm, expected):
+        assert oncokb.use_genomic_query(gene, nm, self.TRANSCRIPTS) is expected
+
+    def test_genomic_location_uses_vcf_alleles_with_consistent_end(self):
+        resp = MagicMock(status_code=200)
+        resp.json.return_value = {"oncogenic": "Likely Oncogenic"}
+        with patch("requests.get", return_value=resp) as get:
+            oncokb.query_oncokb_genomic("chr17", 31159042, "A", "AT", "UNKNOWN", "t", cache={})
+            oncokb.query_oncokb_genomic("chr17", 31258385, "AG", "A", "UNKNOWN", "t", cache={})
+        locations = [c.kwargs["params"]["genomicLocation"] for c in get.call_args_list]
+        assert locations == ["17,31159042,31159042,A,AT", "17,31258385,31258386,AG,A"]
+        assert all("byGenomicChange" in c.args[0] for c in get.call_args_list)
+
+    def test_transcript_list_unavailable_falls_back_to_protein_queries(self):
+        with patch("requests.get", return_value=MagicMock(status_code=401)), patch("time.sleep"):
+            assert oncokb.load_oncokb_transcripts("bad-token") == {}
+
+    def test_transcript_list_is_unversioned(self):
+        resp = MagicMock(status_code=200)
+        resp.json.return_value = [{"hugoSymbol": "NF1", "grch38RefSeq": "NM_000267.3"},
+                                  {"hugoSymbol": "X", "grch38RefSeq": ""}]
+        with patch("requests.get", return_value=resp):
+            assert oncokb.load_oncokb_transcripts("t") == {"NF1": "NM_000267"}

@@ -44,7 +44,7 @@ GNAS	NM_000516.7	c.602G>A	p.Arg201His	Oncogenic	protein
 H3-3A	NM_002107.7	c.83A>T	p.Lys28Met	Oncogenic	protein
 H3-3A	NM_002107.7	c.103G>A/C	p.Gly35Arg	Oncogenic	protein
 H3-3A	NM_002107.7	c.103G>T	p.Gly35Trp	Oncogenic	protein
-H3-3B	NM_005324.5	c.110A>T/c.111G>C	p.Lys37Met	Oncogenic	protein
+H3-3B	NM_005324.5	c.110A>T	p.Lys37Met	Oncogenic	protein
 HRAS	NM_005343.4	c.34G>A	p.Gly12Ser	Oncogenic	protein
 HRAS	NM_005343.4	c.34G>T	p.Gly12Cys	Oncogenic	protein
 HRAS	NM_005343.4	c.35G>A	p.Gly12Asp	Oncogenic	protein
@@ -96,7 +96,7 @@ MPL	NM_005373.3	c.1514G>A	p.Ser505Asn	Oncogenic	protein
 MPL	NM_005373.3	c.1543_1544delinsAA/c.1543_1545delinsAAA	p.Trp515Lys	Oncogenic	protein
 MPL	NM_005373.3	c.1544G>T	p.Trp515Leu	Oncogenic	protein
 MYD88	NM_002468.5	c.755T>C	p.Leu252Pro	Oncogenic	protein
-NPM1	NM_002520.7	c.860_863dup/c.863_864ins(4 bases)	p.Trp288CysfsTer12	Oncogenic	protein
+NPM1	NM_002520.7	c.860_863dup (type A)/c.863_864insCATG (type B)/c.863_864insCCTG (type D)	p.Trp288CysfsTer12	Oncogenic	protein
 NRAS	NM_002524.5	c.34G>A	p.Gly12Ser	Oncogenic	protein
 NRAS	NM_002524.5	c.34G>C	p.Gly12Arg	Oncogenic	protein
 NRAS	NM_002524.5	c.34G>T	p.Gly12Cys	Oncogenic	protein
@@ -125,7 +125,7 @@ POLE	NM_006231.4	c.1231G>C/T	p.Val411Leu	Oncogenic	protein
 RET	NM_020975.6	c.2753T>C	p.Met918Thr	Likely Oncogenic	protein
 RHOA	NM_001664.4	c.50G>T	p.Gly17Val	Oncogenic	protein
 RUNX1	NM_001754.5	c.601C>T	p.Arg201Ter	Oncogenic	protein
-RUNX1	NM_001754.5	c.601G>A	p.Arg201Gln	Oncogenic	protein
+RUNX1	NM_001754.5	c.602G>A	p.Arg201Gln	Oncogenic	protein
 SETBP1	NM_015559.3	c.2602G>A	p.Asp868Asn	Oncogenic	protein
 SETBP1	NM_015559.3	c.2608G>A	p.Gly870Ser	Oncogenic	protein
 SF3B1	NM_012433.4	c.1866G>C/T	p.Glu622Asp	Oncogenic	protein

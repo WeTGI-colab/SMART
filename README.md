@@ -30,7 +30,7 @@ SMART (Somatic Mutation Annotation and Reporting Tool) integrates sequential pro
 |------|------|-------------|
 | 1. PASS Filter _(optional)_ | bcftools / awk | Keep only PASS-filtered variants — disable with `--no-pass` |
 | 2. LiftOver _(optional)_ | GATK 4.6 | hg19 → hg38 coordinate conversion — disable with `--no-liftover` |
-| 3. VEP Annotation | Ensembl VEP 114 | Functional annotation with SpliceAI, REVEL, ClinVar, CIViC, CancerHotspots, LOEUF plugins (+ COSMIC, CADD if provided) |
+| 3. VEP Annotation | Ensembl VEP 114 | Functional annotation with SpliceAI, REVEL, ClinVar, CIViC, CancerHotspots, LOEUF plugins (+ COSMIC, CADD, dbNSFP if provided) |
 | 4. OncoKB Annotation _(optional)_ | oncokb2.0.py | Per-variant clinical annotation via OncoKB REST API (mutations + CNAs). Skipped in VEP-only mode (`--vep-only`, or when no OncoKB token is given), which also stops steps 5–7 |
 | 5. VCF → Table | vcf2table.py | Transcript-prioritised CSV with all VEP + OncoKB fields |
 | 6. MAF Annotation | MafAnnotator | OncoKB MafAnnotator for standardised MAF output |
@@ -80,12 +80,13 @@ This logic applies to both SNV/indel and CNA variants, ensuring consistent gene 
 | SpliceAI plugin | 1.3 | Splice-site impact prediction |
 | REVEL plugin | 1.3 | Missense pathogenicity scoring |
 | CADD plugin | v1.7 | Genome-wide deleteriousness scoring (optional — score files not shipped) |
+| dbNSFP plugin | dbNSFP 5.0a | 30 additional in silico predictors and conservation scores (optional — academic licence, user-built) |
 | bcftools / samtools / tabix | System | VCF manipulation |
 | Python 3.10 | + pandas, cyvcf2, requests | Pipeline scripts |
 | OncoKB Annotator | Latest | MafAnnotator for MAF output |
 
 > **The container ships only _software_ — the annotation tools, VEP plugins, and pipeline scripts. It does _not_ contain the annotation databases.**
-> The reference/annotation data (VEP cache, ClinVar, CIViC, COSMIC, SpliceAI, REVEL, CADD, gnomAD constraints, Cancer Hotspots, liftover chain + genome) are large, separately-licensed datasets that you download once and provide at runtime via the mounted reference directory — see [Reference Files Setup](#reference-files-setup). This keeps the image small and lets each database be updated independently of the SMART code.
+> The reference/annotation data (VEP cache, ClinVar, CIViC, COSMIC, SpliceAI, REVEL, CADD, dbNSFP, gnomAD constraints, Cancer Hotspots, liftover chain + genome) are large, separately-licensed datasets that you download once and provide at runtime via the mounted reference directory — see [Reference Files Setup](#reference-files-setup). This keeps the image small and lets each database be updated independently of the SMART code.
 
 ---
 
@@ -125,6 +126,11 @@ SMART expects a reference directory with the following structure:
 ├── CADD/                            # OPTIONAL — genome-wide deleteriousness (~80 GB)
 │   ├── whole_genome_SNVs.tsv.gz                 (+.tbi)
 │   └── gnomad.genomes.r4.0.indel.tsv.gz         (+.tbi)
+├── GENIE/                           # OPTIONAL — GENIE case counts (data-use agreement)
+│   ├── genie_o4_counts.tsv.gz
+│   └── genie_o4_counts.cohort.tsv
+├── dbNSFP/                          # OPTIONAL — extra in silico predictors (academic licence)
+│   └── dbNSFP5.0a_grch38.smart.gz               (+.tbi)
 └── homo_sapiens/                    # VEP cache directory
     └── 114_GRCh38/
 ```
@@ -134,6 +140,10 @@ All reference files can be downloaded using the provided `utils/get_ref_files.sh
 COSMIC is **optional** and not redistributable: if the `COSMIC/` directory is present SMART adds Cancer Mutation Census recurrence columns, otherwise it is skipped. Build the file from your own COSMIC download with `utils/cosmic_cmc_to_vcf.py` (see [utils/README.md](utils/README.md)).
 
 CADD is also **optional**. The GRCh38 score files are very large (whole-genome SNVs ~80 GB + indels), so they are not downloaded by default. If both files are present under `CADD/`, SMART adds the `CADD_PHRED` / `CADD_RAW` columns; otherwise it is skipped. Install them by re-running the downloader with the opt-in flag: `INSTALL_CADD=1 utils/get_ref_files.sh <base_dir>`.
+
+GENIE case counts are also **optional** and not redistributable (AACR Project GENIE data-use agreement). Build `GENIE/genie_o4_counts.tsv.gz` from your own GENIE release with `utils/build_genie_o4.py`; if present, SMART adds `GENIE_*` annotation columns (unique patients with the same nucleotide change and counted as for SVIG-UK O4, for all, haematological and solid tumours, with the commonest OncoTree codes and the cohort size) and uses the counts for O4 in Tier 4.
+
+dbNSFP is also **optional** and not redistributable (academic releases are CC BY-NC-ND 4.0; some scores, e.g. VEST4, are free for non-commercial use only). Download dbNSFP 5.0a from [dbnsfp.org](https://www.dbnsfp.org), unzip it and build SMART's file with `python3 utils/build_dbnsfp.py --dbnsfp-dir <dbNSFP5.0a> --out <base_dir>/dbNSFP/dbNSFP5.0a_grch38.smart.gz`. If present, SMART adds one score (and the categorical prediction where dbNSFP provides one) for each predictor it does not already annotate — MutationTaster, MutationAssessor, PROVEAN, VEST4, MetaSVM, MetaLR, MetaRNN, M-CAP, MutPred, MVP, gMVP, MPC, PrimateAI, DEOGEN2, BayesDel (without allele frequency), ClinPred, LIST-S2, VARITY_R, ESM1b, AlphaMissense, PHACTboost, MutFormer, MutScore, ALoFT, DANN, fathmm-XF, Eigen, GERP++, phyloP and phastCons (100-way vertebrate) — described in `Config.yaml`. SIFT, PolyPhen, REVEL and CADD are not taken from dbNSFP because SMART already annotates them. Values for several Ensembl transcripts are separated by `&`, in the order of `Ensembl_transcriptid`.
 
 ---
 
@@ -230,6 +240,13 @@ Options:
                                    VEP-annotated VCFs are written to AnnotatedVcf/.
                                    --transcripts-file and --config are not required
                                    in this mode.
+  --tumour-type TYPE               Tumour type for the Tier 4 classification: OncoTree
+                                   code (e.g. AML, MDS, LUAD) or myeloid | lymphoid |
+                                   haem | solid | unknown (default: unknown). A
+                                   per-variant TUMOUR_TYPE column takes precedence.
+  --o4-on-target LEVEL             GENIE entries counted for O4: code | tissue |
+                                   lineage | all (default: lineage)
+  --no-classification              Do not write the Tier 4 classification
   --help                           Show help
 ```
 
@@ -246,13 +263,14 @@ All results are written to the mounted `/data` directory:
 
 ### Output tiers
 
-The pipeline produces three audience-targeted output files:
+The pipeline produces three annotation files and one classification file:
 
 | File | Audience | Contents |
 |------|----------|----------|
 | `Final_result_tier1.maf` | Downstream tools | All non-dropped fields in standard MAF format (~1028 columns; exact count varies with the number of OncoKB treatment, diagnostic, and prognostic entries returned for the variants in the run) |
 | `Final_result_tier2.tsv` | Bioinformaticians | Selected fields with two-row header (field names + metadata) |
 | `Final_result_tier3.tsv` | Clinical scientists | Clinically relevant fields with two-row header |
+| `Final_result_tier4.tsv` | Clinical scientists | SVIG-UK oncogenicity classification — kept separate from the annotation. Two-row header (field names; description, source and version of the classification system). One row per Tier 1 row: variant identifiers, tumour type and gene role used, final class and score, **one column per SVIG-UK code** (O1–O11, B1–B7) with the strength and points applied, the evidence behind every code, codes removed by combination rules, and the population, in silico and OncoKB values used. Every row carries `SVIG_UK_REVIEW_STATUS` (automated suggestion, to be confirmed by a clinical scientist) and `SVIG_UK_REVIEW_FLAGS`. A structured copy is written to `Final_result_tier4.json`. See [SVIG-UK oncogenicity classifier](#svig-uk-oncogenicity-classifier) |
 
 When `--keep-tmp` is used, intermediate files are retained:
 
@@ -460,8 +478,10 @@ For the binary metrics, **positive = (Likely) Oncogenic** on both sides.
 ### SVIG-UK oncogenicity classifier
 
 `scripts/svig_uk_classifier.py` classifies each variant in a SMART MAF following the
-**ACGS / SVIG-UK 2025** guidelines ([main guideline](docs/guidelines/svig-uk_guidelines_v10.pdf),
-[supplementary material](docs/guidelines/svig-uk_supplementary_material.pdf)). It replaces the
+**ACGS / SVIG-UK 2025** guidelines, version 1.1 (26/05/2026) ([v1.0 main guideline](docs/guidelines/svig-uk_guidelines_v10.pdf),
+[v1.0 supplementary material](docs/guidelines/svig-uk_supplementary_material.pdf); combination numbers and the
+canonical variants list follow the v1.1 revision log). The pipeline runs it after post-analysis and writes
+`Final_result_tier4.tsv`. It replaces the
 earlier heuristic multi-evidence scorer, whose point values were not taken from the guideline.
 
 **Design principles**
@@ -483,17 +503,17 @@ earlier heuristic multi-evidence scorer, whose point values were not taken from 
 | Code | Guideline rule (strength) | SMART implementation | Data | Status |
 |------|---------------------------|----------------------|------|--------|
 | O1 | SVIG-UK canonical variants list — stand-alone, with the list's Oncogenic / Likely Oncogenic assessment | Protein match (frameshift tail ignored); genomic match for TERT promoter; FLT3 exon-14 in-frame duplication for ITD | [`reference_lists/svig_uk_canonical_variants.tsv`](reference_lists/svig_uk_canonical_variants.tsv) (Supplementary Table 3) | As written |
-| O2 | Null variant in a tumour suppressor, PVS1 decision tree (+8/+4/+2/+1) | Stop/frameshift predicted to trigger NMD +8; final exon or first 100 bp of exon 1 +2; canonical ±1/2 splice +2 (+2T>C only if SpliceAI ≥ 0.8; +2C>T never); start-loss +1 | VEP consequence, EXON, CDS position, SpliceAI; gene role | Proxy — exon boundaries and protein length are not in the MAF, so the tree falls back to its lowest reachable strength |
-| O3 | Absent from gnomAD v4.1 (+2); ≤0.001% in a sub-population of ≥100,000 alleles (+1), not if >1 allele in a smaller sub-population | As written; allele counts estimated from allele frequency and gnomAD v4 sample sizes. Not applied if it would lift otherwise likely-benign evidence into VUS | gnomAD v4.1 exomes + genomes (VEP) | As written |
-| O4 | Enriched in a somatic database (GENIE thresholds by variant class, +4/+2/+1); needs O3; not with B1/B2 | COSMIC Cancer Mutation Census sample counts at protein level, all tissues, with every GENIE threshold ×5 — the guideline requires "much higher thresholds" for COSMIC and gives >50 (vs GENIE >10) for strong missense. Missense >50 / 25–50; truncating (same position or downstream) and in-frame >250 / 100–250 / 50–99 | COSMIC CMC (optional, user-licensed) | Proxy — on-target tumour-type counting is not possible because the CMC tissue breakdown is empty for ~99.5% of mutations |
-| O5 | Different (likely) oncogenic change at the same residue, compared by REVEL | — | Needs the REVEL score of the reference variant | Not automated |
+| O2 | Null variant in a tumour suppressor, PVS1 decision tree (+8/+4/+2/+1) | Stop/frameshift: NMD predicted unless the stop falls in the final exon or the last 50 bp of the penultimate exon (+8); NMD escape → +4 if >10% of the protein is altered, else +2; stop in the first 100 bp of exon 1 +2. Canonical ±1/2 splice: the nearest exon is assumed skipped — in-frame → +4/+2 by protein fraction, out-of-frame → reading frame translated from the genome, +8 if the new stop triggers NMD; first/final intron or a SpliceAI-predicted cryptic site within ±20 bp +2; skipping the initiation-codon exon +1; +2T>C only if SpliceAI ≥ 0.8, +2C>T never; variants that are not ±1/2 on the 3'-shifted HGVS description get no splice O2. Start-loss +1 | VEP consequence, HGVSc/HGVSp, EXON/INTRON; RefSeq exon structure (UCSC `ncbiRefSeq`); GRCh38 FASTA; SpliceAI; gene role | Proxy — "region critical to protein function" is not judged, only the >10% branch; without transcript models the lowest reachable strength is used |
+| O3 | Absent from gnomAD v4.1 (+2); ≤0.001% in a sub-population of ≥100,000 alleles (+1), not if >1 allele in a smaller sub-population | As written; allele counts estimated from allele frequency and gnomAD v4 sample sizes. Not applied if it would lift otherwise likely-benign evidence into VUS. CHIP correction for DNMT3A, ASXL1, TET2 and TP53: when neither O3 nor B1 applies and total AF >0.001%, the frequency is recalculated from gnomAD carriers with VAF 0.30–0.65 (none → +2, ≤0.001% → +1). Hereditary cancer genes with ClinGen VCEP rules (TP53, RUNX1, PTEN, CDH1, ATM, PALB2, BRCA1/2, APC, MLH1, MSH2, MSH6, PMS2, VHL, DICER1) use the panel's PM2 cut-off | gnomAD v4.1 exomes + genomes (VEP); gnomAD v4.1 allele-balance histograms for the CHIP genes | As written; CHIP recalculation uses the combined exome + genome total because allele balance is not given per population |
+| O4 | Enriched in a somatic database (GENIE thresholds by variant class, +4/+2/+1); needs O3; not with B1/B2 | **GENIE (preferred)**: unique patients, thresholds as written — missense (same amino-acid change, any nucleotide change) and canonical splice (exact nucleotide change) >10 / 5–10; frameshift/nonsense at the same residue or downstream and in-frame (exact insertion; deletions equal to or within the deleted region) >50 / 20–50 / 10–19. GENIE entries are lifted to GRCh38, left-aligned and matched by genomic change, with residues computed on the transcript SMART annotated. The tumour type (`--tumour-type` or a per-variant `TUMOUR_TYPE` column) is an OncoTree code (e.g. `AML`, `MDS`, `DLBCLNOS`) or a broad group (`myeloid`, `lymphoid`, `haem`, `solid`); `--o4-on-target` chooses which entries count: `code` (the code and its subtypes), `tissue` (e.g. all myeloid), `lineage` (haematopoietic or solid; default) or `all` (off-target included). A finer level than the tumour type given falls back to the finest available; an unknown tumour type counts all entries; a patient counts once if any of their samples is on-target; lineage-dependent genes (EZH2) never count the other lineage. **COSMIC (fallback when no GENIE table)**: CMC sample counts, all tissues, every GENIE threshold ×5 | GENIE table built by `utils/build_genie_o4.py` from your licensed GENIE release (optional); COSMIC CMC (optional, user-licensed) | As written for GENIE; COSMIC is a proxy (no on-target counting) |
+| O5 | Different (likely) oncogenic change at the same residue, compared by REVEL (+2/+1) | Missense route: a (likely) oncogenic reference with a different amino acid at the same residue; +2 if the variant's REVEL is within 0.02 of or above the reference's, or both >0.773; +1 if the variant's REVEL is >0.7 and <0.773 and lower. Reference REVEL = highest score among nucleotide changes giving that amino acid change. References on another transcript are mapped through the genome; references without a transcript must match residue and reference amino acid. Not with O7 (stronger kept), removes O8 and O10 | SVIG-UK canonical list; optional CGI catalogue table (`utils/build_o5_references.py`); REVEL table (tabix); RefSeq exon structure | Proxy — catalogue references are not accredited-laboratory classifications and a shared mechanism of action is assumed; splice and initiation-codon routes not automated |
 | O6 | REVEL ≥ 0.7 or SpliceAI Δ ≥ 0.2 (+1 max); in gain-of-function genes only within functional regions | As written; "functional region" = curated protein domain or Cancer Hotspots residue | REVEL, SpliceAI, VEP DOMAINS | As written |
 | O7 | Cancer Hotspots: ≥50 at residue and ≥10 same change (+4); <50 and ≥10 (+2); 2–9 same change (+1) | Cancer Hotspots route as written; the functional-domain routes (which need judgement on local benign variation) are not used | Cancer Hotspots counts | As written (hotspot route) |
 | O8 | Missense constraint, gnomAD missense Z ≥ 3.09 (+1) | As written, on the transcript SMART selected (MANE fallback) | gnomAD constraint | As written |
 | O9 | In-frame change in a functional domain (>1 residue +2, single residue +1); truncation in the final exon of an oncogene (+2) | "Functional domain" = Pfam, SMART, PROSITE, CDD, PRINTS, HAMAP, NCBIFAM or PIRSF entry from VEP | VEP DOMAINS | Proxy |
 | O10 | Well-established functional studies (+8/+4/+2/+1) | OncoKB variant-level mutation effect (Gain/Switch-of-function in an oncogene, Loss-of-function in a TSG) at **supporting** strength only | OncoKB | Proxy |
 | O11 | Tumour phenotype | — | IHC, MSI, TMB, LOH | Not automated |
-| B1 | gnomAD >1% stand-alone benign; >0.1% (−4) | Overall or highest of AFR/EAS/NFE/AMR/SAS, exomes or genomes | gnomAD v4.1 | As written |
+| B1 | gnomAD >1% stand-alone benign; >0.1% (−4); hereditary cancer genes: ClinGen VCEP BA1 (stand-alone) and BS1 (−4) | Overall or highest of AFR/EAS/NFE/AMR/SAS, exomes or genomes | gnomAD v4.1 | As written |
 | B2 | Variant does not fit the gene's mode of action — stand-alone VUS | Null variant in a gene with an oncogene role and no tumour-suppressor role (final-exon truncations go to O9 instead). Activating variants in TSGs are not detected | COSMIC Cancer Gene Census (OncoKB fallback) | Proxy |
 | B3 | REVEL ≤ 0.4 (not for activating variants) or all SpliceAI Δ ≤ 0.1 (−1) | REVEL route only in genes with a tumour-suppressor role | REVEL, SpliceAI | As written |
 | B4 | Synonymous / intronic (≥+7 or ≤−21) / UTR with no predicted splicing impact (−1 in silico; −4 needs an RNA assay) | In silico route (−1); synonymous variants in the splice region excluded | VEP consequence, HGVSc, SpliceAI | As written |
@@ -511,7 +531,7 @@ removed when O2 applies; O10 is removed with null variants; O6 is removed with O
 with O7; O6 + O7 are capped at 4 points; O4 needs O3 and is removed with B1; O7 is removed when B1
 applies; B6 is removed when SpliceAI predicts a splicing impact.
 
-**Output columns**
+**Output columns** (`--out`: appended to a copy of the Tier 1 MAF; the Tier 4 file, `--tier4`, also has one column per code)
 
 | Column | Content |
 |--------|---------|
@@ -532,29 +552,50 @@ python3 utils/build_svig_uk_resources.py \
 # classify a SMART MAF
 python3 scripts/svig_uk_classifier.py \
     --maf output/Final_result_tier1.maf \
-    --out output/Final_result_tier1.svig_uk.maf \
-    --refs /refs --tumour-type myeloid
+    --tier4 output/Final_result_tier4.tsv \
+    --refs /refs --tumour-type AML
 ```
 
 Resources are resolved against `--refs` (`SVIG_UK/cgc_gene_roles.tsv`,
 `SVIG_UK/cosmic_o4_counts.tsv.gz`, `oncokb_gene_roles.tsv`,
-`CancerHotSpots/cancerhotspots_counts.json`, `gnomAD_constraints/loeuf_dataset_grch38.tsv.gz`).
+`CancerHotSpots/cancerhotspots_counts.json`, `gnomAD_constraints/loeuf_dataset_grch38.tsv.gz`,
+`OncoTree/oncotree_2025_10_03.json` (the OncoTree release used to resolve codes and subtypes),
+`reference_lists/svig_uk_vcep_population_thresholds.tsv` (shipped; ClinGen VCEP population cut-offs),
+`GENIE/genie_o4_counts.tsv.gz` — built with
+`python3 utils/build_genie_o4.py --genie-dir <GENIE release> --oncotree /refs/OncoTree/oncotree_2025_10_03.json --chain /refs/liftover/hg19ToHg38.over.chain --fasta /refs/liftover/hg38.fa --out /refs/GENIE/genie_o4_counts.tsv.gz`;
+GENIE's data-use agreement forbids redistribution, so keep this file with your licensed data —,
+`REVEL/new_tabbed_revel_grch38.tsv.gz` (tabix-indexed, needs `tabix` on the PATH),
+`SVIG_UK/o5_reference_variants.tsv` — built with
+`python3 utils/build_o5_references.py --cgi-dictionary <OncoVI>/resources/cgi_dictionary.txt --out /refs/SVIG_UK/o5_reference_variants.tsv` —,
+`SVIG_UK/gnomad_v41_chip_allele_balance.tsv.gz` — built with
+`python3 utils/build_gnomad_chip_ab.py --transcript-models /refs/TranscriptModels/ncbiRefSeq.hg38.txt.gz --out /refs/SVIG_UK/gnomad_v41_chip_allele_balance.tsv.gz`,
+which queries the public gnomAD v4.1 VCFs remotely with tabix —,
+`TranscriptModels/ncbiRefSeq.hg38.txt.gz` — the UCSC hg38 `ncbiRefSeq` table from
+`hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz` — and the
+`liftover/hg38.fa` FASTA already used by VEP). The transcript used for O2 is the one SMART
+annotated; its RefSeq version must be present in the table and its exon count must agree with
+VEP, otherwise O2 falls back to the lowest reachable strength.
 Each is optional; when one is missing the dependent codes are listed as not evaluated in
 `SVIG_UK_NOTES` rather than silently skipped.
 
 **Known limitations**
 
-- O5, O11 and B7 are not automated, and the RNA-assay forms of O2 and B4 are not used.
-- O2 cannot check the last 50 bp of the penultimate exon or the ">10% of the protein" criterion.
-- O3 does not apply the CHIP allele-balance correction the guideline describes for DNMT3A,
-  ASXL1, TET2 and TP53, and cannot check gnomAD read depth.
-- O4 uses COSMIC rather than GENIE, counts all tissues rather than on-target tumour types, and
-  matches amino-acid changes by gene, so transcript numbering differences between SMART and
-  COSMIC can hide counts.
+- The O5 splice and initiation-codon routes, O11 and B7 are not automated, and the RNA-assay forms of O2 and B4 are not used.
+- O2 does not judge whether a lost region is critical to protein function, so truncations
+  removing ≤10% of the protein (e.g. C-terminal domains) stay at moderate strength; alternative
+  start codons, alternative transcripts and nonstop decay are not assessed.
+- VCEP cut-offs are specified as GrpMax filtering allele frequencies and sometimes on gnomAD
+  non-cancer subsets; SMART estimates the FAF95 from gnomAD v4.1 allele frequencies and group sizes.
+- O3 applies the CHIP correction only to the four genes the guideline names (DNMT3A, ASXL1,
+  TET2, TP53), and cannot check gnomAD read depth.
+- O4 with GENIE does not exclude downstream truncating entries with a different mechanism, and
+  counting at the `all` level cannot confirm that the mechanism is consistent across tumour types. Without a
+  GENIE table O4 falls back to COSMIC, which counts all tissues and matches amino-acid changes
+  by gene, so transcript numbering differences between SMART and COSMIC can hide counts.
 - The guideline states that professional judgement must always be applied; this classifier is
   decision support, not a replacement for scientist review.
 
-The classifier's rules are covered by 63 unit tests whose expectations are taken from the
+The classifier's rules are covered by 146 unit tests whose expectations are taken from the
 guideline text ([tests/verification5/test_svig_uk_classifier.py](tests/verification5/test_svig_uk_classifier.py)).
 
 ---
