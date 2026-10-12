@@ -12,7 +12,27 @@ Docker images are published as `monkiky/smart:<version>`.
 SMART stays an annotation pipeline (Tiers 1–3); classification is a separate output.
 
 ### Added
-- **Field provenance taken from the VCFs** (`scripts/vcf_metadata.py`). The description, source
+- **Annotation flags, so a filter cannot drop a variant before its evidence is read**
+  ([#14](https://github.com/WeTGI-colab/SMART/issues/14),
+  [#15](https://github.com/WeTGI-colab/SMART/issues/15)). SpliceAI already reached the output
+  (`SpliceAI_pred_DS_*`, columns 113–116 of 807) and the two TERT promoter hotspots were already
+  annotated correctly as `5'Flank`, but a filter on `Variant_Classification` or on `IMPACT`
+  removes those rows as `Silent`, `Intron`, `5'Flank`, `LOW` or `MODIFIER` before anyone reaches
+  the evidence: the data was there and the row was gone. Across three cohorts (10,124 rows) that
+  is 11 variants with a SpliceAI delta of 0.5 or above and about 25 at 0.2, several of them
+  intronic changes three to five bases into the splice region with deltas of 0.90–0.99. Two new
+  columns: `SPLICEAI_MAX_DS`, the highest of the four deltas as one sortable number, computed for
+  every row; and `ANNOTATION_FLAGS`, `;`-separated reasons to keep a row — `splice_predicted(<score>)`
+  for a `LOW`/`MODIFIER` row reaching 0.2, the delta from which the classifier awards O6, so every
+  variant that could earn O6 now reaches the classifier; and `svig_canonical` for a position on the
+  SVIG-UK canonical variants list, read from the same reference file the classifier uses for O1 and
+  matched genomically, since a promoter variant's `c.` notation depends on the transcript annotated
+  while its position does not. The consuming filter gains one condition and one column carries every
+  reason. `Variant_Classification` is deliberately unchanged: a splice-predicted synonymous variant
+  is still synonymous, a value outside the MAF vocabulary breaks third-party readers, and relabelling
+  destroys the record of the consequence. Documented in `docs/annotation_flags.md`.
+
+- **Field provenance taken from the VCFs** (`scripts/vcf_metadata.py`, [#16](https://github.com/WeTGI-colab/SMART/issues/16)). The description, source
   and version of every column used to come from `Config.yaml`, maintained by hand, which had
   drifted: `hotspot` was attributed to Cancer Hotspots when the variant caller writes it,
   `FractionInformativeReads` to Manta when DRAGEN writes it, six further DRAGEN fields had no
@@ -79,6 +99,17 @@ SMART stays an annotation pipeline (Tiers 1–3); classification is a separate o
   `GENIE/genie_o4_counts.tsv.gz` is present; the builder now also writes cohort sizes).
 
 ### Fixed
+- **`VAF` was described as a population frequency when it is the tumour allele fraction.**
+  `Config.yaml` described `VAF` as "Frequency of existing variant in 1000 Genomes" with
+  `source: VCF`, but SMART computes it from the caller's allelic depth as ALT/(REF+ALT). Both
+  `AF` (VEP's population frequency) and `VAF` are tier 3, so the sheet carried two columns
+  described as population frequencies, one of which was the patient's allele fraction. The
+  description and source are corrected; the computed values never changed. Found while adding
+  the annotation flags, and the same class of drift as
+  [#16](https://github.com/WeTGI-colab/SMART/issues/16).
+- **Duplicate `VAF` key in `create_config/ConfigORIGINAL.yaml`.** The field was defined twice;
+  in YAML the later definition silently wins, so the first was dead. Consolidated into one.
+
 - **OncoKB did not recognise known variants when the selected transcript is not OncoKB's.**
   OncoKB curates protein changes on one RefSeq transcript per gene; with another transcript
   the residue numbering can differ (NF1 NM_001042492 p.R1769* is NM_000267 p.R1748*;

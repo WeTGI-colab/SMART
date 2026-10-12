@@ -4,6 +4,9 @@ Every column of the SMART outputs carries three pieces of metadata in the second
 Tiers 2 and 3: a description, the source it came from, and the version of that source. This note
 says where each of the three is taken from, and why.
 
+Prompted by [#16](https://github.com/WeTGI-colab/SMART/issues/16), which reported that the variant
+caller's `hotspot` flag was attributed to the wrong resource.
+
 ## The problem this solves
 
 Until now all three came from `Config.yaml`, a file of 423 field definitions maintained by hand.

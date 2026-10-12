@@ -105,9 +105,25 @@ fields:
     version: vcf_v2.4
     tier: 2
   VAF:
-    description: Frequency of existing variant in 1000 Genomes https://www.ensembl.org/info/docs/tools/vep/vep_formats.html
-    source: VCF
-    version: vcf_v2.4
+    description: 'Variant allele fraction in this sample, computed by SMART as ALT/(REF+ALT) from the
+      allelic depth (AD) of the variant caller. This is a property of the tumour sample, not a
+      population frequency; the population frequencies are AF, gnomADe_AF and gnomADg_AF'
+    source: SMART
+    tier: 3
+  SPLICEAI_MAX_DS:
+    description: 'Highest of the four SpliceAI delta scores (acceptor gain/loss, donor gain/loss),
+      computed by SMART so that splice evidence can be filtered and sorted on one number. Empty
+      where SpliceAI returned no prediction'
+    source: SMART
+    tier: 3
+  ANNOTATION_FLAGS:
+    description: 'Reasons this row is worth keeping when a consequence- or impact-based filter would
+      otherwise drop it, ";"-separated, empty where none apply. splice_predicted(<score>) marks a
+      LOW or MODIFIER variant whose SPLICEAI_MAX_DS reaches 0.2, the delta from which the classifier
+      awards O6; svig_canonical marks a position on the SVIG-UK canonical variants list, today the
+      two TERT promoter hotspots. Variant_Classification is not altered: a splice-predicted
+      synonymous variant is still synonymous'
+    source: SMART
     tier: 3
   HGVSp_Short:
     description: Short HGVS protein notation

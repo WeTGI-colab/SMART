@@ -52,12 +52,14 @@
 #   4.  Calculate End_Position based on variant type (SNV, indel, SV)
 #   5.  Clean field values (replace empty arrays, URL-encoded characters, etc.)
 #   6.  Compute VAF from allelic depth (AD) if not already present
-#   7.  Drop any columns listed in COLS_TO_REMOVE
-#   8.  Report columns not documented in the YAML config (warnings only)
-#   9.  Remove all columns marked as "drop" in the YAML config
-#   10. Write Tier 1 MAF file (single header, all remaining columns)
-#   11. Split columns by tier (read from Config.yaml) and build two-row headers
-#   12. Write Tier 2 and Tier 3 TSV files
+#   7.  Add SPLICEAI_MAX_DS and ANNOTATION_FLAGS, so that rows a consequence- or
+#       impact-based filter would drop can be kept on their evidence
+#   8.  Drop any columns listed in COLS_TO_REMOVE
+#   9.  Report columns not documented in the YAML config (warnings only)
+#   10. Remove all columns marked as "drop" in the YAML config
+#   11. Write Tier 1 MAF file (single header, all remaining columns)
+#   12. Split columns by tier (read from Config.yaml) and build two-row headers
+#   13. Write Tier 2 and Tier 3 TSV files
 #
 # TIER DEFINITIONS (controlled by build_config.py, not this script):
 #   Tier 1 : All non-drop fields — written to Final_result_tier1.maf
@@ -91,6 +93,8 @@
 # =============================================================================
 
 import os
+import re
+import csv
 import fnmatch
 import ast
 import glob
@@ -642,6 +646,143 @@ def add_vaf_column(df, ad_column="AD"):
     return df
 
 
+# === Step 5b: Annotation flags ===
+# github.com/WeTGI-colab/SMART/issues/14 (SpliceAI evidence on LOW/MODIFIER rows)
+# github.com/WeTGI-colab/SMART/issues/15 (the TERT promoter hotspot positions)
+# Both ask for the same thing: a row a filter would drop must be keepable on its
+# evidence. See docs/annotation_flags.md.
+SPLICEAI_DS_COLUMNS = ("SpliceAI_pred_DS_AG", "SpliceAI_pred_DS_AL",
+                       "SpliceAI_pred_DS_DG", "SpliceAI_pred_DS_DL")
+
+# 0.2 is the delta at which the classifier starts awarding O6. Flagging from the same
+# value means every variant that could earn O6 reaches the classifier; a laboratory that
+# wants a stricter cut filters on SPLICEAI_MAX_DS itself.
+SPLICEAI_FLAG_THRESHOLD = 0.2
+
+# Only LOW and MODIFIER rows are flagged: those are the ones an impact filter removes.
+# HIGH and MODERATE survive such a filter anyway, and their scores are in SPLICEAI_MAX_DS
+# either way.
+SPLICEAI_FLAG_IMPACTS = ("LOW", "MODIFIER")
+
+CANONICAL_VARIANTS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                       "..", "reference_lists",
+                                       "svig_uk_canonical_variants.tsv")
+
+
+def _max_score(value):
+    """The largest number in one SpliceAI cell, or None.
+
+    Equivalent to the classifier's fnum() for the single values SpliceAI actually
+    writes; the search is used so that a cell carrying more than one prediction
+    cannot silently drop its evidence by failing to parse as one float.
+    """
+    s = str(value).strip()
+    if s in ("", ".", "-", "nan", "NaN", "None", "NA"):
+        return None
+    found = [float(m) for m in re.findall(r"-?\d+\.?\d*(?:[eE][-+]?\d+)?", s)]
+    return max(found) if found else None
+
+
+def load_canonical_genomic(path=None):
+    """Genomic entries of the SVIG-UK canonical list as {(chrom, pos, ref, alt)}.
+
+    Read from the same reference file the classifier uses for O1, so the annotation
+    flag and the classification rule cannot drift apart, and so the set extends by
+    itself if non-coding entries are added to the list. Entries matched by protein
+    change or by a bespoke rule are skipped: a genomic position is what an annotation
+    flag can test, and a promoter variant's c. notation depends on the transcript
+    annotated while its position does not.
+    """
+    path = path or CANONICAL_VARIANTS_PATH
+    out = set()
+    if not os.path.exists(path):
+        print(f"WARNING: canonical variant list not found at {path}; "
+              f"svig_canonical will not be flagged")
+        return out
+    with open(path, newline="", encoding="utf-8") as fh:
+        for entry in csv.DictReader(fh, delimiter="\t"):
+            rule = (entry.get("match_rule") or "").strip()
+            if not rule.startswith("genomic:"):
+                continue
+            parts = rule.split(":")
+            if len(parts) != 5:
+                print(f"WARNING: malformed genomic match_rule {rule!r}; skipped")
+                continue
+            _, chrom, pos, ref, alt = parts
+            out.add((chrom.replace("chr", ""), str(pos), ref, alt))
+    return out
+
+
+def add_annotation_flags(df, canonical=None):
+    """Add SPLICEAI_MAX_DS and ANNOTATION_FLAGS.
+
+    ANNOTATION_FLAGS states why a row is worth keeping when a consequence- or
+    impact-based filter would otherwise drop it, ';'-separated:
+
+      splice_predicted(0.95)  a LOW/MODIFIER row whose maximum SpliceAI delta
+                              reaches SPLICEAI_FLAG_THRESHOLD
+      svig_canonical          a position on the SVIG-UK canonical variants list
+                              (today the two TERT promoter hotspots)
+
+    Variant_Classification is deliberately left alone. It is a defined MAF vocabulary
+    describing the consequence: a splice-predicted synonymous variant is still
+    synonymous, rewriting it would break third-party readers of the MAF and would
+    destroy the record of what the consequence actually was. The filter changes from
+    "drop Silent/Intron" to "drop Silent/Intron unless ANNOTATION_FLAGS is non-empty",
+    and one column carries every such reason rather than one column per reason.
+
+    ANNOTATION_FLAGS is always created, empty where nothing is flagged, so the
+    consuming filter can rely on the column existing.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input dataframe.
+    canonical : set, optional
+        Genomic keys from load_canonical_genomic(); loaded on demand when omitted.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Dataframe with 'SPLICEAI_MAX_DS' and 'ANNOTATION_FLAGS' added.
+    """
+    if canonical is None:
+        canonical = load_canonical_genomic()
+
+    present = [c for c in SPLICEAI_DS_COLUMNS if c in df.columns]
+    if present:
+        # float, not object: the column exists to be sorted and compared on, and an
+        # object column of floats and Nones sorts as text in some readers
+        scores = df[present].apply(
+            lambda col: pd.to_numeric(col.map(_max_score), errors="coerce"))
+        df["SPLICEAI_MAX_DS"] = scores.max(axis=1, skipna=True)
+    else:
+        print("WARNING: no SpliceAI delta columns found; SPLICEAI_MAX_DS left empty")
+        df["SPLICEAI_MAX_DS"] = float("nan")
+
+    def flags_for(row):
+        flags = []
+        score = row.get("SPLICEAI_MAX_DS")
+        impact = str(row.get("IMPACT", "")).strip().upper()
+        if (score is not None and pd.notna(score)
+                and score >= SPLICEAI_FLAG_THRESHOLD
+                and impact in SPLICEAI_FLAG_IMPACTS):
+            flags.append(f"splice_predicted({score:g})")
+        key = (str(row.get("Chromosome", "")).replace("chr", ""),
+               str(row.get("Start_Position", "")),
+               row.get("Reference_Allele"), row.get("Tumor_Seq_Allele2"))
+        if key in canonical:
+            flags.append("svig_canonical")
+        return ";".join(flags)
+
+    df["ANNOTATION_FLAGS"] = df.apply(flags_for, axis=1)
+
+    n = int((df["ANNOTATION_FLAGS"] != "").sum())
+    if n:
+        print(f"Annotation flags set on {n} row(s)")
+    return df
+
+
 # === Step 6: Drop columns ===
 def drop_columns(df, cols_to_remove):
     """
@@ -865,6 +1006,7 @@ def _transform_sample(df, field_config):
     df = expand_oncokb_json_arrays(df)
     df = clean_column_values(df)
     df = add_vaf_column(df)
+    df = add_annotation_flags(df)
     df, n_filled, n_cna = _apply_oncokb_fixes(df)
     df = drop_columns(df, COLS_TO_REMOVE)
     df = strip_embedded_whitespace(df)   # guard: no \n / \t / \r in any cell -> one clean MAF row per record

@@ -14,3 +14,4 @@ exclude:
   - guidelines/
   - field_provenance.md
   - SMART_requirements_table.pptx
+  - annotation_flags.md
