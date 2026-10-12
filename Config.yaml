@@ -1184,9 +1184,12 @@ fields:
     version: changv2
     tier: 2
   hotspot:
-    description: Known somatic site, used to increase confidence in call
-    source: Cancer Hotspots
-    version: changv2
+    description: 'Known somatic site, used to increase confidence in call. Written by the variant caller into the input
+      VCF, not added by SMART; where a run harvests field metadata from its own VCFs this entry
+      is only the fallback. In WGLS runs the caller is DRAGEN, which uses its built-in COSMIC
+      positions when no hotspot file is supplied; the release behind that default is not stated'
+    source: Input VCF (variant caller)
+    version: Not versioned by the caller
     tier: 3
   NCBI_Build:
     description: Genome build used in the OncoKB annotation
@@ -1470,9 +1473,10 @@ fields:
     version: Manta_v1.6
     tier: 2
   FractionInformativeReads:
-    description: Fraction of reads informative for the structural variant
-    source: Manta
-    version: Manta_v1.6
+    description: 'The fraction of informative reads out of the total reads. Written by the variant caller
+      into the input VCF, not added by SMART'
+    source: Input VCF (variant caller)
+    version: Not versioned by the caller
     tier: 2
   HOMLEN:
     description: Length of homologous sequence at the breakpoint

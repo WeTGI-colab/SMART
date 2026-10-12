@@ -1,0 +1,52 @@
+##fileformat=VCFv4.2
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths (counting only informative reads out of the total reads) for the ref and alt alleles in the order listed">
+##FORMAT=<ID=AF,Number=A,Type=Float,Description="Allele fractions for alt alleles in the order listed">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth (reads with MQ=255 or with bad mates are filtered)">
+##FORMAT=<ID=F1R2,Number=R,Type=Integer,Description="Count of reads in F1R2 pair orientation supporting each allele">
+##FORMAT=<ID=F2R1,Number=R,Type=Integer,Description="Count of reads in F2R1 pair orientation supporting each allele">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=MB,Number=4,Type=Integer,Description="Per-sample component statistics to detect mate bias">
+##FORMAT=<ID=PS,Number=1,Type=Integer,Description="Physical phasing ID information, where each unique ID within a given sample (but not across samples) connects records within a phasing group">
+##FORMAT=<ID=SB,Number=4,Type=Integer,Description="Per-sample component statistics which comprise the Fisher's Exact Test to detect strand bias">
+##FORMAT=<ID=SQ,Number=A,Type=Float,Description="Somatic quality">
+##DRAGENCommandLine=<ID=HashTableBuild,Version="SW: 00.000.000.4.5.0-2091-g6f03e098, HashTableVersion: 12",CommandLineOptions="/opt/dragen/4.5.0-2091-g6f03e098/bin/dragen --ht-reference=/staging/tmp/suite_def/illumina-isi07/scratch/dragen_datasets/data/vault/reference_genomes/Hsapiens/hg38/seq/hg38.fa --output-file-prefix=run_dragen-hg38-alt_masked.cnv.hla.methylation_combined.methyl_cg.rna_v6-suite10847094-stage1 --events-log-file=/staging/tmp/suite_def/prod/10847094/001_Run_hg38_alt_masked_cnv_hla_methylation_combined_methyl_cg_rna_v6/_application_debug/dragen_events.csv --output-directory=/staging/tmp/suite_def/prod/10847094/001_Run_hg38_alt_masked_cnv_hla_methylation_combined_methyl_cg_rna_v6/_application_output --enable-metrics-json=true --ht-num-threads=42 --build-hash-table=true --logging-to-output-dir=true --enable-cnv=true --ht-build-rna-hashtable=true --ht-build-hla-hashtable=true --ht-methylated-cg=true --ht-methylated-combined=true --ht-hapdb-left-aligned-warning=false --ht-mask-bed=/illumina-isi07/scratch/dragen_datasets/data/vault/reference_genomes/Hsapiens/hg38_alt_masked_v5/hg38_v2_mask.plus_chr6_7442581-7443291_fix.plus_JTFH01000070v1_mask.bed --enable-watchdog=false --validate-pangenome-reference=false">
+##DRAGENCommandLine=<ID=dragen,Version="SW: 13.031.818.4.5.4, HW: 13.031.818",CommandLineOptions="--cram-version 3.0 --enable-duplicate-marking false --enable-map-align true --enable-map-align-output true --enable-metrics-json true --enable-variant-annotation false --enable-variant-caller true --force --intermediate-results-dir /scratch --lic-instance-id-location /opt/instance-identity --logging-to-output-dir true --output-directory D00_00000_000000_Thyroid --output-file-prefix D00_00000_000000_Thyroid --output-format CRAM --ref-dir /scratch/hg38-alt_masked.cnv.hla.methyl_cg.methylated_combined.rna-12-r6.0-2/DRAGEN/12 --tumor-fastq-list tumor-fastq-list.csv --tumor-fastq-list-sample-id D00_00000_000000_Thyroid --umi-enable true --umi-library-type nonrandom-duplex --umi-metrics-interval-file panel_targets.bed --umi-min-supporting-reads 2 --validate-pangenome-reference false --vc-combine-phased-variants-distance 0 --vc-enable-germline-tagging false --vc-enable-umi-solid true --vc-skip-germline-tagging true --vc-systematic-noise NONE --vc-target-bed panel_targets.bed">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth (informative and non-informative); some reads may have been filtered based on mapq etc.">
+##INFO=<ID=FractionInformativeReads,Number=1,Type=Float,Description="The fraction of informative reads out of the total reads">
+##INFO=<ID=MQ,Number=1,Type=Float,Description="RMS Mapping Quality">
+##INFO=<ID=MQRankSum,Number=1,Type=Float,Description="Z-score From Wilcoxon rank sum test of Alt vs. Ref read mapping qualities">
+##INFO=<ID=ReadPosRankSum,Number=1,Type=Float,Description="Z-score from Wilcoxon rank sum test of Alt vs. Ref read position bias">
+##INFO=<ID=SoftClipRatio,Number=1,Type=Float,Description="Ratio of soft-clipped bases out of total bases supporting the variant">
+##INFO=<ID=hotspot,Number=0,Type=Flag,Description="Known somatic site, used to increase confidence in call">
+##INFO=<ID=STR,Number=0,Type=Flag,Description="Variant is in a short tandem repeat.">
+##INFO=<ID=RU,Number=1,Type=String,Description="Tandem repeat unit (bases).">
+##INFO=<ID=RPA,Number=1,Type=Integer,Description="Number of times tandem repeat unit is repeated in reference.">
+##FILTER=<ID=base_quality,Description="Site filtered because median base quality of alt reads at this locus does not meet the threshold of 20">
+##FILTER=<ID=filtered_reads,Description="Site filtered because the fraction of reads have been filtered out is larger than 0.5">
+##FILTER=<ID=fragment_length,Description="Site filtered because absolute difference between the median fragment length of alt reads and median fragment length of ref reads at this locus exceeds the threshold of 10000">
+##FILTER=<ID=low_af,Description="Allele frequency does not meet threshold. For mitochondrial contigs, the threshold is 0.02; for other chromosomes, the threshold is 0.05">
+##FILTER=<ID=low_frac_info_reads,Description="Site filtered because the fraction of informative reads is below the threshold of 0.5">
+##FILTER=<ID=low_normal_depth,Description="Site filtered because the normal sample read depth is less than the threshold of 3">
+##FILTER=<ID=long_indel,Description="Site filtered because the indel length is more than 50bp">
+##FILTER=<ID=low_tlen,Description="Site filtered because the fraction of low TLEN ALT supporting reads exceeds the threshold of 0.4">
+##FILTER=<ID=mapping_quality,Description="Site filtered because median mapping quality of alt reads at this locus does not meet the threshold of 20">
+##FILTER=<ID=multiallelic,Description="Site filtered because more than two alt alleles pass tumor LOD">
+##FILTER=<ID=non_homref_normal,Description="Site filtered because the normal sample genotype is not homozygous reference">
+##FILTER=<ID=no_reliable_supporting_read,Description="Site filtered because no reliable supporting somatic read exists">
+##FILTER=<ID=read_position,Description="Site filtered because median of distances between start/end of read and this locus is below the threshold of 5">
+##FILTER=<ID=RMxNRepeatRegion,Description="Site filtered because all or part of the variant allele is a repeat of the reference">
+##FILTER=<ID=soft_clip_ratio,Description="Ratio of soft-clipped bases supporting the variant is above the threshold of 0.8">
+##FILTER=<ID=str_contraction,Description="Site filtered due to suspected PCR error where the alt allele is one repeat unit less than the reference">
+##FILTER=<ID=too_few_supporting_reads,Description="Site filtered because there are too few supporting reads (less than 1) in the tumor sample.">
+##FILTER=<ID=weak_evidence,Description="Somatic variant score does not meet the threshold of 4 for SNVs or 4 for indels.">
+##FILTER=<ID=long_repeat,Description="Indel call filtered because it is in a homopolymer or STR with repeat length greater than threshold of 25">
+##personalization=OFF
+##contig=<ID=chr1,length=248956422>
+##reference=file:///scratch/hg38-alt_masked.cnv.hla.methyl_cg.methylated_combined.rna-12-r6.0-2/DRAGEN/12/reference.bin
+##source=DRAGEN_SNV
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	D00_00000_000000_Thyroid
+chr1	114713908	.	T	C	.	PASS	DP=71;MQ=250.00;FractionInformativeReads=0.986;SoftClipRatio=0.00;hotspot	GT:SQ:AD:AF:F1R2:F2R1:DP:SB:MB	0/1:53.25:55,15:0.2143:25,9:30,6:70:22,33,4,11:30,25,6,9
+chr1	15928903	.	G	T	.	no_reliable_supporting_read;read_position;weak_evidence	DP=243;MQ=249.22;FractionInformativeReads=1.000;SoftClipRatio=0.33;STR;RU=A;RPA=3	GT:SQ:AD:AF:F1R2:F2R1:DP:SB:MB	0/1:1.41:240,3:0.0123:125,2:115,1:243:110,130,0,3:145,95,1,2
+chr1	8015577	.	A	T	.	no_reliable_supporting_read;read_position;weak_evidence	DP=68;MQ=246.63;FractionInformativeReads=0.971;SoftClipRatio=0.00	GT:SQ:AD:AF:F1R2:F2R1:DP:SB:MB	0/1:0.19:64,2:0.0303:29,0:35,2:66:29,35,2,0:32,32,0,2
+chr1	39897382	.	G	T	.	multiallelic;weak_evidence	DP=418;MQ=245.43;FractionInformativeReads=1.000;SoftClipRatio=0.00	GT:SQ:AD:AF:F1R2:F2R1:DP:SB:MB	0/1:3.35:0,1:0.0024:0,1:0,0:418:0,0,298,120:0,0,206,212
+chr1	18748090	.	G	GGT	.	read_position	DP=141;MQ=248.42;FractionInformativeReads=0.986;SoftClipRatio=0.50	GT:SQ:AD:AF:F1R2:F2R1:DP:SB:MB	0/1:9.88:137,2:0.0144:70,1:67,1:139:87,50,1,1:72,65,0,2

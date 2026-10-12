@@ -1,0 +1,20 @@
+##fileformat=VCFv4.2
+##source=DRAGEN_SOMATIC 4.5.1
+##reference=file:///ref/GRCh38.fa
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth">
+##INFO=<ID=MQ,Number=1,Type=Float,Description="RMS mapping quality">
+##INFO=<ID=FractionInformativeReads,Number=1,Type=Float,Description="The fraction of informative reads out of the total reads">
+##INFO=<ID=SoftClipRatio,Number=1,Type=Float,Description="Ratio of soft clipped reads to total reads">
+##INFO=<ID=STR,Number=0,Type=Flag,Description="Short tandem repeat">
+##INFO=<ID=RU,Number=1,Type=String,Description="Repeat unit for the short tandem repeat">
+##INFO=<ID=RPA,Number=.,Type=Integer,Description="Number of times the repeat unit is repeated">
+##INFO=<ID=hotspot,Number=0,Type=Flag,Description="Known somatic site, used to increase confidence in call">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths for the ref and alt alleles">
+##FORMAT=<ID=AF,Number=A,Type=Float,Description="Allele fraction in tumor">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=SQ,Number=A,Type=Float,Description="Somatic quality">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TUMOUR
+chr1	26780371	.	G	A	.	PASS	DP=8;MQ=237.86;FractionInformativeReads=1.000;SoftClipRatio=0.00;STR;RU=A;RPA=3;hotspot	GT:AD:AF:DP:SQ	0/1:7,1:0.1250:8:27.41
+chr7	140753336	.	A	T	.	PASS	DP=412;MQ=250.00;FractionInformativeReads=0.991;SoftClipRatio=0.01;hotspot	GT:AD:AF:DP:SQ	0/1:210,202:0.4903:412:310.2
+chr17	7675088	.	C	T	.	PASS	DP=96;MQ=249.12;FractionInformativeReads=0.980;SoftClipRatio=0.00	GT:AD:AF:DP:SQ	0/1:60,36:0.3750:96:180.5

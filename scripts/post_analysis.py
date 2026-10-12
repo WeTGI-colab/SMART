@@ -93,6 +93,8 @@
 import os
 import fnmatch
 import ast
+import glob
+import importlib.util
 import json
 import yaml
 import pandas as pd
@@ -100,6 +102,12 @@ import argparse
 import tempfile
 import shutil
 from contextlib import nullcontext
+
+# sibling module: field metadata harvested from the run's own VCFs
+_vm_spec = importlib.util.spec_from_file_location(
+    "vcf_metadata", os.path.join(os.path.dirname(os.path.abspath(__file__)), "vcf_metadata.py"))
+vcf_metadata = importlib.util.module_from_spec(_vm_spec)
+_vm_spec.loader.exec_module(vcf_metadata)
 
 
 COLS_TO_REMOVE = []
@@ -144,6 +152,54 @@ def load_field_config(yaml_path):
     return fields, patterns
 
 
+# Metadata harvested from this run's VCFs, loaded once by load_vcf_metadata(). A VCF describes
+# its own fields, and does so for the run that produced them, so it is preferred over Config.yaml
+# for everything it covers; Config.yaml keeps the MAF standard columns, the values SMART computes
+# and the OncoKB MafAnnotator output, which is a table and has no header to read.
+VCF_META = None
+RUN_ONCOKB_VERSION = None
+LIFTOVER_RAN = False
+
+
+def load_vcf_metadata(path, oncokb_version=None):
+    """Load a sidecar, or merge every sidecar in a directory. Absent is not an error: without
+    one the pipeline behaves exactly as it did before, describing fields from Config.yaml."""
+    global VCF_META, RUN_ONCOKB_VERSION
+    RUN_ONCOKB_VERSION = oncokb_version
+    if not path:
+        return None
+    paths = sorted(glob.glob(os.path.join(path, "*.vcf_metadata.json"))) \
+        if os.path.isdir(path) else [path]
+    paths = [p for p in paths if os.path.exists(p)]
+    if not paths:
+        print(f"WARNING: no VCF metadata found at {path}; field provenance falls back to the config")
+        return None
+    VCF_META = vcf_metadata.merge(paths) if len(paths) > 1 else json.load(open(paths[0]))
+    print(f"VCF metadata: {len(VCF_META.get('fields', {}))} field(s) described by the run's own "
+          f"VCFs, from {len(paths)} sample sidecar(s)")
+    for key in ("input_caller", "vep_version", "vep_cache", "oncokb_data_version"):
+        if VCF_META.get("run", {}).get(key):
+            print(f"  {key}: {VCF_META['run'][key]}")
+    return VCF_META
+
+
+def report_vcf_metadata_checks(df=None, liftover=False, oncokb_versions=None,
+                               field_config=None):
+    """Print what the harvest found wrong. Errors mean a value in the output is wrong."""
+    if not VCF_META:
+        return []
+    problems = vcf_metadata.check(VCF_META,
+                                 table_columns=list(df.columns) if df is not None else None,
+                                 liftover=liftover, oncokb_versions=oncokb_versions)
+    if field_config:
+        for name, claimed, actual in vcf_metadata.conflicts(VCF_META, field_config):
+            problems.append(("warning", f"Config.yaml describes {name} as coming from "
+                                        f"'{claimed}', the VCF says '{actual}'. The VCF is used."))
+    for level, msg in problems:
+        print(f"{level.upper()}: {msg}")
+    return problems
+
+
 # === Resolve field metadata with pattern fallback ===
 def resolve_field_meta(col, field_config, field_patterns):
     """
@@ -167,6 +223,12 @@ def resolve_field_meta(col, field_config, field_patterns):
     dict
         Metadata dictionary for the column, or empty dict if not found.
     """
+
+    # A field the run's own VCFs describe is described by them: the file cannot go stale,
+    # and it records the resource version actually used.
+    if VCF_META:
+        return vcf_metadata.resolve(col, VCF_META, field_config, field_patterns,
+                                    RUN_ONCOKB_VERSION)
 
     # Try exact match first
     if col in field_config:
@@ -641,6 +703,18 @@ def report_undocumented_columns(df, field_config, field_patterns):
         for col in undocumented:
             print(f"Undocumented column: {col}")
 
+    # Provenance taken from the VCFs is checked against what the config claims, and against
+    # what the run itself should satisfy: nothing lost, no name collision, one OncoKB release.
+    if VCF_META:
+        print("\n=== Field provenance checks ===")
+        oncokb_versions = sorted({str(v) for v in df.get("ONCOKB_DATA_VERSION", pd.Series(dtype=str))
+                                  .dropna().unique() if str(v).strip()}) \
+            if "ONCOKB_DATA_VERSION" in df.columns else None
+        if not report_vcf_metadata_checks(df, liftover=LIFTOVER_RAN,
+                                          oncokb_versions=oncokb_versions,
+                                          field_config=field_config):
+            print("no problems found")
+
 
 # === Step 8: Build two-row header ===
 def build_multiindex_header(df, field_config, field_patterns):
@@ -797,7 +871,8 @@ def _transform_sample(df, field_config):
     return df, n_filled, n_cna
 
 
-def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown"):
+def merge_maf_files(input_dir, output_dir, yaml_config, smart_version="unknown",
+                    liftover=False):
     """Merge per-sample MAFs into the three tiered outputs with a streaming,
     two-pass strategy: peak memory stays at ~one sample regardless of cohort size.
 
@@ -909,11 +984,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True, help="Path to Config.yaml")
     parser.add_argument("--smart-version", default="unknown", help="SMART pipeline version")
+    parser.add_argument("--vcf-metadata", help="sidecar written by vcf_metadata.py, or a "
+                        "directory of per-sample sidecars to merge. Without it, fields are "
+                        "described from Config.yaml alone, as before")
+    parser.add_argument("--oncokb-version", help="OncoKB data version observed in this run; "
+                        "applied to the MafAnnotator columns, which carry no header of their own")
+    parser.add_argument("--liftover", action="store_true", help="liftover ran in this pipeline; "
+                        "warn that caller fields may not have survived it")
     args = parser.parse_args()
+
+    # Load the run's own field metadata before merging, so the two-row header is built from it.
+    globals()["LIFTOVER_RAN"] = args.liftover
+    load_vcf_metadata(args.vcf_metadata, args.oncokb_version)
 
     merge_maf_files(
         input_dir="./FINAL_Table/",
         output_dir="./output/",
         yaml_config=args.config,
         smart_version=args.smart_version,
+        liftover=args.liftover,
     )

@@ -12,3 +12,5 @@ exclude:
   - SMART_presentation_notes.md
   - gen_example_output.py
   - guidelines/
+  - field_provenance.md
+  - SMART_requirements_table.pptx

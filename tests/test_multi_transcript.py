@@ -36,9 +36,15 @@ sys.path.insert(0, os.path.abspath(SCRIPTS_DIR))
 import types as _types
 import importlib.util as _ilu
 
-# Stub heavy dependencies that are only available inside Docker
+# Stub the heavy dependencies that are only available inside Docker — but only the ones that
+# are genuinely absent. Testing "not in sys.modules" instead of trying the import installs an
+# empty stub over a library that is installed and simply not imported yet, and because
+# sys.modules is global the stub then shadows the real library for every later test module:
+# mock.patch("requests.get") fails with "module 'requests' has no attribute 'get'".
 for _mod_name in ("cyvcf2", "requests"):
-    if _mod_name not in sys.modules:
+    try:
+        __import__(_mod_name)
+    except ImportError:
         sys.modules[_mod_name] = _types.ModuleType(_mod_name)
 
 # Ensure cyvcf2.VCF / Writer exist as dummy classes so module-level imports succeed

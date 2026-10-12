@@ -12,6 +12,21 @@ Docker images are published as `monkiky/smart:<version>`.
 SMART stays an annotation pipeline (Tiers 1–3); classification is a separate output.
 
 ### Added
+- **Field provenance taken from the VCFs** (`scripts/vcf_metadata.py`). The description, source
+  and version of every column used to come from `Config.yaml`, maintained by hand, which had
+  drifted: `hotspot` was attributed to Cancer Hotspots when the variant caller writes it,
+  `FractionInformativeReads` to Manta when DRAGEN writes it, six further DRAGEN fields had no
+  entry, and 475 of 807 Tier 1 columns were undocumented. A VCF documents its own fields, for the
+  run that produced them, so the headers are now harvested — the caller's own `##INFO`/`##FORMAT`
+  entries and `##source`, VEP's version and cache, each custom annotation's resource file, each
+  plugin's version, and OncoKB's fields. The VCF supplies description, source and version for
+  what it covers; `Config.yaml` keeps the tier, the MAF standard columns, what SMART computes and
+  the OncoKB MafAnnotator columns, whose version is the OncoKB release observed in the run.
+  Checks report fields lost between the caller and the table, an input `INFO` name colliding with
+  an annotation field (an error: the caller's value would silently replace it), a run straddling
+  two OncoKB releases, and samples within a run disagreeing on a resource. Documented in
+  `docs/field_provenance.md`; without `--vcf-metadata` the pipeline behaves as before.
+
 - **Gene-specific splice provisions (classifier v2.3).** SVIG-UK §7.11 states that synonymous
   changes at the last base of exons 4, 6 and 9 of TP53 "should be classed as driver variants as
   they affect splicing of these exons". Those positions are not part of the canonical +/-1,2

@@ -570,6 +570,15 @@ process_sample() {
     echo -e "${sample}\t${ORIGINAL_COUNT}\t${PASS_COUNT}\t${LIFTED_COUNT}\t${ANNOTATED_COUNT}\t${ONCOKB_COUNT}\t${TABLE_COUNT}" \
         > "${COUNT_FILE}.${sample}"
 
+    # --- Field metadata, harvested while the VCFs still exist ---
+    # A VCF documents its own fields, and the cleanup below deletes the annotated and OncoKB
+    # VCFs, so the headers are read now and kept as a sidecar for post_analysis to describe
+    # the columns from. One per sample: the merge step checks the samples agree.
+    python3 "$SCRIPT_DIR/vcf_metadata.py" \
+        --input "$vcf" --annotated "$ANNOTATED_VCF" --oncokb "$ONCOKB_VCF" \
+        --out "$LOGS_DIR/${sample}.vcf_metadata.json" \
+        || echo "WARNING: could not harvest field metadata for $sample; the two-row header will fall back to Config.yaml"
+
     # --- Cleanup ---
     if [[ $CLEAN_TMP -eq 1 ]]; then
         echo ">>> Cleaning temporary files for: $sample"
@@ -645,8 +654,16 @@ echo "###################### Post Analysis #####################################
 # post_analysis.py uses relative paths (./FINAL_Table/, ./output/) so it must
 # run from OUTPUT_DIR_BASE where those directories were created.
 cd "$OUTPUT_DIR_BASE"
+# The OncoKB data version is a property of the run, not of the tool: it is applied to the
+# MafAnnotator columns, which carry no header of their own.
+RUN_ONCOKB_VERSION=$(awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if($i=="ONCOKB_DATA_VERSION") c=i; next}
+                                  c && $c != "" {print $c}' FINAL_Table/*.maf 2>/dev/null \
+                     | sort -u | head -1)
 python3 "$SCRIPT_DIR/post_analysis.py" --config "$CONFIG_FILE" \
     --smart-version "$SMART_VERSION" \
+    --vcf-metadata logs \
+    ${RUN_ONCOKB_VERSION:+--oncokb-version "$RUN_ONCOKB_VERSION"} \
+    $([[ $DO_LIFTOVER -eq 1 ]] && echo --liftover) \
     || { echo "ERROR: post_analysis.py failed — aborting"; exit 1; }
 
 # --- Tier 4: SVIG-UK oncogenicity classification ---
