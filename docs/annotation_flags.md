@@ -115,9 +115,25 @@ Both columns are computed by SMART, so nothing in any VCF describes them and the
 from `Config.yaml` — see [`field_provenance.md`](field_provenance.md) for how that division works.
 Both are tier 3, so they reach the sheet clinical scientists read.
 
+## Verified against a real MAF
+
+The flags run inside the per-sample transform, after the annotation columns have been expanded and
+before `drop_columns`. On a real per-sample MAF from `tests/verification1` — 22 rows, 1,035 columns —
+both columns are added, `SPLICEAI_MAX_DS` parses the real cells (VEP writes them as a numeric column,
+so empty cells arrive as `NaN` rather than as `.`), and both reach the Tier 2 and Tier 3 sheets.
+
+That sample contains no row that should be flagged: its two `LOW`/`MODIFIER` rows are a `Silent`
+GNAQ variant and a CDK4 5'UTR variant for which SpliceAI returned no prediction at all, so an empty
+`ANNOTATION_FLAGS` is the correct output and a flag there would be a false positive. The flagging
+path is therefore exercised by taking real rows from that MAF and making them eligible — giving the
+`Silent`/`LOW` row a score, and moving one row to the TERT position — which is what the integration
+tests do.
+
 ## Tests
 
-`tests/verification5/test_annotation_flags.py` (53 tests): the 0.2 boundary from both sides, the
+`tests/verification5/test_annotation_flags.py` (63 tests): the 0.2 boundary from both sides, the
 `LOW`/`MODIFIER` scope, both TERT positions and the near misses that must not match, the two flags
 on one row, the empty forms SpliceAI writes, and that `Variant_Classification` is unchanged and
-unflagged rows are written empty rather than as the word `None`.
+unflagged rows are written empty rather than as the word `None`. The last two groups cover the
+dtypes real data arrives in (`float64` with `NaN`, and an integer `Start_Position` matched against
+a list that holds it as text) and the real MAF described above.

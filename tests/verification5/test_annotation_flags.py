@@ -284,3 +284,124 @@ class TestWiring:
 
     def test_the_flag_is_scoped_to_the_impacts_a_filter_removes(self):
         assert set(post.SPLICEAI_FLAG_IMPACTS) == {"LOW", "MODIFIER"}
+
+
+# ===========================================================================
+# the dtypes real data arrives in
+# ===========================================================================
+
+class TestRealDtypes:
+    """A real MAF gives the SpliceAI columns as float64 with NaN, not as '.' strings.
+
+    pandas types a numeric column on read, so the empty cells arrive as NaN and the
+    scores as floats. The string forms above are what a hand-built frame gives; these
+    are what the pipeline actually passes in.
+    """
+
+    def test_float_scores_are_read(self):
+        df = post.add_annotation_flags(pd.DataFrame([
+            dict(Chromosome="chr7", Start_Position=100, Reference_Allele="C",
+                 Tumor_Seq_Allele2="T", IMPACT="LOW",
+                 **dict(zip(DS, [0.95, float("nan"), 0.11, float("nan")])))]),
+            canonical=set())
+        assert df["SPLICEAI_MAX_DS"].iloc[0] == pytest.approx(0.95)
+        assert df["ANNOTATION_FLAGS"].iloc[0] == "splice_predicted(0.95)"
+
+    def test_all_nan_is_no_score_and_no_flag(self):
+        df = post.add_annotation_flags(pd.DataFrame([
+            dict(Chromosome="chr7", Start_Position=100, Reference_Allele="C",
+                 Tumor_Seq_Allele2="T", IMPACT="LOW",
+                 **dict(zip(DS, [float("nan")] * 4)))]), canonical=set())
+        assert pd.isna(df["SPLICEAI_MAX_DS"].iloc[0])
+        assert df["ANNOTATION_FLAGS"].iloc[0] == ""
+
+    def test_a_float_zero_is_a_score_not_an_absence(self):
+        # 0.00 is SpliceAI saying "no effect", which is not the same as no prediction
+        df = post.add_annotation_flags(pd.DataFrame([
+            dict(Chromosome="chr7", Start_Position=100, Reference_Allele="C",
+                 Tumor_Seq_Allele2="T", IMPACT="LOW",
+                 **dict(zip(DS, [0.0, float("nan"), float("nan"), float("nan")])))]),
+            canonical=set())
+        assert df["SPLICEAI_MAX_DS"].iloc[0] == 0.0
+        assert not pd.isna(df["SPLICEAI_MAX_DS"].iloc[0])
+
+    def test_an_integer_position_matches_the_canonical_list(self):
+        # Start_Position is int64 in a real MAF, and the list holds it as text
+        df = post.add_annotation_flags(pd.DataFrame([
+            dict(Chromosome="chr5", Start_Position=1295113, Reference_Allele="G",
+                 Tumor_Seq_Allele2="A", IMPACT="MODIFIER",
+                 **dict(zip(DS, [float("nan")] * 4)))]))
+        assert df["ANNOTATION_FLAGS"].iloc[0] == "svig_canonical"
+
+
+# ===========================================================================
+# against a real MAF committed to the repository
+# ===========================================================================
+
+REAL_MAF = os.path.join(os.path.dirname(__file__), "..", "verification1", "output",
+                        "FINAL_Table", "verification1.oncoKB.maf")
+
+
+@pytest.mark.skipif(not os.path.exists(REAL_MAF), reason="verification1 output not present")
+class TestAgainstARealMaf:
+    """The unit tests above build a frame of nine columns. A real MAF has over a
+    thousand, with the dtypes pandas infers and the values VEP and OncoKB wrote, and it
+    passes through every other transformation before reaching the flags."""
+
+    @staticmethod
+    def _real():
+        return pd.read_csv(REAL_MAF, sep="\t", comment="#", low_memory=False)
+
+    def test_every_column_the_flags_depend_on_is_present(self):
+        cols = self._real().columns
+        for c in ("IMPACT", "Chromosome", "Start_Position", "Reference_Allele",
+                  "Tumor_Seq_Allele2", *DS):
+            assert c in cols, f"{c} absent from a real MAF: the flags would be silent"
+
+    def test_the_columns_are_added_to_a_real_frame(self):
+        df = post.add_annotation_flags(self._real())
+        assert df["SPLICEAI_MAX_DS"].dtype == "float64"
+        assert (df["ANNOTATION_FLAGS"] == "").all(), \
+            "no row of this sample qualifies; a flag here would be a false positive"
+
+    def test_scores_are_recovered_from_the_real_cells(self):
+        df = post.add_annotation_flags(self._real())
+        assert df["SPLICEAI_MAX_DS"].notna().sum() > 0, \
+            "real SpliceAI cells parsed to nothing"
+
+    def test_a_real_row_made_eligible_is_flagged(self):
+        # the sample contains a Silent/LOW row for which SpliceAI returned nothing;
+        # give it a score and the row must be kept, with everything else untouched
+        df = self._real()
+        low = df.index[df["IMPACT"].astype(str).str.upper() == "LOW"]
+        assert len(low), "no LOW row in this sample"
+        i = low[0]
+        before = df.at[i, "Variant_Classification"]
+        df.at[i, "SpliceAI_pred_DS_AG"] = 0.95
+        out = post.add_annotation_flags(df)
+        assert out.at[i, "ANNOTATION_FLAGS"] == "splice_predicted(0.95)"
+        assert out.at[i, "Variant_Classification"] == before
+        assert (out["ANNOTATION_FLAGS"] != "").sum() == 1
+
+    def test_a_real_row_moved_to_a_canonical_position_is_flagged(self):
+        df = self._real()
+        i = df.index[0]
+        df.at[i, "Chromosome"] = "chr5"
+        df.at[i, "Start_Position"] = 1295113
+        df.at[i, "Reference_Allele"] = "G"
+        df.at[i, "Tumor_Seq_Allele2"] = "A"
+        out = post.add_annotation_flags(df)
+        assert "svig_canonical" in out.at[i, "ANNOTATION_FLAGS"]
+
+    def test_the_flags_survive_the_whole_per_sample_transform(self):
+        # add_annotation_flags runs inside _transform_sample, before drop_columns
+        root = os.path.join(os.path.dirname(__file__), "..", "..")
+        field_config, field_patterns = post.load_field_config(
+            os.path.join(root, "Config.yaml"))
+        out, _, _ = post._transform_sample(self._real(), field_config)
+        assert "SPLICEAI_MAX_DS" in out.columns, "dropped by a later step"
+        assert "ANNOTATION_FLAGS" in out.columns, "dropped by a later step"
+        t2, t3 = post.split_by_tier(out, field_config, field_patterns)
+        for c in ("SPLICEAI_MAX_DS", "ANNOTATION_FLAGS"):
+            assert c in t3.columns, f"{c} does not reach the Tier 3 sheet"
+            assert c in t2.columns

@@ -30,7 +30,9 @@ SMART stays an annotation pipeline (Tiers 1–3); classification is a separate o
   while its position does not. The consuming filter gains one condition and one column carries every
   reason. `Variant_Classification` is deliberately unchanged: a splice-predicted synonymous variant
   is still synonymous, a value outside the MAF vocabulary breaks third-party readers, and relabelling
-  destroys the record of the consequence. Documented in `docs/annotation_flags.md`.
+  destroys the record of the consequence. Verified on a real per-sample MAF (22 rows, 1,035
+  columns) that both columns are added, parse the numeric cells VEP actually writes and reach
+  the Tier 2 and Tier 3 sheets. Documented in `docs/annotation_flags.md`.
 
 - **Field provenance taken from the VCFs** (`scripts/vcf_metadata.py`, [#16](https://github.com/WeTGI-colab/SMART/issues/16)). The description, source
   and version of every column used to come from `Config.yaml`, maintained by hand, which had
