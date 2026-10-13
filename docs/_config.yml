@@ -16,3 +16,4 @@ exclude:
   - SMART_requirements_table.pptx
   - annotation_flags.md
   - reference_check.md
+  - spliceai_local.md

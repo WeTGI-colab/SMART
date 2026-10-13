@@ -75,6 +75,12 @@ ENV PATH="/opt/vep/src/ensembl-vep:${PATH}"
 ENV PERL5LIB=/opt/vep/src/ensembl-vep:/opt/vep/src/ensembl-vep/modules
 
 # ---------- Python dependencies ----------
+# SpliceAI and a TensorFlow it works with. The released package uses tf.keras, which Keras 3
+# (TF >= 2.16) removes, so the version is pinned rather than left to resolve. This is what makes
+# '--spliceai compute' possible: the model scores against the transcripts we report, instead of
+# looking up tables that carry no transcript and stop at +/-50 bp. See docs/spliceai_local.md.
+RUN pip install --no-cache-dir "tensorflow-cpu==2.15.*" "spliceai==1.3.1"
+
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt && \
     rm /tmp/requirements.txt

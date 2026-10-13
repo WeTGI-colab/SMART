@@ -12,6 +12,52 @@ Docker images are published as `monkiky/smart:<version>`.
 SMART stays an annotation pipeline (Tiers 1–3); classification is a separate output.
 
 ### Added
+- **SpliceAI is computed against the reported transcripts by default, or looked up on request**
+  (`--spliceai compute|lookup`, `--spliceai-mask 0|1`; [#2](https://github.com/WeTGI-colab/SMART/issues/2),
+  [#22](https://github.com/WeTGI-colab/SMART/issues/22)). Illumina's precomputed tables carry no
+  transcript — one score per gene, computed on GENCODE v24 canonical of December 2015 — and were
+  generated within a ±50 bp window, measured as exactly 50 over 199,971 records. Neither is
+  configurable: both are properties of the files. For 16 of the 519 TSO500 transcripts the
+  gene-level score therefore describes a different transcript from the one reported, MET, HRAS,
+  AKT1, FGFR1 and CDKN2A among them; and where a transcript grew between GENCODE releases, part of
+  it has no record at all — TET2's reported transcript has 37 kb, 28% of its length, uncovered,
+  and 93 of one cohort's 168 TET2 variants sit there.
+
+  Computing removes both, because the model takes a gene annotation as input. One annotation is
+  built per run from the same `--transcripts-file` used for prioritisation
+  (`scripts/build_spliceai_annotation.py`), rows named `GENE--REFSEQ`; since SpliceAI reports its
+  annotation's NAME as the SYMBOL field, **the output records which transcript each score was
+  computed on**, which the tables never allowed. The model runs on the file VEP annotates, after
+  liftover; VEP runs without the plugin; and the scores are merged into the existing
+  `SpliceAI_pred_*` columns, so the tier split, the `ANNOTATION_FLAGS` threshold, O6 and the
+  cryptic-site check are unchanged whichever mode produced them.
+
+  Validated against the Broad's own service, which is an independent implementation: for
+  `16:2317763 T>A` a local run gives `0.01|0.21|0.04|0.00|1|106|128|497`, identical on all four
+  deltas and all four positions, where our precomputed table gives 0.08 with every delta position
+  within ±2 bp. Ten tests assert it against a frozen fixture of six public variants
+  (`tests/verification5/test_spliceai_lookup_agreement.py`).
+
+  Reference data for the two modes differs by four orders of magnitude: **91 GB** of precomputed
+  tables against **10 MB** for `gencode.v43.annotation.txt.gz`, the model riding in the image
+  (`tensorflow-cpu==2.15.*`, `spliceai==1.3.1`; TensorFlow pinned because the released package
+  uses `tf.keras`, which Keras 3 removes). The cost moves to CPU, about 0.6 s per variant.
+
+  Masked is the default, which is what the model's developers recommend for variant interpretation
+  and what the laboratory uses; the tables we hold are the raw set, so this was previously raw by
+  omission rather than by choice. Rows the model does not score are left empty rather than
+  carrying a precomputed value, so a column never mixes the two sources silently, and
+  multi-nucleotide variants — which the released model declines without saying so — are counted and
+  warned about per sample.
+
+  **Known limitation.** Supplying scores where there were none activates
+  [#21](https://github.com/WeTGI-colab/SMART/issues/21): three TET2 variants in the development
+  cohort move from Likely Oncogenic to VUS because the O2 cryptic-site check fires on an acceptor
+  gain at +1 bp, which is the model re-detecting the junction the variant destroys rather than an
+  alternative site. Masking does not prevent it. The rule is wrong independently of this change,
+  but it is only reachable once the data exists, so #21 should be settled before cohorts are
+  re-run on the new default.
+
 - **Every annotation source is now verified against its own data.** `tests/verify_local_sources.py`
   gained modules for dbNSFP, GENIE and gnomAD, closing the set: on the 93-variant public cohort,
   11,253 checks over ClinVar, Cancer Hotspots, SpliceAI, REVEL, LOEUF, dbNSFP and GENIE give
