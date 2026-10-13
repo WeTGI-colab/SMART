@@ -123,13 +123,21 @@ and it is the one the branch rests on; it skips where the model or the reference
 
 ## Cost
 
+**Correction to a figure quoted earlier in this work.** I repeatedly gave the comparison as
+91 GB against about 8 GB. That was wrong: 8 GB is the whole SpliceAI-lookup reference bundle,
+which includes its own copies of hg19 and hg38. Compute mode uses the pipeline's existing
+`$REF_DIR/liftover/hg38.fa`, so the only additional reference file is
+`gencode.v43.annotation.txt.gz` at **10 MB**, with the model riding in the Docker image. The real
+comparison is **91 GB against 10 MB**.
+
+
 On an M-series Mac, CPU only: **0.71 s per variant** for 18 variants including model load, with
 inference itself about 44 ms per model and five models per variant. A 300-variant panel sample is
 therefore a few minutes rather than the microseconds a `tabix` lookup costs.
 
-Against that, the reference data shrinks from **91 GB to about 8 GB**. SpliceAI's precomputed
-tables are the single largest component of our 316 GB reference set, ahead of CADD; the model plus
-a GENCODE annotation is 8 GB and scores any variant, on any transcript in the annotation, at any
+Against that, the reference data shrinks from **91 GB to 10 MB**. SpliceAI's precomputed
+tables are the single largest component of our 316 GB reference set, ahead of CADD; the model ships in the image and the
+GENCODE annotation is 10 MB, and together they score any variant, on any transcript in the annotation, at any
 distance.
 
 ## What this does not yet show

@@ -108,9 +108,11 @@ SMART expects a reference directory with the following structure:
 │   ├── hg19ToHg38.over.chain       # UCSC chain file
 │   └── hg38.fa                      # GRCh38 reference genome + .fai + .dict
 ├── Plugins/                         # VEP plugin files (SpliceAI.pm, REVEL.pm, LOEUF.pm)
-├── SpliceAI/
+├── SpliceAI/                        # ONLY for --spliceai lookup (91 GB)
 │   ├── spliceai_scores.raw.snv.hg38.vcf.gz      (+.tbi)
 │   └── spliceai_scores.raw.indel.hg38.vcf.gz    (+.tbi)
+├── SpliceAI-lookup/                 # ONLY for --spliceai compute (10 MB)
+│   └── references_files/annotations/gencode.v43.annotation.txt.gz
 ├── REVEL/
 │   └── new_tabbed_revel_grch38.tsv.gz            (+.tbi)
 ├── ClinVar/
@@ -144,6 +146,39 @@ CADD is also **optional**. The GRCh38 score files are very large (whole-genome S
 GENIE case counts are also **optional** and not redistributable (AACR Project GENIE data-use agreement). Build `GENIE/genie_o4_counts.tsv.gz` from your own GENIE release with `utils/build_genie_o4.py`; if present, SMART adds `GENIE_*` annotation columns (unique patients with the same nucleotide change and counted as for SVIG-UK O4, for all, haematological and solid tumours, with the commonest OncoTree codes and the cohort size) and uses the counts for O4 in Tier 4.
 
 dbNSFP is also **optional** and not redistributable (academic releases are CC BY-NC-ND 4.0; some scores, e.g. VEST4, are free for non-commercial use only). Download dbNSFP 5.0a from [dbnsfp.org](https://www.dbnsfp.org), unzip it and build SMART's file with `python3 utils/build_dbnsfp.py --dbnsfp-dir <dbNSFP5.0a> --out <base_dir>/dbNSFP/dbNSFP5.0a_grch38.smart.gz`. If present, SMART adds one score (and the categorical prediction where dbNSFP provides one) for each predictor it does not already annotate — MutationTaster, MutationAssessor, PROVEAN, VEST4, MetaSVM, MetaLR, MetaRNN, M-CAP, MutPred, MVP, gMVP, MPC, PrimateAI, DEOGEN2, BayesDel (without allele frequency), ClinPred, LIST-S2, VARITY_R, ESM1b, AlphaMissense, PHACTboost, MutFormer, MutScore, ALoFT, DANN, fathmm-XF, Eigen, GERP++, phyloP and phastCons (100-way vertebrate) — described in `Config.yaml`. SIFT, PolyPhen, REVEL and CADD are not taken from dbNSFP because SMART already annotates them. Values for several Ensembl transcripts are separated by `&`, in the order of `Ensembl_transcriptid`.
+
+---
+
+### SpliceAI: download the scores, or compute them
+
+These are two genuinely different setups and you only need one. The default is **compute**.
+
+| | `--spliceai lookup` | `--spliceai compute` *(default)* |
+|---|---|---|
+| **Reference data** | **91 GB** — `spliceai_scores.raw.{snv,indel}.hg38.vcf.gz` | **10 MB** — `gencode.v43.annotation.txt.gz`, plus the GRCh38 FASTA the pipeline already requires |
+| Speed | a `tabix` lookup, microseconds | model inference, ~0.6 s per variant |
+| Transcript | **none recorded.** One score per gene, computed on GENCODE v24 canonical (Dec 2015) | the transcript from your `--transcripts-file`, named in `SpliceAI_pred_SYMBOL` as `GENE--REFSEQ` |
+| Window | **±50 bp, fixed.** A splice effect further out is reported as `0.00` | 500 bp |
+| Multi-nucleotide variants | scored, if the table holds them | **not scored** — the released model does not support them; the run warns per sample |
+| Reproducibility | a static file | the pinned model and annotation versions |
+
+Both honour `--spliceai-mask 0|1` (default `1`, masked), which is what SpliceAI's developers
+recommend for variant interpretation.
+
+**Which to choose.** Compute, unless you cannot. The precomputed tables carry no transcript and
+stop at ±50 bp, and neither limit can be configured away — they are properties of the files. For
+16 of a 519-transcript panel the gene-level score describes a different transcript from the one
+reported, MET, HRAS, AKT1, FGFR1 and CDKN2A among them, and a gene whose transcript grew between
+GENCODE releases can have no coverage at all over part of it: TET2's reported transcript has
+37 kb — 28% of its length — with no precomputed record.
+
+Lookup remains the right choice if you cannot spend CPU per variant, if you need MNVs scored, or
+if you want scores reproducible from a file rather than from a model.
+
+`compute` fails with a clear message if `gencode.v43.annotation.txt.gz` is absent, naming
+`--spliceai lookup` as the alternative. It does not fall back silently. Full detail, including the
+validation against the Broad's own service, is in
+[`docs/spliceai_local.md`](docs/spliceai_local.md).
 
 ---
 
