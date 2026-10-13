@@ -654,207 +654,46 @@ The `utils/` directory contains standalone helper scripts that operate **outside
 
 ## Testing & Verification
 
-The `tests/` directory contains five independent verification suites, a verifier that checks the annotation against the files it came from, and a shared utility. All automated suites can be run together:
+**[Full testing guide → `tests/README.md`](tests/README.md)** — what each layer checks, a worked
+example traced through all of them, and what is deliberately not covered.
+
+The tests are arranged around three questions: does the logic do what the guideline says, does
+the pipeline still run end to end, and does each annotated value match what its source actually
+says. The third is the one that finds the quiet failures.
+
+| | Where | Needs | What it answers |
+|---|---|---|---|
+| Unit tests | `tests/verification5/` | python3 + pytest | the logic — **632 tests** in about a second |
+| Caller compatibility | `tests/verification2/` | Docker, refs | four callers' VCF conventions (manual) |
+| Transcript choice | `tests/verification3/` | Docker, refs, token | the whitelist changes the annotation and the OncoKB call |
+| Parallel jobs | `tests/verification4/` | Docker, refs, token | `--jobs N` matches a sequential run |
+| API verification | `tests/verification1/` | Docker, refs, token | 219 columns against the sources' own APIs |
+| Source verification | `tests/verify_local_sources.py` | refs | the other 151, against the files on disk |
 
 ```bash
 export ONCOKB_TOKEN=your_token_here
-bash tests/run_all_verifications.sh
-```
+bash tests/run_all_verifications.sh --refs /path/to/refs
 
-To run a single suite:
-
-```bash
+# one at a time
+bash tests/run_all_verifications.sh --only verification5    # no Docker, no token, no refs
 bash tests/run_all_verifications.sh --only verification1
-bash tests/run_all_verifications.sh --only verification3
-bash tests/run_all_verifications.sh --only verification4
-bash tests/run_all_verifications.sh --only verification5    # pytest, no Docker
 bash tests/run_all_verifications.sh --only localsources     # needs --refs
+
+# the unit tests on their own
+python3 -m pytest tests/ -q
 ```
 
----
+Two things worth knowing before you read an output:
 
-### Verification 1 — Field-level API verification
-
-Located in `tests/verification1/`. Contains 22 curated variants (18 SNV/indel + 4 CNA) covering key clinical scenarios across NRAS, IDH1, PIK3CA, EGFR, BRAF, GNAQ, PTEN, KRAS, BRCA2, DICER1, TP53, ERBB2, MET, CDKN2A, and CDK4.
-
-> Two copies of the fixture are committed and they differ: `verification1.vcf.gz` holds 22 variants and is what the pipeline reads, while the plain `verification1.vcf` holds 18 and is two months older. Three of its records also carry a REF allele that does not match GRCh38. Both are tracked in [issue #19](https://github.com/WeTGI-colab/SMART/issues/19); until it is resolved, read the `.vcf.gz` for what is actually tested.
-
-After running the pipeline, `verify.py` cross-checks the MAF output against live external APIs:
-
-- **OncoKB module** — queries `oncokb.org/api/v1` for each variant; compares 23 fields including oncogenicity, mutation effect, all treatment/FDA/diagnostic/prognostic levels, and summaries
-- **VEP module** — queries `rest.ensembl.org` for each SNV/indel; compares 14 fields including consequence, HGVSc/HGVSp, SIFT, PolyPhen, exon number, and canonical flag
-- **CIViC module** — queries the CIViC GraphQL API for each variant; compares variant type, consequence, gene, and clinical significance
-
-All modules report PASS / MISMATCH per field with a coverage report identifying which fields were testable and which were always empty.
-
-```bash
-python tests/verification1/verify.py \
-    --maf  tests/verification1/output/output/Final_result_tier1.maf \
-    --token $ONCOKB_TOKEN \
-    --output tests/verification1/results.tsv
-```
-
-See `tests/verification1/README.md` for full details.
-
----
-
-### Verification 2 — Variant caller compatibility
-
-Located in `tests/verification2/`. Tests the pipeline against VCFs from four different variant callers (GATK MuTect2, Strelka, SomaticSniper, Pisces) using SEQC2 benchmark samples, verifying that SMART correctly handles different VCF formats, FILTER field conventions, and column orderings. This suite is run manually (see `tests/verification2/README.md`).
-
----
-
-### Verification 3 — Transcript prioritisation impact
-
-Located in `tests/verification3/`. Demonstrates that the preferred-transcript whitelist meaningfully changes the VEP annotation output and, downstream, the OncoKB clinical interpretation. The pipeline is run twice on the same three-variant VCF using two different transcript files, then `verify.py` confirms:
-
-1. **DIFFER** — targeted variants produce different VEP annotations between runs (the whitelist drives annotation selection)
-2. **PASS** — each run's annotation is confirmed correct by the Ensembl REST API for the expected transcript
-3. **OncoKB impact** — the annotation difference propagates to a different clinical result (e.g. LEVEL_1 vs Unknown, CDKN2A LEVEL_4 vs CDKN2B with no level)
-
-| Variant | Transcript A | Result A | Transcript B | Result B |
-|---|---|---|---|---|
-| EGFR L858R | NM_005228.5 (MANE) | p.Leu858Arg (LEVEL_1) | NM_001346897.2 | p.Leu813Arg (Unknown) |
-| TP53 R175H | NM_000546.6 (MANE) | p.Arg175His (hotspot) | NM_001126115.2 | p.Arg43His (not a hotspot) |
-| CDKN2A/B DEL | NM_058195.4 | CDKN2A (LEVEL_4) | NM_004936.4 | CDKN2B (no level) |
-| FGFR1 N546K | NM_023110.3 (MANE) | p.Asn546Lys (Unknown) | NM_001174067.2 (TSO500 non-MANE) | p.Asn577Lys (Likely Oncogenic, LEVEL_4 — false positive) |
-
-```bash
-export ONCOKB_TOKEN=your_token_here
-bash tests/verification3/run_verification3.sh
-```
-
-See `tests/verification3/README.md` for full details.
-
----
-
-### Verification 4 — Parallel job processing (`--jobs`)
-
-Located in `tests/verification4/`. Verifies that `--jobs N` correctly processes
-multiple samples in parallel on a single machine, producing identical output to a
-sequential run.
-
-The `--jobs N` flag runs up to N samples concurrently as background processes on
-the **same machine**, sharing its CPU and RAM. It is not distributed computing —
-all jobs run inside the same Docker container. This is designed for machines with
-internet access, since OncoKB requires internet connectivity that is typically
-unavailable on HPC compute nodes.
-
-The test copies `verification1.vcf.gz` twice under different sample names and
-runs with `--jobs 2`. `verify.py` confirms — without any external API calls:
-
-- Both per-sample log files exist in `logs/` and contain the completion marker
-- `variant_counts.txt` has exactly one data row per sample (count-merge worked)
-- Both output MAFs exist and are content-identical after excluding
-  `Tumor_Sample_Barcode` (same input → same annotations)
-
-```bash
-export ONCOKB_TOKEN=your_token_here
-bash tests/verification4/run_verification4.sh
-```
-
-See `tests/verification4/README.md` for resource guidance and implementation details.
-
----
-
-### verify_maf.py — Expected variant presence
-
-`tests/verify_maf.py` checks that specific known variants are present in a MAF output with the correct ID values. Used as a quick sanity check after a pipeline run.
-
----
-
-### Verification 5 — Unit tests (pure logic, no Docker required)
-
-Located in `tests/verification5/`. A pytest-based unit test suite targeting the pure-Python logic in the three core pipeline scripts. **No Docker, no OncoKB token, and no reference files are needed** — the suite runs in any standard Python environment in under one second.
-
-```bash
-cd tests/verification5
-python3 -m pytest . -v
-```
-
-#### What is tested
-
-| Script | Functions tested |
-|--------|-----------------|
-| `vcf2table.py` | `calculate_end` (all variant classes), `convert_hgvsp_short` (3→1 letter AA conversion), `load_nm_transcripts` (version stripping, edge cases) |
-| `oncokb2.0.py` | `get_cancer_from_filename`, `clean_value`, `stringify_list`, `_extract_one_letter_protein`, `classify_variant` (all SVTYPE + MantaID combinations), `map_svtype_to_cna`, `load_preferred_transcripts`, `get_csq_index`, `parse_csq_format` |
-| `post_analysis.py` | `load_field_config`, `resolve_field_meta` (exact + wildcard pattern), `standardize_format_column`, `normalize_format_fields`, `add_vaf_column`, `clean_column_values`, `calculate_end_position`, `drop_columns`, `add_annotation_flags` |
-| `svig_uk_classifier.py` | every evidence code against the guideline text, the scoring thresholds and the combination restrictions (211 tests) |
-| `vcf_metadata.py` | harvesting field provenance from the run's own VCF headers, precedence against `Config.yaml`, and the five consistency checks |
-| `check_reference.py` | reading a FASTA through its `.fai`, which records are checkable, and detection of strand flips, off-by-one REFs and a wrong assembly |
-| `verify_local_sources.py` | the comparison logic: contig naming, list separators, rounding tolerance, flags against numbers, and the GENIE recomputation |
-
-Per file: `test_svig_uk_classifier` 211, `test_oncokb` 70, `test_annotation_flags` 63, `test_verify_local_sources` 60, `test_post_analysis` 48, `test_vcf2table` 43, `test_check_reference` 42, `test_vcf_metadata` 28, `test_vep_only_mode` 27, `test_multi_transcript` 20, `test_oncokb_maf_query` 8, `test_build_dbnsfp` 7, `test_genie_annotation` 5.
-
-**632 tests, all passing.** Real variants from the verification1 dataset (NRAS Q61R, IDH1 R132H, PIK3CA E545K/H1047R, BRAF V600E, TP53 R175H/R248W, EGFR exon 19 deletion) are used as parametrised ground-truth cases.
-
-#### Code coverage
-
-Coverage is measured over the pure-Python lines of each script. Lines excluded from coverage are those that require Docker, a live OncoKB API connection, or a real VCF file to execute (the main pipeline loops — `annotate_vcf`, `merge_maf_files`, `main` — and the HTTP query functions).
-
-| Script | Statements | Covered | **Coverage** |
-|--------|-----------|---------|--------------|
-| `vcf2table.py` | 216 | 40 | **19%** |
-| `oncokb2.0.py` | 401 | 122 | **30%** |
-| `post_analysis.py` | 342 | 108 | **32%** |
-| **Total** | **959** | **270** | **28%** |
-
-The uncovered lines are concentrated in three pipeline orchestrators (`main`, `annotate_vcf`, `merge_maf_files`) and the OncoKB HTTP query functions. These are exercised end-to-end by verifications 1–4. The unit tests cover **100% of the pure, stateless logic** that can be tested without external infrastructure.
-
-To reproduce the coverage report:
-
-```bash
-cd tests/verification5
-python3 -m pytest . --cov=../../scripts --cov-report=term-missing
-# HTML report (open coverage_html/index.html in a browser):
-python3 -m pytest . --cov=../../scripts --cov-report=html:../../coverage_html
-```
-
----
-
-### Local source verification — annotation against the files it came from
-
-`tests/verify_local_sources.py`. Verification 1 cross-checks the output against the REST APIs
-of OncoKB, VEP, CIViC, COSMIC and CADD, which covers 219 of the 425 described columns. The rest
-are annotated from files on disk through VEP custom annotations and plugins, have no API to
-query, and so were previously checked against nothing. This verifier looks each variant up in
-the same file the pipeline annotated from and compares the value SMART wrote.
-
-```bash
-python3 tests/verify_local_sources.py \
-    --maf tests/verification1/output/FINAL_Table/verification1.oncoKB.maf \
-    --refs /path/to/refs \
-    --output local_source_results.tsv
-
-# one source at a time
-python3 tests/verify_local_sources.py --maf ... --refs ... --modules clinvar spliceai
-```
-
-| Module | Source | How it is checked |
-|---|---|---|
-| `clinvar` | `ClinVar/clinvar.vcf.gz` | INFO value per `ClinVar_<KEY>` column |
-| `hotspots` | `CancerHotSpots/hg38.hotspots_*.vcf.gz` | INFO value, and the record's own ID |
-| `spliceai` | the two precomputed score VCFs | the four deltas and four positions from the pipe record |
-| `revel` | `REVEL/new_tabbed_revel_grch38.tsv.gz` | the score, plus whether a cross-transcript score describes the same substitution |
-| `loeuf` | `gnomAD_constraints/loeuf_dataset_grch38.tsv.gz` | by transcript |
-| `dbnsfp` | `dbNSFP/dbNSFP5.0a_grch38.smart.gz` | 49 columns by exact header name |
-| `genie` | `GENIE/genie_o4_counts.tsv.gz` | the same-nucleotide counts are **recomputed**; the O4 match columns are checked for invariants |
-| `gnomad` | the VEP REST API | gnomAD has no file — it comes from the VEP cache, so the API is the only route |
-
-GENIE is the exception to "compare a value": its columns are aggregates, so verification means
-redoing the arithmetic. The O4 match columns are deliberately not recomputed, because
-reproducing the matching rules would be reimplementing the classifier and would agree with it by
-construction.
-
-On the 93-variant public cohort: **13,671 checks, 12,703 PASS**. ClinVar, Cancer Hotspots,
-SpliceAI, GENIE and gnomAD are clean. The remaining differences are documented in
-[#20](https://github.com/WeTGI-colab/SMART/issues/20) (dbNSFP) and were the route to the REVEL
-defect fixed in the changelog.
-
-`--cache DIR` stores the VEP API responses so a re-run costs nothing, and `--sleep` paces the
-calls, since the public endpoint is rate limited.
-
----
+- **Never read a MAF with `comment="#"`.** Annotation values contain `#` — ClinVar's `CLNVI`
+  holds `UniProtKB:P01111#VAR_006847` — and pandas honours a comment character mid-line, which
+  truncates the row there. On verification1's output that discards 895 of 1,035 columns on 16 of
+  22 rows. Count the leading `#` lines and pass `skiprows`.
+  ([#4](https://github.com/WeTGI-colab/SMART/issues/4))
+- **`tests/verification1/` has two copies of its fixture and they differ.** The `.vcf.gz` holds
+  22 variants and is what the pipeline reads; the plain `.vcf` holds 18 and is older. Three of
+  its records carry a REF allele that does not match GRCh38.
+  ([#19](https://github.com/WeTGI-colab/SMART/issues/19))
 
 ---
 
