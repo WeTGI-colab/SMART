@@ -951,6 +951,42 @@ def _apply_oncokb_fixes(df):
             df.loc[cna_mask, "MUTATION_EFFECT_CITATIONS"] = (
                 df.loc[cna_mask, "ONCOKB_mutationEffect.citations.pmids"].fillna("").apply(_norm_pmids)
             )
+        # Levels come from the per-entry columns, not from the stringified blob.
+        # ONCOKB_TX_{n}_level and ONCOKB_TX_{n}_drugs are written upstream by oncokb2.0.py from
+        # the real API response, so they are structured and already populated. Re-parsing
+        # ONCOKB_treatments was the original approach and cannot work: its free text carries
+        # unescaped apostrophes, which close a Python literal early. Reading the columns needs
+        # no parsing at all.
+        _tx_levels = [c for c in df.columns
+                      if c.startswith("ONCOKB_TX_") and c.endswith("_level")]
+        if _tx_levels:
+            _level_cols_tx = ["LEVEL_1", "LEVEL_2", "LEVEL_3A", "LEVEL_3B",
+                              "LEVEL_4", "LEVEL_R1", "LEVEL_R2"]
+
+            def _levels_from_columns(idx):
+                out = {lc: [] for lc in _level_cols_tx}
+                for lvl_col in _tx_levels:
+                    n = lvl_col[len("ONCOKB_TX_"):-len("_level")]
+                    lvl = str(df.at[idx, lvl_col] or "").strip()
+                    if lvl not in out:
+                        continue
+                    drug_col = f"ONCOKB_TX_{n}_drugs"
+                    if drug_col not in df.columns:
+                        continue
+                    drugs = str(df.at[idx, drug_col] or "").strip()
+                    if drugs in ("", "nan", "."):
+                        continue
+                    # a combination arrives as "A + B"; the verifier and OncoKB list each drug
+                    for name in [d.strip() for d in drugs.replace("+", ",").split(",")]:
+                        if name and name not in out[lvl]:
+                            out[lvl].append(name)
+                return {k: ",".join(v) for k, v in out.items()}
+
+            for cna_idx in df.index[cna_mask]:
+                for lc, val in _levels_from_columns(cna_idx).items():
+                    if lc in df.columns and val and not str(df.at[cna_idx, lc] or "").strip():
+                        df.at[cna_idx, lc] = val
+
         if "ONCOKB_treatments" in df.columns:
             _level_cols = ["LEVEL_1", "LEVEL_2", "LEVEL_3A", "LEVEL_3B",
                            "LEVEL_4", "LEVEL_R1", "LEVEL_R2"]

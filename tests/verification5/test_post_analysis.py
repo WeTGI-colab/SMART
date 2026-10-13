@@ -435,3 +435,72 @@ class TestOncoKBTreatmentsShapes:
         out = self._run("[{'level': 'LEVEL_1', 'drugs': [{'drugName': 'X'}, "
                         "{'drugName': 'X'}, {'drugName': 'Y'}]}]")
         assert out.at[0, "LEVEL_1"] == "X,Y"
+
+
+class TestCNALevelsFromStructuredColumns:
+    """CNA treatment levels come from ONCOKB_TX_{n}_level / _drugs, not from the blob.
+
+    ONCOKB_treatments holds the API response stringified, and its free text carries unescaped
+    apostrophes that close a Python literal early, so it cannot be parsed back for most rows.
+    oncokb2.0.py has already written the same information out per entry from the real JSON.
+    Reading those columns needs no parsing, which is why this works where re-parsing could not.
+    """
+
+    def _row(self, **extra):
+        base = {
+            "ONCOKB_QUERY_TYPE": "CNA", "Variant_Type": "INS",
+            "Tumor_Seq_Allele2": "<DUP>", "ONCOKB_treatments": "[]",
+            "LEVEL_1": "", "LEVEL_2": "", "LEVEL_3A": "", "LEVEL_4": "",
+            "HIGHEST_SENSITIVE_LEVEL": "", "ONCOKB_SENS_LVL": "",
+            "HIGHEST_RESISTANCE_LEVEL": "", "ONCOKB_RESIST_LVL": "",
+            "VARIANT_IN_ONCOKB": "", "ONCOKB_variantExist": "",
+            "GENE_IN_ONCOKB": "False", "ONCOKB_geneExist": "True",
+        }
+        base.update(extra)
+        out, _, _ = post._apply_oncokb_fixes(pd.DataFrame([base]))
+        return out.iloc[0]
+
+    def test_a_single_entry_fills_its_level(self):
+        r = self._row(**{"ONCOKB_TX_0_level": "LEVEL_1",
+                         "ONCOKB_TX_0_drugs": "Ado-Trastuzumab Emtansine"})
+        assert r["LEVEL_1"] == "Ado-Trastuzumab Emtansine"
+
+    def test_several_entries_at_one_level_are_joined(self):
+        r = self._row(**{"ONCOKB_TX_0_level": "LEVEL_4", "ONCOKB_TX_0_drugs": "Palbociclib",
+                         "ONCOKB_TX_1_level": "LEVEL_4", "ONCOKB_TX_1_drugs": "Abemaciclib"})
+        assert r["LEVEL_4"] == "Palbociclib,Abemaciclib"
+
+    def test_a_combination_is_split_into_its_drugs(self):
+        # OncoKB writes a combination as "A + B"; the levels list each drug
+        r = self._row(**{"ONCOKB_TX_0_level": "LEVEL_1",
+                         "ONCOKB_TX_0_drugs": "Lapatinib + Capecitabine"})
+        assert r["LEVEL_1"] == "Lapatinib,Capecitabine"
+
+    def test_a_drug_is_not_repeated_across_entries(self):
+        r = self._row(**{"ONCOKB_TX_0_level": "LEVEL_2", "ONCOKB_TX_0_drugs": "Trastuzumab",
+                         "ONCOKB_TX_1_level": "LEVEL_2", "ONCOKB_TX_1_drugs": "Trastuzumab"})
+        assert r["LEVEL_2"] == "Trastuzumab"
+
+    def test_entries_go_to_their_own_levels(self):
+        r = self._row(**{"ONCOKB_TX_0_level": "LEVEL_1", "ONCOKB_TX_0_drugs": "A",
+                         "ONCOKB_TX_1_level": "LEVEL_3A", "ONCOKB_TX_1_drugs": "B"})
+        assert r["LEVEL_1"] == "A" and r["LEVEL_3A"] == "B"
+
+    def test_an_unknown_level_is_ignored_rather_than_crashing(self):
+        r = self._row(**{"ONCOKB_TX_0_level": "LEVEL_NONSENSE", "ONCOKB_TX_0_drugs": "A"})
+        assert r["LEVEL_1"] == ""
+
+    def test_an_empty_drug_entry_is_skipped(self):
+        for empty in ("", "nan", "."):
+            r = self._row(**{"ONCOKB_TX_0_level": "LEVEL_1", "ONCOKB_TX_0_drugs": empty})
+            assert r["LEVEL_1"] == ""
+
+    def test_an_existing_value_is_not_overwritten(self):
+        # MafAnnotator's own answer wins where it gave one; this only fills gaps
+        r = self._row(LEVEL_1="Already there",
+                      **{"ONCOKB_TX_0_level": "LEVEL_1", "ONCOKB_TX_0_drugs": "Other"})
+        assert r["LEVEL_1"] == "Already there"
+
+    def test_no_tx_columns_at_all_is_survivable(self):
+        r = self._row()
+        assert r["LEVEL_1"] == ""
