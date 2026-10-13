@@ -109,11 +109,17 @@ def tabix(path, region):
 # '&', because '|' delimits the CSQ field and ',' separates alleles. So a value that differs
 # only in its separator is the same value, and comparing the elements as a set also absorbs
 # a difference in order.
-LIST_SEPARATORS = "&,|"
+# ';' is added because dbNSFP packs one value per transcript into a single field with it,
+# and VEP rewrites that to '&' too. A ';' cannot occur inside a VCF INFO value (it separates
+# the fields) and in dbNSFP it is only ever the list separator, so treating it as one here
+# cannot flatten a value that legitimately contains it.
+LIST_SEPARATORS = "&,|;"
 
-# A VCF flag has no value of its own. The table renders its presence as 1, and a float
-# column renders that as 1.0, while this script reads it from the source as True.
-TRUTHY = {"1", "1.0", "true", "yes", "present"}
+# A VCF flag has no value of its own. The source gives its presence as True while the table
+# writes 1, or 1.0 in a float column. That equivalence cannot live here: a genuine score of
+# 1.0 -- phastCons reaches it often -- is a number and must stay one. So only the unambiguous
+# spellings are folded here, and 1 == True is decided in verdict() where both sides are known.
+TRUTHY = {"true", "yes", "present"}
 
 
 def norm(v):
@@ -129,7 +135,7 @@ def norm(v):
     except ValueError:
         pass
     if any(sep in s for sep in LIST_SEPARATORS):
-        parts = s.replace(",", "&").replace("|", "&").split("&")
+        parts = s.replace(",", "&").replace("|", "&").replace(";", "&").split("&")
         return "&".join(sorted(p.strip() for p in parts if p.strip()))
     return s
 
@@ -430,6 +436,98 @@ def check_gnomad(row, cols, cache_dir, sleep):
     return [(c, freqs.get(gnomad_key(c), ""), None) for c in cols]
 
 
+# ---------------------------------------------------------------- GENIE, by recomputation
+
+# GENIE's columns are not transcriptions: genie_annotation.py aggregates a counts table that
+# holds one row per variant per set of tumour types. So verifying them means recomputing the
+# aggregate, which checks the arithmetic rather than the copying -- a stronger check, and the
+# one that matters, since the GENIE indel left-alignment defect in the changelog was exactly
+# an arithmetic error.
+#
+# What is recomputed independently and what is only checked for consistency:
+#
+#   GENIE_SAME_NUCLEOTIDE_{ALL,HAEM,SOLID}   recomputed from the table for substitutions.
+#   GENIE_O4_MATCH_*, GENIE_TOP_TUMOUR_TYPES  invariants only. Reproducing them means
+#       reimplementing the O4 matching rules (same amino-acid change, truncating at or
+#       downstream of a residue, in-frame containment), and a verifier that re-ran the
+#       pipeline's own logic would agree with it by construction and prove nothing.
+#   indels   skipped for the recomputation: matching them needs the same left-alignment the
+#       pipeline applies, so an independent attempt would differ for reasons of its own.
+
+GENIE_HAEM = {"Myeloid", "Lymphoid"}
+
+
+def load_genie_counts(refs):
+    """The counts table as {(chrom, start, end, ref, alt): [(n, [lineages]), ...]}."""
+    path = os.path.join(refs, "GENIE", "genie_o4_counts.tsv.gz")
+    if not os.path.exists(path):
+        return None
+    out = {}
+    with gzip.open(path, "rt") as fh:
+        rd = csv.DictReader(fh, delimiter="\t")
+        for r in rd:
+            key = (r["chrom"], r["start"], r["end"], r["ref"], r["alt"])
+            lineages = [x for x in (r.get("lineage") or "").split("|") if x]
+            out.setdefault(key, []).append((int(r["n_patients"]), lineages))
+    return out
+
+
+def check_genie(row, cols, counts):
+    """Recompute the same-nucleotide counts; check the rest for internal consistency."""
+    if counts is None:
+        return [(c, "", "SKIP: GENIE counts table absent") for c in cols]
+    ref, alt = row["Reference_Allele"], row["Tumor_Seq_Allele2"]
+    out = []
+
+    if len(ref) == 1 and len(alt) == 1 and not alt.startswith("<"):
+        chrom = str(row["Chromosome"])
+        chrom = chrom if chrom.startswith("chr") else "chr" + chrom
+        pos = str(int(row["Start_Position"]))
+        entries = counts.get((chrom, pos, pos, ref, alt), [])
+        all_n = sum(n for n, _ in entries)
+        haem = sum(n for n, ls in entries if any(l in GENIE_HAEM for l in ls))
+        solid = sum(n for n, ls in entries if any(l == "Solid" for l in ls))
+        recomputed = {"GENIE_SAME_NUCLEOTIDE_ALL": all_n,
+                      "GENIE_SAME_NUCLEOTIDE_HAEM": haem,
+                      "GENIE_SAME_NUCLEOTIDE_SOLID": solid}
+    else:
+        recomputed = {}
+
+    def num(col):
+        """The column as a number, or None when it holds no value.
+
+        'nan' must not become float('nan'): every comparison against it is False, so an
+        unannotated row would fail an invariant it was never subject to.
+        """
+        s = str(row.get(col, "")).strip()
+        if s in EMPTY:
+            return None
+        try:
+            v = float(s)
+        except ValueError:
+            return None
+        return None if v != v else v
+
+    for col in cols:
+        if col in recomputed:
+            out.append((col, str(recomputed[col]), None))
+            continue
+        if col in ("GENIE_SAME_NUCLEOTIDE_ALL", "GENIE_SAME_NUCLEOTIDE_HAEM",
+                   "GENIE_SAME_NUCLEOTIDE_SOLID"):
+            out.append((col, None, "SKIP: indel, needs the pipeline's own left-alignment"))
+            continue
+        if col in ("GENIE_O4_MATCH_HAEM", "GENIE_O4_MATCH_SOLID"):
+            # an invariant rather than a value: a subset cannot exceed the whole
+            whole, part = num("GENIE_O4_MATCH_ALL"), num(col)
+            if whole is None or part is None:
+                out.append((col, None, "SKIP: no O4 match on this row, nothing to bound"))
+            else:
+                out.append((col, str(part) if part <= whole else f"<= {whole}", None))
+            continue
+        out.append((col, None, "SKIP: derived by the O4 matching rules, not recomputed here"))
+    return out
+
+
 # ---------------------------------------------------------------- comparison
 
 # The VEP cache writes an allele frequency to three significant figures while the REST API
@@ -449,6 +547,12 @@ def _same_number(a, b):
     return scale > 0 and abs(x - y) / scale <= REL_TOLERANCE
 
 
+def _flag_equal(a, b):
+    """One side is a flag's presence, the other the 1 the table writes for it."""
+    pair = {a, b}
+    return "True" in pair and ("1" in pair or "1.0" in pair)
+
+
 def verdict(maf_value, source_value):
     """PASS when SMART's value is what the source offers.
 
@@ -463,12 +567,16 @@ def verdict(maf_value, source_value):
             return ("PASS", f"one of {len(cands)} source rows" if len(cands) > 1 else "")
         if any(_same_number(m, c) for c in cands):
             return ("PASS", "equal within rounding")
+        if any(_flag_equal(m, c) for c in cands):
+            return ("PASS", "flag presence")
         return ("MISMATCH", f"source offers {sorted(cands)[:4]}")
     s = norm(source_value)
     if m == s:
         return ("PASS", "")
     if _same_number(m, s):
         return ("PASS", "equal within rounding")
+    if _flag_equal(m, s):
+        return ("PASS", "flag presence")
     return ("MISMATCH", "")
 
 
@@ -490,6 +598,7 @@ def run(maf_path, refs, modules, out_path, cache_dir=None, sleep=0.2):
         "loeuf":    [c for c in cols if c == "LOEUF"],
         "dbnsfp":   of(lambda s: s.startswith("dbNSFP")),
         "gnomad":   of(lambda s: s.startswith("gnomAD")),
+        "genie":    sorted(c for c in cols if c.startswith("GENIE_")),
     }
     # VEP's own fields, which Config.yaml attributes to ClinVar: they come from
     # --everything, not from our --custom ClinVar annotation, so they are not in
@@ -499,6 +608,7 @@ def run(maf_path, refs, modules, out_path, cache_dir=None, sleep=0.2):
     groups["clinvar"] = [c for c in groups["clinvar"] if c not in NOT_FROM_CUSTOM]
 
     loeuf_table = load_loeuf(refs) if "loeuf" in modules else None
+    genie_counts = load_genie_counts(refs) if "genie" in modules else None
     revel_hdr = tsv_header(refs, "revel") if "revel" in modules else None
     dbnsfp_hdr = tsv_header(refs, "dbnsfp") if "dbnsfp" in modules else None
 
@@ -522,6 +632,8 @@ def run(maf_path, refs, modules, out_path, cache_dir=None, sleep=0.2):
             plan.append(("REVEL", check_revel(refs, row, groups["revel"], revel_hdr)))
         if "loeuf" in modules and groups["loeuf"]:
             plan.append(("LOEUF", check_loeuf(refs, row, groups["loeuf"], loeuf_table)))
+        if "genie" in modules and groups["genie"]:
+            plan.append(("GENIE", check_genie(row, groups["genie"], genie_counts)))
         if "gnomad" in modules and groups["gnomad"]:
             plan.append(("gnomAD", check_gnomad(row, groups["gnomad"], cache_dir, sleep)))
         if "dbnsfp" in modules and groups["dbnsfp"] and dbnsfp_hdr:
@@ -583,7 +695,7 @@ def main():
     p.add_argument("--output", default="local_source_results.tsv")
     p.add_argument("--modules", nargs="+",
                    default=["clinvar", "hotspots", "spliceai", "revel", "loeuf", "dbnsfp",
-                            "gnomad"])
+                            "gnomad", "genie"])
     p.add_argument("--cache", default=None,
                    help="directory for cached VEP API responses, so a re-run costs nothing")
     p.add_argument("--sleep", type=float, default=0.2,

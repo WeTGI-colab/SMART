@@ -39,10 +39,16 @@ class TestNorm:
     def test_numbers_compare_as_numbers(self):
         assert vls.norm("0.10") == vls.norm("0.1") == "0.1"
 
-    @pytest.mark.parametrize("value", ["1", "1.0", "True", "yes"])
-    def test_a_flag_is_a_flag_however_rendered(self, value):
-        # a VCF flag has no value; the table writes 1, a float column writes 1.0
+    @pytest.mark.parametrize("value", ["True", "true", "yes", "present"])
+    def test_the_unambiguous_spellings_of_presence_fold_together(self, value):
         assert vls.norm(value) == "True"
+
+    @pytest.mark.parametrize("value", ["1", "1.0"])
+    def test_one_stays_a_number_here(self, value):
+        # 1 is both how the table writes a flag's presence and a real score phastCons
+        # reaches. norm() cannot know which, so it keeps the number and verdict() decides
+        # the flag case where both sides are in view. See TestFlagsAreNotNumbers.
+        assert vls.norm(value) == "1"
 
     def test_list_separators_are_equivalent(self):
         # VEP rewrites ',' and '|' to '&' inside a custom-annotation value
@@ -144,3 +150,127 @@ class TestSources:
         # the thing most likely to make a lookup silently find nothing
         assert vls.SOURCES["clinvar"]["contig"] == "plain"
         assert vls.SOURCES["hotspots"]["contig"] == "chr"
+
+
+class TestSeparatorsIncludeSemicolon:
+    def test_dbnsfp_packs_values_with_a_semicolon(self):
+        # dbNSFP writes one value per transcript joined by ';' and VEP rewrites it to '&';
+        # without this the whole dbNSFP module reported every multi-transcript row as wrong
+        assert vls.norm("T;T;T") == vls.norm("T&T&T")
+        assert vls.norm(".;LB;B") == vls.norm(".&LB&B")
+
+    def test_all_four_separators_are_one_thing(self):
+        assert vls.norm("a;b") == vls.norm("a|b") == vls.norm("a,b") == vls.norm("a&b")
+
+
+class TestFlagsAreNotNumbers:
+    def test_a_flag_matches_the_one_the_table_writes(self):
+        # CancerHotspots_HOTSPOT is a VCF flag; the table renders its presence as 1.0
+        assert vls.verdict("1.0", "True")[0] == "PASS"
+        assert vls.verdict("1", "True")[0] == "PASS"
+
+    def test_a_score_of_one_stays_a_number(self):
+        # phastCons reaches 1.0 often, and it is a measurement, not a presence
+        assert vls.norm("1.0") == "1"
+        assert vls.verdict("1.0", "1.000000")[0] == "PASS"
+
+    def test_a_flag_does_not_match_an_unrelated_number(self):
+        assert vls.verdict("0.5", "True")[0] == "MISMATCH"
+
+
+class TestGenie:
+    def test_haematological_lineages_are_the_classifier_s(self):
+        # must stay the same set genie_annotation.py uses, or the recomputation is not a check
+        assert vls.GENIE_HAEM == {"Myeloid", "Lymphoid"}
+
+    def _counts(self, tmp_path, rows):
+        import gzip as gz
+        d = tmp_path / "GENIE"
+        d.mkdir()
+        hdr = ("gene\tvariant_class\tchrom\tstart\tend\tref\talt\tref_aa\talt_aa\t"
+               "oncotree_code\ttissue\tlineage\tn_patients\n")
+        with gz.open(d / "genie_o4_counts.tsv.gz", "wt") as fh:
+            fh.write(hdr)
+            for r in rows:
+                fh.write("\t".join(r) + "\n")
+        return vls.load_genie_counts(str(tmp_path))
+
+    def test_counts_are_summed_across_rows_of_one_variant(self, tmp_path):
+        counts = self._counts(tmp_path, [
+            ("BRAF", "missense", "chr7", "140753336", "140753336", "A", "T",
+             "V", "E", "COAD", "Bowel", "Solid", "1401"),
+            ("BRAF", "missense", "chr7", "140753336", "140753336", "A", "T",
+             "V", "E", "LUAD", "Lung", "Solid", "464"),
+        ])
+        row = dict(Chromosome="chr7", Start_Position=140753336,
+                   Reference_Allele="A", Tumor_Seq_Allele2="T")
+        got = dict((c, v) for c, v, _ in vls.check_genie(
+            row, ["GENIE_SAME_NUCLEOTIDE_ALL", "GENIE_SAME_NUCLEOTIDE_SOLID",
+                  "GENIE_SAME_NUCLEOTIDE_HAEM"], counts))
+        assert got["GENIE_SAME_NUCLEOTIDE_ALL"] == "1865"
+        assert got["GENIE_SAME_NUCLEOTIDE_SOLID"] == "1865"
+        assert got["GENIE_SAME_NUCLEOTIDE_HAEM"] == "0"
+
+    def test_a_patient_with_two_lineages_counts_in_both(self, tmp_path):
+        counts = self._counts(tmp_path, [
+            ("X", "missense", "chr1", "100", "100", "A", "T", "V", "E",
+             "A|B", "t1|t2", "Lymphoid|Solid", "3"),
+        ])
+        row = dict(Chromosome="chr1", Start_Position=100,
+                   Reference_Allele="A", Tumor_Seq_Allele2="T")
+        got = dict((c, v) for c, v, _ in vls.check_genie(
+            row, ["GENIE_SAME_NUCLEOTIDE_ALL", "GENIE_SAME_NUCLEOTIDE_HAEM",
+                  "GENIE_SAME_NUCLEOTIDE_SOLID"], counts))
+        assert got == {"GENIE_SAME_NUCLEOTIDE_ALL": "3",
+                       "GENIE_SAME_NUCLEOTIDE_HAEM": "3",
+                       "GENIE_SAME_NUCLEOTIDE_SOLID": "3"}
+
+    def test_a_variant_absent_from_the_table_counts_zero(self, tmp_path):
+        counts = self._counts(tmp_path, [])
+        row = dict(Chromosome="chr1", Start_Position=999,
+                   Reference_Allele="A", Tumor_Seq_Allele2="T")
+        got = dict((c, v) for c, v, _ in vls.check_genie(
+            row, ["GENIE_SAME_NUCLEOTIDE_ALL"], counts))
+        assert got["GENIE_SAME_NUCLEOTIDE_ALL"] == "0"
+
+    def test_indels_are_skipped_rather_than_recomputed(self, tmp_path):
+        # matching an indel needs the left-alignment the pipeline applies; an independent
+        # attempt would differ for reasons of its own rather than finding a defect
+        counts = self._counts(tmp_path, [])
+        row = dict(Chromosome="chr13", Start_Position=48342703,
+                   Reference_Allele="CTA", Tumor_Seq_Allele2="C")
+        notes = [n for _, _, n in vls.check_genie(
+            row, ["GENIE_SAME_NUCLEOTIDE_ALL"], counts)]
+        assert notes and "left-alignment" in notes[0]
+
+    def test_the_derived_o4_columns_are_not_claimed_to_be_recomputed(self, tmp_path):
+        counts = self._counts(tmp_path, [])
+        row = dict(Chromosome="chr1", Start_Position=1,
+                   Reference_Allele="A", Tumor_Seq_Allele2="T")
+        notes = {c: n for c, _, n in vls.check_genie(
+            row, ["GENIE_O4_MATCH_TYPE", "GENIE_TOP_TUMOUR_TYPES"], counts)}
+        for c, n in notes.items():
+            assert n and n.startswith("SKIP"), f"{c} must not claim an independent check"
+
+    def test_a_subset_count_above_the_whole_is_caught(self, tmp_path):
+        counts = self._counts(tmp_path, [])
+        row = dict(Chromosome="chr1", Start_Position=1, Reference_Allele="A",
+                   Tumor_Seq_Allele2="T", GENIE_O4_MATCH_ALL="10",
+                   GENIE_O4_MATCH_HAEM="12")
+        got = dict((c, v) for c, v, _ in vls.check_genie(
+            row, ["GENIE_O4_MATCH_HAEM"], counts))
+        assert got["GENIE_O4_MATCH_HAEM"] == "<= 10.0"
+
+    def test_an_unannotated_row_is_not_held_to_the_invariant(self, tmp_path):
+        counts = self._counts(tmp_path, [])
+        row = dict(Chromosome="chr1", Start_Position=1, Reference_Allele="A",
+                   Tumor_Seq_Allele2="T", GENIE_O4_MATCH_ALL="nan",
+                   GENIE_O4_MATCH_HAEM="nan")
+        notes = [n for _, _, n in vls.check_genie(row, ["GENIE_O4_MATCH_HAEM"], counts)]
+        assert notes and notes[0].startswith("SKIP")
+
+    def test_a_missing_counts_table_is_skipped_not_failed(self, tmp_path):
+        row = dict(Chromosome="chr1", Start_Position=1,
+                   Reference_Allele="A", Tumor_Seq_Allele2="T")
+        notes = [n for _, _, n in vls.check_genie(row, ["GENIE_SAME_NUCLEOTIDE_ALL"], None)]
+        assert notes and "absent" in notes[0]

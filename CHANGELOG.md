@@ -12,6 +12,21 @@ Docker images are published as `monkiky/smart:<version>`.
 SMART stays an annotation pipeline (Tiers 1–3); classification is a separate output.
 
 ### Added
+- **Every annotation source is now verified against its own data.** `tests/verify_local_sources.py`
+  gained modules for dbNSFP, GENIE and gnomAD, closing the set: on the 93-variant public cohort,
+  11,253 checks over ClinVar, Cancer Hotspots, SpliceAI, REVEL, LOEUF, dbNSFP and GENIE give
+  10,597 PASS, 600 SKIP and 56 MISMATCH, and gnomAD adds 416 checks with none. GENIE is verified
+  by recomputing its same-nucleotide counts from the counts table rather than by comparing a
+  value, since its columns are aggregates; the O4 match columns are checked for invariants only,
+  because reproducing the matching rules would be reimplementing the classifier and would agree
+  with it by construction. Normalisation had to absorb four list separators -- VEP rewrites `,`,
+  `|` and dbNSFP's `;` all to `&` -- a relative tolerance, since the VEP cache writes three
+  significant figures where the REST API writes four, and the difference between a flag's
+  presence written as 1 and a genuine score of 1.0, which is decided where both sides are in view
+  rather than in the normalisation.
+- **Acknowledgement of AACR Project GENIE in the manuscript**, as its terms of access require
+  alongside citation of the consortium publication and a statement of the dataset version.
+
 - **gnomAD verified against the VEP API; 26 more columns covered.** gnomAD has no file in the
   pipeline -- `gnomADe_AF`, `gnomADg_AF` and the population columns come from the VEP cache via
   `--everything` -- so it was left out of the local-source verifier for want of anything to look
@@ -133,6 +148,16 @@ SMART stays an annotation pipeline (Tiers 1–3); classification is a separate o
   `GENIE/genie_o4_counts.tsv.gz` is present; the builder now also writes cohort sizes).
 
 ### Fixed
+- **O5 could not be awarded for any gene whose reported transcript is absent from REVEL's
+  file, BRAF among them.** `rule_o5` reads the table's `REVEL` column and returns None when it
+  is empty, with no fallback -- the classifier's own REVEL lookup is used only for the
+  *reference* variant's score, not the assessed one. Because the plugin matched by transcript
+  and REVEL's file records older Ensembl identifiers, the column was empty for 9 of the 71
+  missense rows (13%) of the 93-variant cohort: all 8 BRAF variants on `ENST00000646891`, and
+  one FLT3. So O5, worth +4 moderate or +2 supporting, was silently unavailable for those
+  variants. Fixed by running the plugin with `no_match=1` (see the REVEL entry above);
+  classifications computed before that fix did not have O5 available for the affected genes.
+
 - **REVEL silently returned nothing for variants annotated on a newer transcript, BRAF V600E
   among them.** The plugin matches by transcript by default, and REVEL's source file records one
   transcript per score using older Ensembl identifiers: it holds 0.931 for BRAF V600E on
