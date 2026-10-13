@@ -499,8 +499,16 @@ fields:
     version: 1.3
     tier: 2
   REVEL:
-    description: Rare Exome Variant Ensemble Learner score predicting pathogenicity
-      of missense variants. https://sites.google.com/site/revelgenomics/
+    description: 'Rare Exome Variant Ensemble Learner score predicting pathogenicity of
+      missense variants (https://sites.google.com/site/revelgenomics/). REVEL scores the
+      amino-acid substitution, not the transcript structure, so it transfers between
+      transcripts that give the same change. Its source file records one transcript per score
+      and those are older Ensembl identifiers, so the plugin''s default transcript-matched
+      lookup returned nothing for variants annotated on a newer transcript -- BRAF V600E among
+      them, where the file holds 0.931 for ENST00000288602 while the pipeline reports
+      ENST00000646891. The plugin is therefore run with no_match=1: the score is for the
+      substitution, and where the transcript differs from the one reported, the amino-acid
+      change is the same'
     source: REVEL
     version: 1.3
     tier: 3

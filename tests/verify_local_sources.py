@@ -263,6 +263,55 @@ def check_tsv(refs, row, cols, source, header_names, pos_col, value_cols):
     return out
 
 
+def check_revel(refs, row, cols, header):
+    """REVEL, with the transcript question made explicit.
+
+    The source file records one transcript per score and those are older Ensembl
+    identifiers, so the transcript we report is often absent from it. REVEL scores the
+    amino-acid substitution rather than the transcript structure, so a score computed on
+    another transcript is still the right answer **provided the substitution is the same**
+    -- which the file states in its aaref/aaalt columns. The plugin runs with no_match=1
+    for that reason, and this check is where the proviso is tested rather than assumed.
+    """
+    spec = SOURCES["revel"]
+    path = os.path.join(refs, spec["path"])
+    if not os.path.exists(path):
+        return [(c, "", f"SKIP: source file absent: {spec['path']}") for c in cols]
+    idx = {n: i for i, n in enumerate(header)}
+    c = contig(row["Chromosome"], spec["contig"])
+    pos = int(row["Start_Position"])
+    hits = [r for r in tabix(path, f"{c}:{pos}-{pos}")
+            if len(r) > max(idx.values())
+            and r[idx["grch38_pos"]] == str(pos)
+            and r[idx["ref"]] == row["Reference_Allele"]
+            and r[idx["alt"]] == row["Tumor_Seq_Allele2"]]
+    if not hits:
+        return [(c2, set(), None) for c2 in cols]
+
+    # the amino-acid change the table reports, as VEP writes it: "V/E"
+    aa = str(row.get("Amino_acids", "") or "")
+    want = tuple(aa.split("/")) if "/" in aa else None
+    tx = str(row.get("Feature", "")).split(".")[0]
+
+    agree = [r for r in hits
+             if want is None or (r[idx["aaref"]], r[idx["aaalt"]]) == want]
+    same_tx = [r for r in hits
+               if tx and tx in {i.split(".")[0]
+                                for i in r[idx["Ensembl_transcriptid"]].split(";")}]
+
+    note = None
+    if not same_tx and agree:
+        note = (f"score computed on another transcript "
+                f"({agree[0][idx['Ensembl_transcriptid']][:40]}), same substitution {aa}")
+    elif want and not agree:
+        return [(c2, {r[idx[c2]] for r in hits} if c2 in idx else set(),
+                 None) for c2 in cols]      # let the value comparison call it
+
+    rows_to_use = agree or hits
+    return [(c2, {r[idx[c2]] for r in rows_to_use} if c2 in idx else set(), note)
+            for c2 in cols]
+
+
 def check_loeuf(refs, row, cols, table):
     """LOEUF, looked up by the transcript VEP annotated (the plugin uses match_by=transcript)."""
     if table is None:
@@ -296,7 +345,109 @@ def tsv_header(refs, source):
         return fh.readline().rstrip("\n").lstrip("#").split("\t")
 
 
+# ---------------------------------------------------------------- gnomAD, via the API
+
+# gnomAD is the one source in the unverified set with no file on disk: `gnomADe_AF`,
+# `gnomADg_AF` and the population columns come out of the VEP cache via --everything, so
+# there is nothing to look up locally and the Ensembl REST API is the only route. It is
+# included here because it belongs to the same gap, not because it is a local source.
+#
+# verification1/verify.py excluded gnomAD on the grounds that the API's gnomAD release may
+# differ from the cache's, which would make a mismatch unprovable. On the variants checked
+# so far the two agree exactly, so the exclusion looks unnecessary -- but a disagreement
+# here should be read as "these may be different releases" before it is read as an error.
+
+VEP_REST = "https://rest.ensembl.org/vep/human/region"
+
+# MAF column -> key in colocated_variants[].frequencies[<alt>]
+#   gnomADe_AF -> gnomade        gnomADg_NFE_AF -> gnomadg_nfe        AFR_AF -> afr
+def gnomad_key(col):
+    stem = col[:-3] if col.endswith("_AF") else col      # drop the _AF suffix
+    if stem in ("gnomADe", "gnomADg"):
+        return stem.lower()
+    for pre in ("gnomADe_", "gnomADg_"):
+        if stem.startswith(pre):
+            return pre[:-1].lower() + "_" + stem[len(pre):].lower()
+    return stem.lower()                                   # the 1000 Genomes populations
+
+
+def fetch_frequencies(chrom, pos, ref, alt, cache_dir, sleep=0.2):
+    """`frequencies` for this ALT from the Ensembl VEP REST API, or (None, reason)."""
+    import json
+    import time
+    import urllib.error
+    import urllib.request
+    if len(ref) != 1 or len(alt) != 1 or alt.startswith("<"):
+        return None, "SKIP: the region endpoint takes substitutions only"
+    c = chrom[3:] if chrom.startswith("chr") else chrom
+    url = (f"{VEP_REST}/{c}:{pos}-{pos}/{alt}"
+           f"?content-type=application/json&af=1&af_gnomade=1&af_gnomadg=1")
+    cache = os.path.join(cache_dir, f"{c}_{pos}_{ref}_{alt}.json") if cache_dir else None
+    if cache and os.path.exists(cache):
+        payload = json.load(open(cache))
+    else:
+        payload, last = None, None
+        for attempt in range(4):
+            try:
+                with urllib.request.urlopen(url, timeout=60) as r:
+                    payload = json.loads(r.read().decode())
+                break
+            except urllib.error.HTTPError as e:
+                last = f"HTTP {e.code}"
+                # 4xx other than 429 is a permanent refusal of this request, not congestion.
+                # A 400 here usually means the variant itself is malformed -- the API rejects
+                # a substitution whose ALT equals the reference base, which is how a
+                # strand-flipped allele presents (see issue #19).
+                if 400 <= e.code < 500 and e.code != 429:
+                    return None, f"ERROR: VEP API rejected the request (HTTP {e.code})"
+                # 429 means we are asking too fast; honour Retry-After when it is given
+                wait = float(e.headers.get("Retry-After", 0) or 0) or (2 ** attempt)
+                time.sleep(wait)
+            except Exception as e:
+                last = type(e).__name__
+                time.sleep(2 ** attempt)
+        if payload is None:
+            return None, f"ERROR: VEP API unreachable after 4 tries ({last})"
+        if cache:
+            os.makedirs(cache_dir, exist_ok=True)
+            json.dump(payload, open(cache, "w"))
+        time.sleep(sleep)                   # the public endpoint is rate limited
+    if not isinstance(payload, list) or not payload:
+        return None, "SKIP: no VEP response"
+    for col in payload[0].get("colocated_variants") or []:
+        freqs = col.get("frequencies") or {}
+        if alt in freqs:
+            return freqs[alt], None
+    return {}, None                         # answered, and the variant has no frequencies
+
+
+def check_gnomad(row, cols, cache_dir, sleep):
+    freqs, err = fetch_frequencies(str(row["Chromosome"]), int(row["Start_Position"]),
+                                   row["Reference_Allele"], row["Tumor_Seq_Allele2"],
+                                   cache_dir, sleep)
+    if err:
+        return [(c, "", err) for c in cols]
+    return [(c, freqs.get(gnomad_key(c), ""), None) for c in cols]
+
+
 # ---------------------------------------------------------------- comparison
+
+# The VEP cache writes an allele frequency to three significant figures while the REST API
+# gives four, so 1.16e-05 and 1.159e-05 are the same number recorded twice. Compare numbers
+# within a relative tolerance rather than as strings.
+REL_TOLERANCE = 5e-3
+
+
+def _same_number(a, b):
+    try:
+        x, y = float(a), float(b)
+    except (TypeError, ValueError):
+        return False
+    if x == y:
+        return True
+    scale = max(abs(x), abs(y))
+    return scale > 0 and abs(x - y) / scale <= REL_TOLERANCE
+
 
 def verdict(maf_value, source_value):
     """PASS when SMART's value is what the source offers.
@@ -310,14 +461,18 @@ def verdict(maf_value, source_value):
             return ("PASS", "both empty") if m == "" else ("MISMATCH", "source has no value")
         if m in cands:
             return ("PASS", f"one of {len(cands)} source rows" if len(cands) > 1 else "")
+        if any(_same_number(m, c) for c in cands):
+            return ("PASS", "equal within rounding")
         return ("MISMATCH", f"source offers {sorted(cands)[:4]}")
     s = norm(source_value)
     if m == s:
         return ("PASS", "")
+    if _same_number(m, s):
+        return ("PASS", "equal within rounding")
     return ("MISMATCH", "")
 
 
-def run(maf_path, refs, modules, out_path):
+def run(maf_path, refs, modules, out_path, cache_dir=None, sleep=0.2):
     df = read_maf(maf_path, low_memory=False)
     cols = set(df.columns)
     import yaml
@@ -334,6 +489,7 @@ def run(maf_path, refs, modules, out_path):
         "revel":    of(lambda s: s == "REVEL"),
         "loeuf":    [c for c in cols if c == "LOEUF"],
         "dbnsfp":   of(lambda s: s.startswith("dbNSFP")),
+        "gnomad":   of(lambda s: s.startswith("gnomAD")),
     }
     # VEP's own fields, which Config.yaml attributes to ClinVar: they come from
     # --everything, not from our --custom ClinVar annotation, so they are not in
@@ -363,21 +519,24 @@ def run(maf_path, refs, modules, out_path):
         if "spliceai" in modules and groups["spliceai"]:
             plan.append(("SpliceAI", check_spliceai(refs, row, groups["spliceai"])))
         if "revel" in modules and groups["revel"] and revel_hdr:
-            plan.append(("REVEL", check_tsv(refs, row, groups["revel"], "revel",
-                                            revel_hdr, "grch38_pos", groups["revel"])))
+            plan.append(("REVEL", check_revel(refs, row, groups["revel"], revel_hdr)))
         if "loeuf" in modules and groups["loeuf"]:
             plan.append(("LOEUF", check_loeuf(refs, row, groups["loeuf"], loeuf_table)))
+        if "gnomad" in modules and groups["gnomad"]:
+            plan.append(("gnomAD", check_gnomad(row, groups["gnomad"], cache_dir, sleep)))
         if "dbnsfp" in modules and groups["dbnsfp"] and dbnsfp_hdr:
             plan.append(("dbNSFP", check_tsv(refs, row, groups["dbnsfp"], "dbnsfp",
                                              dbnsfp_hdr, "pos(1-based)", groups["dbnsfp"])))
         for module, checks in plan:
             for col, src, note in checks:
-                if note and note.startswith("SKIP"):
+                if note and (note.startswith("SKIP") or note.startswith("ERROR")):
                     results.append(dict(base, Module=module, MAF_Field=col,
                                         MAF_Value=row.get(col, ""), Source_Value="",
                                         Result=note, Note=""))
                     continue
                 res, why = verdict(row.get(col, ""), src)
+                if note:
+                    why = f"{note}; {why}" if why else note
                 shown = (";".join(sorted({str(x) for x in src}))[:200]
                          if isinstance(src, set) else str(src)[:200])
                 results.append(dict(base, Module=module, MAF_Field=col,
@@ -423,9 +582,14 @@ def main():
     p.add_argument("--refs", required=True, help="the reference directory the run used")
     p.add_argument("--output", default="local_source_results.tsv")
     p.add_argument("--modules", nargs="+",
-                   default=["clinvar", "hotspots", "spliceai", "revel", "loeuf", "dbnsfp"])
+                   default=["clinvar", "hotspots", "spliceai", "revel", "loeuf", "dbnsfp",
+                            "gnomad"])
+    p.add_argument("--cache", default=None,
+                   help="directory for cached VEP API responses, so a re-run costs nothing")
+    p.add_argument("--sleep", type=float, default=0.2,
+                   help="pause between VEP API calls (the public endpoint is rate limited)")
     a = p.parse_args()
-    return run(a.maf, a.refs, set(a.modules), a.output)
+    return run(a.maf, a.refs, set(a.modules), a.output, a.cache, a.sleep)
 
 
 if __name__ == "__main__":

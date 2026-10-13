@@ -12,6 +12,18 @@ Docker images are published as `monkiky/smart:<version>`.
 SMART stays an annotation pipeline (Tiers 1–3); classification is a separate output.
 
 ### Added
+- **gnomAD verified against the VEP API; 26 more columns covered.** gnomAD has no file in the
+  pipeline -- `gnomADe_AF`, `gnomADg_AF` and the population columns come from the VEP cache via
+  `--everything` -- so it was left out of the local-source verifier for want of anything to look
+  up, and out of `verification1` on the grounds that the REST API's gnomAD release might differ
+  from the cache's and so could not prove a mismatch wrong. The API returns them and they agree:
+  416 checks across 16 variants, no disagreement, `gnomade = 4.857e-05` against our
+  `gnomADe_AF = 4.857e-05` and so on for every population. The exclusion was unnecessary.
+  Comparison needs a relative tolerance because the cache writes three significant figures and
+  the API four, and the retry policy treats a 4xx other than 429 as a permanent refusal -- a 400
+  here means the variant itself is malformed, which is how the strand-flipped allele of #19
+  presents.
+
 - **The REF alleles of a VCF are verified against the reference genome before annotation**
   (`scripts/check_reference.py`, `--ref-check fail|warn`). Nothing checked this, and no other
   step catches it: VEP does not reject a VCF whose REF disagrees with the FASTA, it takes the
@@ -121,6 +133,20 @@ SMART stays an annotation pipeline (Tiers 1–3); classification is a separate o
   `GENIE/genie_o4_counts.tsv.gz` is present; the builder now also writes cohort sizes).
 
 ### Fixed
+- **REVEL silently returned nothing for variants annotated on a newer transcript, BRAF V600E
+  among them.** The plugin matches by transcript by default, and REVEL's source file records one
+  transcript per score using older Ensembl identifiers: it holds 0.931 for BRAF V600E on
+  `ENST00000288602` while the pipeline reports `ENST00000646891`, so the lookup found nothing and
+  the most frequently reported variant in the panel had no REVEL score, with nothing in the
+  output to say whether that meant "no score" or "not assessed". Found by the local-source
+  verifier. REVEL scores the amino-acid substitution rather than the transcript structure, so a
+  score computed on another transcript is the right answer provided the substitution is the same,
+  which its file states in its `aaref`/`aaalt` columns; the plugin now runs with `no_match=1` and
+  the column description says what the score is and is not. The verifier tests the proviso rather
+  than assuming it: a cross-transcript score whose substitution agrees passes with a note naming
+  the transcript it came from, and one whose substitution differs does not. Of 13 missense rows in
+  `verification1` only BRAF was affected, and it was V600E.
+
 - **`VAF` was described as a population frequency when it is the tumour allele fraction.**
   `Config.yaml` described `VAF` as "Frequency of existing variant in 1000 Genomes" with
   `source: VCF`, but SMART computes it from the caller's allelic depth as ALT/(REF+ALT). Both
