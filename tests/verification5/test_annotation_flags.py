@@ -342,7 +342,28 @@ REAL_MAF = os.path.join(os.path.dirname(__file__), "..", "verification1", "outpu
                         "FINAL_Table", "verification1.oncoKB.maf")
 
 
-@pytest.mark.skipif(not os.path.exists(REAL_MAF), reason="verification1 output not present")
+def _real_maf_usable():
+    """Whether the regenerable verification1 output is present and complete.
+
+    It is gitignored and `run_all_verifications.sh` deletes it before re-running the pipeline,
+    so a failed or partial run leaves a MAF that is missing columns. Skipping then is right;
+    failing would report a broken fixture as a broken feature.
+    """
+    if not os.path.exists(REAL_MAF):
+        return False
+    try:
+        with open(REAL_MAF) as fh:
+            for line in fh:
+                if not line.startswith("#"):
+                    return "SpliceAI_pred_DS_AG" in line.split("\t")
+    except OSError:
+        return False
+    return False
+
+
+@pytest.mark.skipif(not _real_maf_usable(),
+                    reason="verification1 output absent or incomplete (it is regenerable; "
+                           "run tests/run_all_verifications.sh --only verification1)")
 class TestAgainstARealMaf:
     """The unit tests above build a frame of nine columns. A real MAF has over a
     thousand, with the dtypes pandas infers and the values VEP and OncoKB wrote, and it

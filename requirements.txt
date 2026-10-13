@@ -2,7 +2,10 @@
 # Python Dependencies (derived from environment.yml)
 
 pandas>=2.0
-numpy>=1.24
+# < 2 because tensorflow 2.15, which '--spliceai compute' needs, is built against the
+# NumPy 1.x ABI: with NumPy 2 installed, importing tensorflow fails with
+# 'numpy.core.umath failed to import'. pandas 2.x works with either.
+numpy>=1.24,<2
 matplotlib>=3.7
 seaborn>=0.13
 plotly>=5.0

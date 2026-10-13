@@ -7,7 +7,7 @@ to the entry below.
 
 Docker images are published as `monkiky/smart:<version>`.
 
-## [2.0.0] — unreleased (in development)
+## [2.1.0] — 2026-10-13
 
 SMART stays an annotation pipeline (Tiers 1–3); classification is a separate output.
 

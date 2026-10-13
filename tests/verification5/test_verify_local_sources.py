@@ -274,3 +274,82 @@ class TestGenie:
                    Reference_Allele="A", Tumor_Seq_Allele2="T")
         notes = [n for _, _, n in vls.check_genie(row, ["GENIE_SAME_NUCLEOTIDE_ALL"], None)]
         assert notes and "absent" in notes[0]
+
+
+class TestPatcherCreatesAbsentColumns:
+    """In compute mode VEP runs without the SpliceAI plugin, so the columns do not exist.
+
+    The patcher was first written for the A/B measurement, where a lookup-mode run had already
+    created them, and it refused a MAF without them. That made the whole compute path fail at
+    the merge step — loudly, but completely. These tests pin the created-column behaviour so it
+    cannot regress back to replace-only.
+    """
+
+    @staticmethod
+    def _patcher():
+        import importlib.util
+        import os
+        import sys
+        spec = importlib.util.spec_from_file_location(
+            "spliceai_patch_maf",
+            os.path.join(os.path.dirname(__file__), "..", "..", "scripts",
+                         "spliceai_patch_maf.py"))
+        m = importlib.util.module_from_spec(spec)
+        sys.modules["spliceai_patch_maf"] = m
+        spec.loader.exec_module(m)
+        return m
+
+    def _files(self, tmp_path, maf_header, maf_row, info):
+        maf = tmp_path / "in.maf"
+        maf.write_text("#SMART_VERSION 2.1.0\n" + "\t".join(maf_header) + "\n"
+                       + "\t".join(maf_row) + "\n")
+        vcf = tmp_path / "in.vcf"
+        vcf.write_text("##fileformat=VCFv4.2\n"
+                       "##contig=<ID=chr7,length=159345973>\n"
+                       "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n"
+                       f"chr7\t140753336\t.\tA\tT\t.\t.\t{info}\n")
+        return str(maf), str(vcf)
+
+    HDR = ["Hugo_Symbol", "Chromosome", "Start_Position",
+           "Reference_Allele", "Tumor_Seq_Allele2"]
+    ROW = ["BRAF", "chr7", "140753336", "A", "T"]
+    INFO = "SpliceAI=T|BRAF--NM_004333.6|0.01|0.02|0.03|0.04|1|2|3|4"
+
+    def test_a_maf_without_the_columns_gains_them(self, tmp_path):
+        m = self._patcher()
+        maf, vcf = self._files(tmp_path, self.HDR, self.ROW, self.INFO)
+        local, _ = m.read_local(vcf)
+        out = tmp_path / "out.maf"
+        import io as _io
+        m.patch(maf, local, str(out), report=_io.StringIO())
+        lines = out.read_text().splitlines()
+        hdr = lines[1].split("\t")
+        for c in ("SpliceAI_pred_DS_AG", "SpliceAI_pred_DS_DL",
+                  "SpliceAI_pred_DP_AG", "SpliceAI_pred_SYMBOL"):
+            assert c in hdr, f"{c} was not created"
+        row = dict(zip(hdr, lines[2].split("\t")))
+        assert row["SpliceAI_pred_DS_AG"] == "0.01"
+        assert row["SpliceAI_pred_DS_DL"] == "0.04"
+        assert row["SpliceAI_pred_SYMBOL"] == "BRAF--NM_004333.6"
+
+    def test_the_leading_metadata_line_survives(self, tmp_path):
+        m = self._patcher()
+        maf, vcf = self._files(tmp_path, self.HDR, self.ROW, self.INFO)
+        local, _ = m.read_local(vcf)
+        out = tmp_path / "out.maf"
+        import io as _io
+        m.patch(maf, local, str(out), report=_io.StringIO())
+        assert out.read_text().splitlines()[0] == "#SMART_VERSION 2.1.0"
+
+    def test_existing_columns_are_replaced_not_duplicated(self, tmp_path):
+        m = self._patcher()
+        hdr = self.HDR + ["SpliceAI_pred_DS_AG"]
+        maf, vcf = self._files(tmp_path, hdr, self.ROW + ["0.99"], self.INFO)
+        local, _ = m.read_local(vcf)
+        out = tmp_path / "out.maf"
+        import io as _io
+        m.patch(maf, local, str(out), report=_io.StringIO())
+        lines = out.read_text().splitlines()
+        cols = lines[1].split("\t")
+        assert cols.count("SpliceAI_pred_DS_AG") == 1
+        assert dict(zip(cols, lines[2].split("\t")))["SpliceAI_pred_DS_AG"] == "0.01"

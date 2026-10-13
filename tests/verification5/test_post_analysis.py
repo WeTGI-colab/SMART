@@ -357,3 +357,81 @@ class TestDropColumns:
         df = pd.DataFrame({"A": [1]})
         result = post.drop_columns(df, [])
         assert isinstance(result, pd.DataFrame)
+
+
+class TestOncoKBTreatmentsShapes:
+    """_apply_oncokb_fixes parses ONCOKB_treatments and must survive every shape it meets.
+
+    json.loads and ast.literal_eval can both succeed and still not return a list of dicts: a
+    quoted string parses to a str, and iterating a str yields characters, so `t.get(...)` raised
+    AttributeError and aborted post_analysis for the whole run. That happened on a CNA row whose
+    treatments had already been flattened to drug names. The parse is now validated rather than
+    trusted, and these pin it.
+    """
+
+    @staticmethod
+    def _run(value):
+        df = pd.DataFrame([{
+            # ONCOKB_QUERY_TYPE == "CNA" is what selects the rows _extract_levels runs on.
+            # Without it the mask is empty and these tests would pass without executing the
+            # code they exist to cover.
+            "ONCOKB_QUERY_TYPE": "CNA",
+            "Variant_Type": "INS", "Tumor_Seq_Allele2": "<DUP>",
+            "ONCOKB_treatments": value,
+            "LEVEL_1": "", "LEVEL_2": "", "LEVEL_3A": "",
+            "HIGHEST_SENSITIVE_LEVEL": "", "ONCOKB_SENS_LVL": "",
+            "HIGHEST_RESISTANCE_LEVEL": "", "ONCOKB_RESIST_LVL": "",
+            "VARIANT_IN_ONCOKB": "", "ONCOKB_variantExist": "",
+        }])
+        out, _, _ = post._apply_oncokb_fixes(df)
+        return out
+
+    @pytest.mark.parametrize("value", [
+        "'Erlotinib,Gefitinib,Osimertinib'",   # parses to a str — the case that aborted a run
+        '"a string"',                           # json-quoted string
+        "Erlotinib,Gefitinib",                  # bare text, parses to nothing
+        "[]", "", "nan", "{}",                  # empty forms
+        "[1, 2, 3]",                            # a list, but not of dicts
+        "['a', 'b']",                           # a list of strings
+        "[{'level': 'LEVEL_1'}]",               # a dict with no drugs
+        "[{'level': 'LEVEL_1', 'drugs': 'not a list'}]",
+        "[{'level': 'LEVEL_1', 'drugs': ['not a dict']}]",
+    ])
+    def test_no_shape_raises(self, value):
+        self._run(value)      # the assertion is that it returns at all
+
+    def test_a_well_formed_value_still_extracts_the_drug(self):
+        out = self._run("[{'level': 'LEVEL_1', 'drugs': [{'drugName': 'Osimertinib'}]}]")
+        assert out.at[0, "LEVEL_1"] == "Osimertinib"
+
+    def test_a_double_encoded_value_is_parsed_through(self):
+        """CDK4 and ERBB2 arrive as a Python repr wrapped in a JSON string.
+
+        One parse yields the inner string, not the list. Iterating that string raised
+        AttributeError; stopping at it would silently lose every treatment level for those
+        rows, which is the state the suite caught as 4 empty LEVEL columns.
+        """
+        out = self._run('"[{\'level\': \'LEVEL_1\', \'drugs\': [{\'drugName\': \'Osimertinib\'}]}]"')
+        assert out.at[0, "LEVEL_1"] == "Osimertinib"
+
+    def test_gene_in_oncokb_is_taken_from_the_gene_query_for_cna_rows(self):
+        """MafAnnotator cannot annotate a CNA, so it leaves GENE_IN_ONCOKB False.
+
+        That reads as "OncoKB does not know this gene" for ERBB2, MET, CDK4 and CDKN2A.
+        oncokb2.0.py asked separately and recorded the answer in ONCOKB_geneExist.
+        """
+        import pandas as _pd
+        df = _pd.DataFrame([{
+            "ONCOKB_QUERY_TYPE": "CNA", "Variant_Type": "INS",
+            "Tumor_Seq_Allele2": "<DUP>", "ONCOKB_treatments": "[]",
+            "GENE_IN_ONCOKB": "False", "ONCOKB_geneExist": "True",
+            "VARIANT_IN_ONCOKB": "", "ONCOKB_variantExist": "True",
+        }])
+        out, _, _ = post._apply_oncokb_fixes(df)
+        assert out.at[0, "GENE_IN_ONCOKB"] == "True"
+        assert out.at[0, "VARIANT_IN_ONCOKB"] == "True"
+
+    def test_duplicate_drugs_are_not_repeated(self):
+        out = self._run("[{'level': 'LEVEL_1', 'drugs': [{'drugName': 'X'}, "
+                        "{'drugName': 'X'}, {'drugName': 'Y'}]}]")
+        assert out.at[0, "LEVEL_1"] == "X,Y"

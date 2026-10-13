@@ -932,6 +932,11 @@ def _apply_oncokb_fixes(df):
     if cna_mask.any():
         if "VARIANT_IN_ONCOKB" in df.columns and "ONCOKB_variantExist" in df.columns:
             df.loc[cna_mask, "VARIANT_IN_ONCOKB"] = df.loc[cna_mask, "ONCOKB_variantExist"].fillna("")
+        # MafAnnotator leaves GENE_IN_ONCOKB False on a CNA row because it cannot annotate
+        # CNAs at all, which read as "OncoKB does not know this gene" for ERBB2, MET, CDK4 and
+        # CDKN2A. oncokb2.0.py already asked and recorded the answer.
+        if "GENE_IN_ONCOKB" in df.columns and "ONCOKB_geneExist" in df.columns:
+            df.loc[cna_mask, "GENE_IN_ONCOKB"] = df.loc[cna_mask, "ONCOKB_geneExist"].fillna("")
         if "ONCOGENIC" in df.columns and "ONCOKB_oncogenic" in df.columns:
             df.loc[cna_mask, "ONCOGENIC"] = df.loc[cna_mask, "ONCOKB_oncogenic"].fillna("")
         if "MUTATION_EFFECT" in df.columns and "ONCOKB_mutationEffect.knownEffect" in df.columns:
@@ -952,20 +957,52 @@ def _apply_oncokb_fixes(df):
 
             def _extract_levels(treatments_json):
                 treatments = []
+                # The value reaches us encoded once or twice depending on the path it took:
+                # MET and CDKN2A arrive as a Python repr, which literal_eval reads, while CDK4
+                # and ERBB2 arrive as that repr wrapped in a JSON string, so one parse yields
+                # the inner *string* rather than the list. Iterating that string is what raised
+                # AttributeError, and stopping at it silently would lose every treatment level
+                # for those rows. So parse until a list appears, with a bound so a pathological
+                # value cannot spin.
                 if treatments_json and treatments_json not in ("[]", "", "nan"):
-                    try:
-                        treatments = json.loads(treatments_json)
-                    except (json.JSONDecodeError, TypeError):
+                    # Newlines are normalised because OncoKB's free text carries real ones --
+                    # 39 lines for ERBB2 amplification -- and a single-quoted Python literal
+                    # cannot span lines. Necessary but NOT sufficient: the same free text also
+                    # contains unescaped apostrophes, which close a literal early and leave the
+                    # rest unbalanced, so this value cannot be parsed at all for some rows and
+                    # their per-level drug columns stay empty. Parsing a stringified structure
+                    # downstream is the wrong design; the fix belongs in oncokb2.0.py, which
+                    # holds the real JSON from the API. See the open issue on CNA levels.
+                    candidate = str(treatments_json).replace("\r", " ").replace("\n", " ")
+                    for _ in range(3):
+                        parsed = None
                         try:
-                            treatments = ast.literal_eval(treatments_json)
-                        except Exception:
-                            treatments = []
+                            parsed = json.loads(candidate)
+                        except (json.JSONDecodeError, TypeError):
+                            try:
+                                parsed = ast.literal_eval(candidate)
+                            except Exception:
+                                break
+                        if isinstance(parsed, str):
+                            candidate = parsed      # it was encoded again; go round
+                            continue
+                        treatments = parsed
+                        break
+                # Both parsers can succeed and still not return what this expects: a quoted
+                # string parses to a str, and iterating a str yields characters, so t.get()
+                # raised AttributeError on a CNA row whose treatments had already been
+                # flattened to drug names. Validate the shape rather than trust the parse.
+                if not isinstance(treatments, list):
+                    treatments = []
                 out = {lc: [] for lc in _level_cols}
                 for t in treatments:
+                    if not isinstance(t, dict):
+                        continue
                     lvl = t.get("level", "")
                     if lvl in out:
-                        for d in t.get("drugs", []):
-                            name = d.get("drugName", "")
+                        drugs = t.get("drugs", [])
+                        for d in (drugs if isinstance(drugs, list) else []):
+                            name = d.get("drugName", "") if isinstance(d, dict) else ""
                             if name and name not in out[lvl]:
                                 out[lvl].append(name)
                 return {k: ",".join(v) for k, v in out.items()}

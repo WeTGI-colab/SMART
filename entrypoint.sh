@@ -382,6 +382,7 @@ FILTERED_DIR="${OUTPUT_DIR_BASE}/FilteredVcf"
 OUTPUT_DIR="${OUTPUT_DIR_BASE}/LiftOverVcf"
 REJECT_DIR="${OUTPUT_DIR_BASE}/LiftOverVcf/Rejected"
 ANNOTATED_DIR="${OUTPUT_DIR_BASE}/AnnotatedVcf"
+SPLICEAI_DIR="${OUTPUT_DIR_BASE}/SpliceAI"
 ONCOKB_DIR="${OUTPUT_DIR_BASE}/OncoKB_VCF"
 TABLE_DIR="${OUTPUT_DIR_BASE}/Table"
 FINAL_TABLE_DIR="${OUTPUT_DIR_BASE}/FINAL_Table"
@@ -408,7 +409,15 @@ COUNT_FILE="${OUTPUT_DIR_BASE}/variant_counts.txt"
 # SpliceAI reports its annotation's NAME as the SYMBOL field, which is how a score becomes
 # traceable to a transcript -- the thing the precomputed tables never recorded.
 SPLICEAI_ANNOTATION=""
-if [[ "$SPLICEAI_MODE" == "compute" && -n "$TRANSCRIPTS_FILE" ]]; then
+# Requested but with nothing to build the annotation from is an error, not a reason to skip:
+# silently producing no splice annotation at all is the failure this work exists to remove.
+if [[ "$SPLICEAI_MODE" == "compute" && -z "$TRANSCRIPTS_FILE" ]]; then
+    echo "ERROR: --spliceai compute needs --transcripts-file: the annotation is built from it,"
+    echo "       so that each score describes the transcript the report names."
+    echo "       Supply one, or use --spliceai lookup."
+    exit 2
+fi
+if [[ "$SPLICEAI_MODE" == "compute" ]]; then
     GENCODE_TABLE="$REF_DIR/SpliceAI-lookup/references_files/annotations/gencode.v43.annotation.txt.gz"
     if [[ ! -f "$GENCODE_TABLE" ]]; then
         echo "ERROR: --spliceai compute needs $GENCODE_TABLE"
@@ -515,7 +524,8 @@ process_sample() {
     local SPLICEAI_VCF=""
     if [[ "$SPLICEAI_MODE" == "compute" && -n "$SPLICEAI_ANNOTATION" ]]; then
         echo ">>> SpliceAI (compute, mask=$SPLICEAI_MASK): $sample"
-        SPLICEAI_VCF="$OUTPUT_DIR/${sample}.spliceai.vcf"
+        mkdir -p "$SPLICEAI_DIR"
+        SPLICEAI_VCF="$SPLICEAI_DIR/${sample}.spliceai.vcf"
         if ! spliceai -I "$VEP_INPUT" -O "$SPLICEAI_VCF" -R "$REF" \
                 -A "$SPLICEAI_ANNOTATION" -D 500 -M "$SPLICEAI_MASK"; then
             echo "ERROR: SpliceAI failed for $sample. Re-run with '--spliceai lookup' to use"

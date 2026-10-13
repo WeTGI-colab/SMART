@@ -100,12 +100,21 @@ def patch(maf_in, local, maf_out, on_missing="blank", report=sys.stderr):
     need = ("Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2")
     if any(c not in idx for c in need):
         raise SystemExit(f"MAF lacks {[c for c in need if c not in idx]}")
-    targets = [c for c in DS + DP + [SYMBOL] if c in idx]
-    if not targets:
-        raise SystemExit("MAF has no SpliceAI columns to replace")
+    # In compute mode VEP runs without the SpliceAI plugin, so these columns do not exist yet
+    # and have to be created. Only in lookup mode are they already present, which is the case
+    # this script was first written for. Appending is safe: the tier split and every consumer
+    # select by name, not by position.
+    wanted = DS + DP + [SYMBOL]
+    created = [c for c in wanted if c not in idx]
+    if created:
+        hdr = hdr + created
+        idx = {c: i for i, c in enumerate(hdr)}   # rebuilt, not offset, so a duplicated
+                                                  # column name in the input cannot shift it
+    targets = wanted
 
     patched = missing = 0
-    out = lines[:lead + 1]
+    out = lines[:lead]
+    out.append("\t".join(hdr) + "\n")
     for line in lines[lead + 1:]:
         f = line.rstrip("\n").split("\t")
         if len(f) < len(hdr):
@@ -130,6 +139,9 @@ def patch(maf_in, local, maf_out, on_missing="blank", report=sys.stderr):
     with open(maf_out, "w") as fh:
         fh.writelines(out)
     total = patched + missing
+    if created:
+        print(f"columns created             : {len(created)}  "
+              f"(absent because VEP ran without the plugin)", file=report)
     print(f"rows                        : {total}", file=report)
     print(f"  patched with local scores : {patched}", file=report)
     print(f"  not scored locally        : {missing}  ({on_missing})", file=report)
