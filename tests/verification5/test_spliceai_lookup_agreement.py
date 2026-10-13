@@ -12,7 +12,7 @@ that batch work be done locally. It returned HTTP 500 on four of 93 rows during 
 live test would fail for reasons that are not ours. And a frozen answer is a dated record, which
 is what makes a later difference meaningful: if these values stop matching, either our annotation
 changed or their Gencode release did, and both are worth knowing. Refresh with
-`utils/../freeze` deliberately, not automatically.
+`utils/freeze_spliceai_lookup.py` deliberately, not automatically.
 
 Note that the service runs a **modified** SpliceAI (github.com/bw2/SpliceAI) with MNV support and
 raw REF/ALT scores that the released package does not expose, so agreement is expected for
@@ -159,7 +159,7 @@ class TestLocalComputationAgrees:
                        "chr16\t2317763\t.\tT\tA\t.\t.\t.\n")
         # ABCA3 is not a cancer gene, so it is not in the panel annotation. A one-row
         # annotation for it is committed beside this test, built by
-        # utils/build_spliceai_annotation.py from the same GENCODE v43 table the published
+        # scripts/build_spliceai_annotation.py from the same GENCODE v43 table the published
         # service uses -- which is what makes the comparison a comparison.
         ann = os.path.join(HERE, "data", "spliceai_annotation_abca3.txt")
         if not os.path.exists(ann):

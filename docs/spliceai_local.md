@@ -22,14 +22,14 @@ describe the transcripts we report, and the distance becomes a parameter.
 
 Two scripts, and no model code of our own.
 
-**`utils/build_spliceai_annotation.py`** builds the gene annotation `spliceai -A` reads. It does
+**`scripts/build_spliceai_annotation.py`** builds the gene annotation `spliceai -A` reads. It does
 not parse a GTF: a SpliceAI-lookup deployment already ships `gencode.v43.annotation.txt.gz`, which
 is GENCODE v43 in SpliceAI's own format with the RefSeq accessions packed into its NAME column, so
 the build is a filter. 516 of our 519 panel transcripts are present; the three that are not are
 named in the output rather than dropped silently.
 
 ```bash
-python3 utils/build_spliceai_annotation.py \
+python3 scripts/build_spliceai_annotation.py \
     --annotation .../annotations/gencode.v43.annotation.txt.gz \
     --transcripts reference_lists/TSO500_transcripts_list.txt \
     --out .../tso500_grch38.spliceai_annotation.txt
@@ -144,6 +144,53 @@ Three variants received no local score: the EGFR in-frame deletion, and the GNAQ
 records whose REF allele does not match GRCh38 ([#19](https://github.com/WeTGI-colab/SMART/issues/19)).
 The second of those is the fourth independent detector of that fixture defect, after the SpliceAI
 lookup's omission, `verification1/verify.py`'s SKIP and the VEP API's 400.
+
+## Now selectable at run time, and computed by default
+
+`entrypoint.sh` takes two flags:
+
+```
+--spliceai compute|lookup    compute against the reported transcripts (default) or look up
+                             the precomputed tables
+--spliceai-mask 0|1          raw (0) or masked (1). Default 1
+```
+
+**The defaults are `compute` and `mask=1`.** Masked because that is what the model's developers
+recommend for variant interpretation and what this laboratory uses; computed because the tables
+carry no transcript and stop at ±50 bp.
+
+How it fits together, with no change to any column name:
+
+1. Once per run, the annotation is built from the same `--transcripts-file` already used for
+   prioritisation, so a score describes the transcript the report names.
+2. Per sample, the model runs on the file VEP is about to annotate — after liftover, so in the
+   assembly the reference describes.
+3. VEP runs **without** the SpliceAI plugin in compute mode.
+4. After MafAnnotator, the scores are merged into the `SpliceAI_pred_*` columns. The names are the
+   plugin's, so the tier split, the `ANNOTATION_FLAGS` threshold, O6 and the cryptic-site check
+   behave the same whichever mode produced them.
+
+Rows the model did not score are left **empty** rather than carrying a precomputed value, so the
+table never mixes the two sources silently in one column.
+
+`compute` requires `gencode.v43.annotation.txt.gz` under
+`$REF_DIR/SpliceAI-lookup/references_files/annotations/`, and fails with a message naming
+`--spliceai lookup` as the alternative rather than falling back silently. The image gains
+`tensorflow-cpu==2.15.*` and `spliceai==1.3.1`; the TensorFlow version is pinned because the
+released package uses `tf.keras`, which Keras 3 removes.
+
+**MNVs are reported, not hidden.** The released model silently returns nothing for a
+multi-nucleotide variant, so the run counts them and warns per sample. In the development cohort
+that is 7 of 1,054. Using the Broad's fork would fix it and is the open question in the list below.
+
+## Before the default should be trusted
+
+**This ships a measured regression until [#21](https://github.com/WeTGI-colab/SMART/issues/21) is
+fixed.** On the development cohort, computing rather than looking up moved three TET2 variants from
+Likely Oncogenic to VUS — 391 true positives to 388 — not because the scores are wrong but because
+supplying scores that were previously absent trips the O2 cryptic-site check on an acceptor gain at
++1 bp. Masking does not prevent it. So the gain from computing is real and currently masked by a
+rule that penalises it, and the two should be settled together.
 
 ## Not decided
 

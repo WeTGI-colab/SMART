@@ -1,5 +1,5 @@
 """
-Unit tests for utils/build_spliceai_annotation.py
+Unit tests for scripts/build_spliceai_annotation.py
 
 The annotation is what makes a locally computed SpliceAI score describe the transcript we
 report rather than GENCODE v24's canonical. A silent omission here would reproduce exactly the
@@ -16,7 +16,7 @@ import pytest
 
 _spec = importlib.util.spec_from_file_location(
     "build_spliceai_annotation",
-    os.path.join(os.path.dirname(__file__), "..", "..", "utils",
+    os.path.join(os.path.dirname(__file__), "..", "..", "scripts",
                  "build_spliceai_annotation.py"))
 bsa = importlib.util.module_from_spec(_spec)
 sys.modules["build_spliceai_annotation"] = bsa

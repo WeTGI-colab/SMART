@@ -24,7 +24,7 @@ produces those numbers:
 How it works
 ------------
 No model code is reimplemented. The `spliceai` CLI reads a VCF and writes a VCF, and `-A` takes
-a gene annotation; `utils/build_spliceai_annotation.py` builds ours from the panel transcript
+a gene annotation; `scripts/build_spliceai_annotation.py` builds ours from the panel transcript
 list. Because SpliceAI reports the annotation's NAME column as its SYMBOL field, and our
 annotation names rows `GENE--REFSEQ`, **the output states which transcript each score belongs
 to** -- the thing the precomputed tables never recorded.

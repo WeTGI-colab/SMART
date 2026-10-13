@@ -23,6 +23,11 @@ Optional (full pipeline):
   <ONCOKB_TOKEN>           OncoKB API token. If omitted, the pipeline stops
                            automatically after VEP annotation (VEP-only mode).
   --transcripts-file FILE  Transcript list for prioritisation (required when token given)
+  --spliceai compute|lookup  Compute SpliceAI against the reported transcripts (default:
+                           compute) or look it up in the precomputed tables. The tables
+                           carry no transcript and use a +/-50 bp window; see issue #2
+  --spliceai-mask 0|1      Raw (0) or masked (1) scores. Default 1, which is what the
+                           model's developers recommend for variant interpretation
   --config FILE            YAML config file for post_analysis (required when token given)
 
   The ref-dir should contain:
@@ -110,6 +115,12 @@ else
     shift
 fi
 TRANSCRIPTS_FILE=""
+# SpliceAI: compute the scores against the reported transcripts (default) or look them up
+# in Illumina's precomputed tables. The tables carry no transcript, were generated on
+# GENCODE v24 and within a +/-50 bp window; see issue #2. Masked is what the model's
+# developers recommend for variant interpretation, and what this laboratory uses.
+SPLICEAI_MODE="compute"
+SPLICEAI_MASK="1"
 REF_DIR=""
 CONFIG_FILE=""
 OUTPUT_DIR_BASE=""
@@ -190,6 +201,20 @@ while [[ $# -gt 0 ]]; do
         --output-dir)
             [[ $# -lt 2 ]] && { echo "ERROR: --output-dir requires a path"; exit 2; }
             OUTPUT_DIR_BASE="$2"
+            shift 2
+            ;;
+        --spliceai)
+            [[ $# -lt 2 ]] && { echo "ERROR: --spliceai requires compute|lookup"; exit 2; }
+            SPLICEAI_MODE="$2"
+            [[ "$SPLICEAI_MODE" != "compute" && "$SPLICEAI_MODE" != "lookup" ]] && {
+                echo "ERROR: --spliceai takes 'compute' or 'lookup', got '$SPLICEAI_MODE'"; exit 2; }
+            shift 2
+            ;;
+        --spliceai-mask)
+            [[ $# -lt 2 ]] && { echo "ERROR: --spliceai-mask requires 0|1"; exit 2; }
+            SPLICEAI_MASK="$2"
+            [[ "$SPLICEAI_MASK" != "0" && "$SPLICEAI_MASK" != "1" ]] && {
+                echo "ERROR: --spliceai-mask takes '0' (raw) or '1' (masked), got '$SPLICEAI_MASK'"; exit 2; }
             shift 2
             ;;
         --transcripts-file)
@@ -336,6 +361,7 @@ echo ""
 echo "Config:"
 echo "  PASS filter:      $([[ $DO_PASS_FILTER -eq 1 ]] && echo ENABLED || echo DISABLED)"
 echo "  Reference check:  $REF_CHECK_MODE"
+echo "  SpliceAI:         $SPLICEAI_MODE, mask=$SPLICEAI_MASK"
 echo "  Liftover:         $([[ $DO_LIFTOVER -eq 1 ]] && echo ENABLED || echo DISABLED)"
 echo "  VEP only:         $([[ $VEP_ONLY -eq 1 ]] && echo "YES — stopping after VEP $( [[ -z "$ONCOKB_TOKEN" ]] && echo '(no token provided)' || echo '(--vep-only flag)' )" || echo NO)"
 echo "  Clean tmp:        $([[ $CLEAN_TMP -eq 1 ]] && echo ENABLED || echo DISABLED)"
@@ -375,6 +401,28 @@ rm -f "$FINAL_TABLE_DIR"/* 2>/dev/null || true
 echo "Cleanup complete."
 
 COUNT_FILE="${OUTPUT_DIR_BASE}/variant_counts.txt"
+
+# --- SpliceAI annotation (compute mode only) ---------------------------------
+# One annotation per run, built from the same transcript list used for prioritisation, so a
+# computed score describes the transcript the report names. Rows are named GENE--REFSEQ and
+# SpliceAI reports its annotation's NAME as the SYMBOL field, which is how a score becomes
+# traceable to a transcript -- the thing the precomputed tables never recorded.
+SPLICEAI_ANNOTATION=""
+if [[ "$SPLICEAI_MODE" == "compute" && -n "$TRANSCRIPTS_FILE" ]]; then
+    GENCODE_TABLE="$REF_DIR/SpliceAI-lookup/references_files/annotations/gencode.v43.annotation.txt.gz"
+    if [[ ! -f "$GENCODE_TABLE" ]]; then
+        echo "ERROR: --spliceai compute needs $GENCODE_TABLE"
+        echo "       Either provide it or run with --spliceai lookup."
+        exit 1
+    fi
+    SPLICEAI_ANNOTATION="${OUTPUT_DIR_BASE}/spliceai_annotation.txt"
+    echo ">>> Building the SpliceAI annotation for the reported transcripts"
+    python3 "$SCRIPT_DIR/build_spliceai_annotation.py" \
+        --annotation "$GENCODE_TABLE" \
+        --transcripts "$TRANSCRIPTS_FILE" \
+        --out "$SPLICEAI_ANNOTATION" || {
+            echo "ERROR: could not build the SpliceAI annotation"; exit 1; }
+fi
 echo -e "Sample\tOriginal_Variants\tPASS_Variants\tLifted_Variants\tVEP_Annotated_Variants\tOncoKB_Annotated_Variants\tVariantsInTable" > "$COUNT_FILE"
 
 echo "------------------------------------------------------------"
@@ -459,6 +507,26 @@ process_sample() {
         VEP_INPUT="$INPUT_FOR_NEXT"
     fi
 
+    # --- SpliceAI (compute mode) ---
+    # Run on $VEP_INPUT, so the scores are for the file VEP annotates, in the assembly the
+    # reference describes. The released model scores single-base substitutions and indels
+    # whose REF matches the genome; it silently returns nothing for multi-nucleotide
+    # variants, so those are reported rather than left to look like an absent prediction.
+    local SPLICEAI_VCF=""
+    if [[ "$SPLICEAI_MODE" == "compute" && -n "$SPLICEAI_ANNOTATION" ]]; then
+        echo ">>> SpliceAI (compute, mask=$SPLICEAI_MASK): $sample"
+        SPLICEAI_VCF="$OUTPUT_DIR/${sample}.spliceai.vcf"
+        if ! spliceai -I "$VEP_INPUT" -O "$SPLICEAI_VCF" -R "$REF" \
+                -A "$SPLICEAI_ANNOTATION" -D 500 -M "$SPLICEAI_MASK"; then
+            echo "ERROR: SpliceAI failed for $sample. Re-run with '--spliceai lookup' to use"
+            echo "       the precomputed tables instead."
+            exit 1
+        fi
+        local N_MNV
+        N_MNV=$(awk 'BEGIN{FS="\t"} !/^#/ && length($4)>1 && length($4)==length($5) {n++} END{print n+0}' "$VEP_INPUT")
+        [[ "$N_MNV" -gt 0 ]] && echo "WARNING: $N_MNV multi-nucleotide variant(s) in $sample receive no SpliceAI score (the released model does not support them)"
+    fi
+
     # --- Reference check ---
     # On $VEP_INPUT rather than the original VCF: after liftover this is the file in the
     # assembly $REF describes, and it is exactly what VEP will read. VEP does not reject a
@@ -470,6 +538,13 @@ process_sample() {
         echo "ERROR: $sample has REF alleles that do not match the reference genome."
         echo "       Re-run with '--ref-check warn' to annotate anyway."
         exit 1
+    fi
+
+    # In compute mode the plugin is left out entirely: the scores come from our own run and
+    # are merged into the table after vcf2table, so the column names are unchanged either way.
+    local SPLICEAI_PLUGIN=""
+    if [[ "$SPLICEAI_MODE" == "lookup" ]]; then
+        SPLICEAI_PLUGIN="--plugin SpliceAI,snv=$SPLICEAI_SNV,indel=$SPLICEAI_INDEL,cutoff=0.5"
     fi
 
     # --- VEP Annotation ---
@@ -484,7 +559,7 @@ process_sample() {
         --assembly GRCh38 \
         --no_escape \
         --fasta "$REF" \
-        --plugin SpliceAI,snv="$SPLICEAI_SNV",indel="$SPLICEAI_INDEL",cutoff=0.5 \
+        $SPLICEAI_PLUGIN \
         --plugin REVEL,file="$REVEL_FILE",no_match=1 \
         --custom "$CLINVAR_VCF",ClinVar,vcf,exact,0,AF_ESP,AF_EXAC,AF_TGP,ALLELEID,CLNDN,CLNDNINCL,CLNDISDB,CLNDISDBINCL,CLNHGVS,CLNREVSTAT,CLNSIG,CLNSIGCONF,CLNSIGINCL,CLNSIGSCV,CLNVC,CLNVCSO,CLNVI,DBVARID,GENEINFO,MC,ONCDN,ONCDNINCL,ONCDISDB,ONCDISDBINCL,ONC,ONCINCL,ONCREVSTAT,ONCSCV,ONCCONF,ORIGIN,RS,SCIDN,SCIDNINCL,SCIDISDB,SCIDISDBINCL,SCIREVSTAT,SCI,SCIINCL,SCISCV \
         --custom "$CIVIC_VCF",CIViC,vcf,exact,0,GN,VT,CSQ \
@@ -567,6 +642,21 @@ process_sample() {
         $GENOMIC_FAILED --out "$ANNOTATED_MAF" \
         || { echo "ERROR: OncoKB MafAnnotator outputs incomplete for $sample"; return 1; }
     rm -f "$MAF_BY_PROTEIN" "$MAF_BY_GENOMIC" "${MAF_BY_PROTEIN%.tsv}.maf" "${MAF_BY_GENOMIC%.tsv}.maf"
+
+    # --- Merge the computed SpliceAI scores into the table ---
+    # The column names are the plugin's, so everything downstream -- the tier split, the
+    # ANNOTATION_FLAGS threshold, the classifier's O6 and its cryptic-site check -- is
+    # unchanged whichever mode produced them. Rows the model did not score are left empty
+    # rather than carrying a precomputed value, so the table never mixes the two sources
+    # silently in one column.
+    if [[ "$SPLICEAI_MODE" == "compute" && -n "$SPLICEAI_VCF" && -f "$SPLICEAI_VCF" ]]; then
+        echo ">>> Merging computed SpliceAI scores: $sample"
+        python3 "$SCRIPT_DIR/spliceai_patch_maf.py" \
+            --maf "$ANNOTATED_MAF" --spliceai-vcf "$SPLICEAI_VCF" \
+            --out "${ANNOTATED_MAF}.spliceai" --on-missing blank \
+            && mv "${ANNOTATED_MAF}.spliceai" "$ANNOTATED_MAF" \
+            || { echo "ERROR: could not merge SpliceAI scores for $sample"; return 1; }
+    fi
 
     # --- GENIE case counts (optional annotation; user-built, licence-restricted table) ---
     if [[ -e "$GENIE_COUNTS" ]]; then
