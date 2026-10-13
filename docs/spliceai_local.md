@@ -45,6 +45,41 @@ with the precomputed table variant by variant, reporting how many scores change,
 0.2 (the delta from which the classifier awards O6) or 0.5, and how many have their strongest
 signal beyond ±50 bp.
 
+## Which SpliceAI, and a caveat on the validation below
+
+The hosted service at spliceailookup.broadinstitute.org does not run the released package. Its
+own page says so:
+
+> Under the hood, this service runs **modified versions** of SpliceAI and Pangolin which have
+> added support for multi-nucleotide variants (MNVs), provide access to raw scores in addition to
+> delta scores, and have other customizations: https://github.com/bw2/SpliceAI
+
+The work here uses the released `spliceai 1.3.1`, so the agreement demonstrated below holds for a
+single-nucleotide substitution, where the fork and the release behave identically. It does **not**
+transfer to multi-nucleotide variants, and that is not hypothetical: of the 1,054 variants in the
+development cohort, **7 are MNVs and the released package scored none of them**, silently.
+
+```
+MPL    chr1:43346917    GG>AA      no score
+MPL    chr1:43349337    TG>AA      no score
+RAD21  chr8:116851977   CA>TG      no score
+RUNX1  chr21:34792613   GC>CT      no score
+BCOR   chrX:40064601    TG>CT      no score
+BTK    chrX:101353928   GGA>TCC    no score
+BTK    chrX:101353930   GGA>TCC    no score
+```
+
+Indels are unaffected — 233 of 237 scored — so this is specific to MNVs, and it is 0.7% of the
+cohort in genes that matter. **Adoption would therefore require the fork, not the released
+package**, or MNVs would go unannotated without saying so, which is the failure mode this whole
+line of work exists to remove. It also keeps the two from being interchangeable for verification:
+an MNV scored by the fork cannot be checked against the release.
+
+The same page states, in their words, why the precomputed tables are not the thing to build on:
+
+> We no longer use the Illumina precomputed SpliceAI score tables since they are based on an old
+> version of Gencode.
+
 ## Validation
 
 The decisive test is whether a local run agrees with an independent implementation of the same
@@ -95,4 +130,6 @@ Nothing here changes the pipeline. Before it could:
   reproducibility a static file gave for free;
 - the benchmark figures in the manuscript were produced with the precomputed scores, so changing
   the source means re-running them and saying so;
-- and the three unaddressable transcripts need a stated fallback rather than a silent gap.
+- the three unaddressable transcripts need a stated fallback rather than a silent gap;
+- and the fork would have to replace the released package, for the MNV reason above, which
+  means depending on one person's repository rather than Illumina's release.
