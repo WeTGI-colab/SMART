@@ -15,3 +15,4 @@ exclude:
   - field_provenance.md
   - SMART_requirements_table.pptx
   - annotation_flags.md
+  - reference_check.md

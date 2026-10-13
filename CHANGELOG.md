@@ -12,6 +12,26 @@ Docker images are published as `monkiky/smart:<version>`.
 SMART stays an annotation pipeline (Tiers 1–3); classification is a separate output.
 
 ### Added
+- **The REF alleles of a VCF are verified against the reference genome before annotation**
+  (`scripts/check_reference.py`, `--ref-check fail|warn`). Nothing checked this, and no other
+  step catches it: VEP does not reject a VCF whose REF disagrees with the FASTA, it takes the
+  reference base from the genome and keeps the submitted ALT, so the consequence it reports
+  belongs to a variant nobody submitted. Found in SMART's own test data —
+  `tests/verification1/verification1.vcf` holds three records whose REF does not match
+  GRCh38. Two are minus-strand genes whose alleles were written on the gene's strand:
+  `GNAQ_Q209L` (chr9:77794572, VCF `A`, genome `T`) was reported as `p.Gln209=` `Silent`,
+  because the flipped ALT equalled the true reference and the variant annotated itself out of
+  existence, and `DICER1_E1705K` (chr14:95094139, VCF `G`, genome `C`) was reported as
+  `p.E1705*` `Nonsense_Mutation`, a different substitution from the one its name states. The
+  third is an off-by-one REF on an EGFR deletion. None produced a warning; the only step that
+  noticed was the SpliceAI lookup, and only by omission, since it matches on CHROM+POS+REF+ALT
+  and those records silently received no splice annotation. The check reads the reference
+  through its `.fai` index, skips records that state no literal sequence (symbolic ALTs,
+  breakends, placeholder REFs), distinguishes a wrong assembly from a handful of strand flips,
+  and runs on the file VEP is about to read — after liftover, so a GRCh37 input does not fail
+  by design. The default stops the run, since one wrong allele yields a wrong consequence and
+  therefore a wrong classification. Documented in `docs/reference_check.md`.
+
 - **Annotation flags, so a filter cannot drop a variant before its evidence is read**
   ([#14](https://github.com/WeTGI-colab/SMART/issues/14),
   [#15](https://github.com/WeTGI-colab/SMART/issues/15)). SpliceAI already reached the output

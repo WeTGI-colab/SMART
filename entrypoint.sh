@@ -40,6 +40,8 @@ Optional (full pipeline):
 
 Options:
   --pass / --no-pass               Enable/disable PASS filtering (default: ON)
+  --ref-check fail|warn            Stop, or only warn, when a VCF's REF alleles do
+                                   not match the reference genome (default: fail)
   --liftover / --no-liftover       Enable/disable liftover (default: ON)
   --clean-tmp / --keep-tmp         Delete/keep intermediate files (default: clean)
   --clean-tables / --keep-tables   Delete/keep table files after post_analysis (default: clean)
@@ -83,6 +85,7 @@ fi
 
 # Defaults
 DO_PASS_FILTER=1
+REF_CHECK_MODE=fail
 DO_LIFTOVER=1
 CLEAN_TMP=1
 CLEAN_TABLES=1
@@ -121,6 +124,14 @@ while [[ $# -gt 0 ]]; do
         --pass)
             DO_PASS_FILTER=1
             shift
+            ;;
+        --ref-check)
+            REF_CHECK_MODE="$2"
+            if [[ "$REF_CHECK_MODE" != "fail" && "$REF_CHECK_MODE" != "warn" ]]; then
+                echo "ERROR: --ref-check takes 'fail' or 'warn', got '$REF_CHECK_MODE'"
+                exit 1
+            fi
+            shift 2
             ;;
         --no-liftover)
             DO_LIFTOVER=0
@@ -324,6 +335,7 @@ echo ""
 echo ""
 echo "Config:"
 echo "  PASS filter:      $([[ $DO_PASS_FILTER -eq 1 ]] && echo ENABLED || echo DISABLED)"
+echo "  Reference check:  $REF_CHECK_MODE"
 echo "  Liftover:         $([[ $DO_LIFTOVER -eq 1 ]] && echo ENABLED || echo DISABLED)"
 echo "  VEP only:         $([[ $VEP_ONLY -eq 1 ]] && echo "YES — stopping after VEP $( [[ -z "$ONCOKB_TOKEN" ]] && echo '(no token provided)' || echo '(--vep-only flag)' )" || echo NO)"
 echo "  Clean tmp:        $([[ $CLEAN_TMP -eq 1 ]] && echo ENABLED || echo DISABLED)"
@@ -445,6 +457,19 @@ process_sample() {
     else
         echo ">>> LiftOver DISABLED: $sample"
         VEP_INPUT="$INPUT_FOR_NEXT"
+    fi
+
+    # --- Reference check ---
+    # On $VEP_INPUT rather than the original VCF: after liftover this is the file in the
+    # assembly $REF describes, and it is exactly what VEP will read. VEP does not reject a
+    # VCF whose REF disagrees -- it takes the reference base and keeps the submitted ALT --
+    # so an unchecked mismatch becomes a consequence for a variant nobody submitted.
+    echo ">>> Reference check: $sample"
+    if ! python3 "$SCRIPT_DIR/check_reference.py" \
+            --vcf "$VEP_INPUT" --reference "$REF" --mode "$REF_CHECK_MODE"; then
+        echo "ERROR: $sample has REF alleles that do not match the reference genome."
+        echo "       Re-run with '--ref-check warn' to annotate anyway."
+        exit 1
     fi
 
     # --- VEP Annotation ---
