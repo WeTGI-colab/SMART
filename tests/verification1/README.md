@@ -13,9 +13,34 @@ annotation logic, VEP field extraction, and post-processing transformations.
 
 | File | Description |
 |---|---|
-| `verification1.vcf.gz` | 18 synthetic variants (14 SNV/indel + 4 CNA) |
+| `verification1.vcf.gz` | 22 synthetic variants (18 SNV/indel + 4 CNA) — **this is the file the pipeline reads** |
+| `verification1.vcf` | 18 variants, two months older and missing four of them; see the warning below |
 | `verification1_transcripts.txt` | 15 preferred NM transcript IDs |
 | `Config.yaml` | Pipeline config (tiers, column metadata) |
+
+> ### Known defects in this fixture — [issue #19](https://github.com/WeTGI-colab/SMART/issues/19)
+>
+> **Two copies are committed and they differ.** `verification1.vcf.gz` has 22 variants and is
+> what the pipeline reads; the plain `verification1.vcf` has 18 and lacks `EGFR_T790M`,
+> `KRAS_G12C`, `PIK3CA_E545K` and `TP53_R248W`. Reading the plain file to see what is tested
+> gives the wrong answer, and that is where the figure "18 variants" came from.
+>
+> **Three records carry a REF allele that does not match GRCh38**, which
+> `scripts/check_reference.py` now reports:
+>
+> | ID | Position | VCF REF | GRCh38 |
+> |---|---|---|---|
+> | `GNAQ_Q209L` | chr9:77794572 | `A` | `T` |
+> | `DICER1_E1705K` | chr14:95094139 | `G` | `C` |
+> | `EGFR_del19` | chr7:55174772 | `GAATTAAGAGAAGCAT` | `GGAATTAAGAGAAGCA` |
+>
+> GNAQ and DICER1 are minus-strand genes whose alleles were written on the gene's strand. VEP
+> does not reject them: it takes the reference base from the genome and keeps the submitted ALT,
+> so each is annotated as a different variant from the one its ID names. **The "Change" column
+> below records those wrong annotations** — `GNAQ_Q209L` as `p.Gln209=` and `DICER1_E1705K` as
+> `p.E1705*` — because they were documented from the output rather than from intent. The
+> intended variants are a Gln209Leu and a Glu1705Lys missense, both of which the correct alleles
+> would produce.
 
 ## Variants
 
@@ -914,3 +939,44 @@ COMBINED SUMMARY
 
 Results written to: results.tsv
 ```
+---
+
+## What this suite does not cover
+
+`verify.py` works by querying the source's own REST API, so it can only reach sources that have
+one. Its own header records the exclusions:
+
+```
+Fields NOT checked (require local databases/plugins not available via REST API):
+  gnomAD*, ClinVar*, SpliceAI*, REVEL, LOEUF, CancerHotspots*
+```
+
+Of the 425 described columns, that leaves **219 verified here** — OncoKB (506 of the checks in
+the committed `results.tsv`), VEP (239), CIViC (60), COSMIC (6) and CADD (2) — and 151 reached
+by no check at all, plus 55 that come from the input VCF or are computed by SMART and have no
+external source to compare against.
+
+Those 151 are now covered by [`tests/verify_local_sources.py`](../verify_local_sources.py),
+which looks each variant up in the file the pipeline annotated from instead of calling an API,
+and takes gnomAD from the VEP REST API because it has no file — it comes out of the VEP cache.
+Run it on this suite's output:
+
+```bash
+python3 tests/verify_local_sources.py \
+    --maf tests/verification1/output/FINAL_Table/verification1.oncoKB.maf \
+    --refs /path/to/refs \
+    --output tests/verification1/local_source_results.tsv
+```
+
+or as part of the whole set with `bash tests/run_all_verifications.sh --only localsources`.
+Its output uses the same columns as `results.tsv` with `Source_Value` in place of `API_Value`,
+so the two can be concatenated.
+
+## Reading the results file
+
+`results.tsv` must **not** be read with `comment="#"`. pandas honours a comment character
+anywhere in a line, and real annotation values contain `#` — ClinVar's `CLNVI` holds
+`UniProtKB:P01111#VAR_006847` — so the row is truncated there and every later column comes back
+empty. On the output MAF that discards 895 of 1,035 columns on any row carrying a `#`, which is
+16 of the 22 rows here. `verify.py` counts the leading metadata lines and passes `skiprows`
+instead; see [issue #4](https://github.com/WeTGI-colab/SMART/issues/4).

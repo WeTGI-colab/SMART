@@ -200,6 +200,18 @@ SMART stays an annotation pipeline (Tiers 1–3); classification is a separate o
   after shifting indels 3' in transcript direction, as HGVS does.
 
 ### Changed
+- **Test documentation brought up to date.** The README described four verification suites and
+  161 unit tests; there are five, a sixth verifier for the annotation sources, and 632 unit
+  tests. It also gave verification1 as 18 variants, a figure taken from the stale plain-text
+  copy of a fixture that exists in two differing versions ([#19](https://github.com/WeTGI-colab/SMART/issues/19));
+  it is 22. `tests/verification1/README.md` recorded the same 18, and its variant table
+  documented `GNAQ_Q209L` as `p.Gln209=` and `DICER1_E1705K` as `p.E1705*` — the annotations
+  produced by that fixture's strand-flipped alleles, written up as though intended. Both READMEs
+  now state what each suite does not cover: `verify.py` reaches only sources with a REST API,
+  which is 219 of the 425 described columns, and `tests/verify_local_sources.py` covers the
+  other 151. `run_all_verifications.sh` gained a `localsources` suite. Both READMEs also warn
+  against reading a MAF with `comment="#"` ([#4](https://github.com/WeTGI-colab/SMART/issues/4)).
+
 - Canonical variants list and combination-rule citations updated to guideline v1.1:
   RUNX1 c.601G>A corrected to c.602G>A, H3-3B c.111G>C removed, NPM1 types A, B and D
   listed; combinations renumbered (#10 O9/O2, #12 O9/O6, #9 O8/O7, #15 O10/O2) and

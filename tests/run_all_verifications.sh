@@ -3,7 +3,7 @@
 # run_all_verifications.sh — Run all SMART verification suites
 #
 # Runs unit tests + verification1, verification3, verification4, verification5,
-# and reports results.
+# localsources, and reports results.
 # verification2 is a manual compatibility check (multiple callers, no automated
 # verify.py) and is excluded from automated runs.
 #
@@ -14,8 +14,11 @@
 # Options:
 #   --image IMAGE    Docker image to use (default: monkiky/smart:latest)
 #   --refs  DIR      Reference directory   (default: /Volumes/ExternalSSD/refs)
-#   --only  NAME     Run only one suite: unit | verification1 | verification3 | verification4 | verification5
-#                    (unit and verification5 need no Docker image, refs, or token)
+#   --only  NAME     Run only one suite: unit | verification1 | verification3 | verification4 |
+#                    verification5 | localsources
+#                    (unit and verification5 need no Docker image, refs, or token;
+#                     localsources needs --refs and verification1's output, but no Docker
+#                     and no token except for its gnomAD module, which calls the VEP API)
 # ==============================================================================
 set -euo pipefail
 
@@ -214,6 +217,32 @@ if [[ -z "$ONLY" || "$ONLY" == "verification4" ]]; then
         PASS_COUNT=$((PASS_COUNT + 1))
     else
         RESULTS+=("  verification4: FAIL (${failures} failed checks — see $V4_RESULTS)")
+        FAIL_COUNT=$((FAIL_COUNT + 1))
+    fi
+fi
+
+# ── Local source verification — annotation against the files it came from ────
+# verification1 reaches the sources that have a REST API. This one reaches the rest:
+# ClinVar, Cancer Hotspots, SpliceAI, REVEL, LOEUF, dbNSFP and GENIE are compared against
+# the files on disk the pipeline annotated from, and gnomAD against the VEP API, since it
+# has no file (it comes from the VEP cache). Needs verification1 to have run.
+if [[ -z "$ONLY" || "$ONLY" == "localsources" ]]; then
+    echo ""
+    echo "================================================================"
+    echo " LOCAL SOURCE VERIFICATION: annotation vs. its own source files"
+    echo "================================================================"
+
+    LOCAL_MAF="$SCRIPT_DIR/verification1/output/FINAL_Table/verification1.oncoKB.maf"
+    if [[ ! -f "$LOCAL_MAF" ]]; then
+        echo "SKIP: $LOCAL_MAF not found — run verification1 first"
+        RESULTS+=("  localsources: SKIP (no verification1 output)")
+    elif python3 "$SCRIPT_DIR/verify_local_sources.py" \
+            --maf "$LOCAL_MAF" --refs "$REFS_DIR" \
+            --output "$SCRIPT_DIR/verification1/local_source_results.tsv"; then
+        RESULTS+=("  localsources: PASS")
+        PASS_COUNT=$((PASS_COUNT + 1))
+    else
+        RESULTS+=("  localsources: FAIL")
         FAIL_COUNT=$((FAIL_COUNT + 1))
     fi
 fi
