@@ -501,6 +501,31 @@ class TestCNALevelsFromStructuredColumns:
                       **{"ONCOKB_TX_0_level": "LEVEL_1", "ONCOKB_TX_0_drugs": "Other"})
         assert r["LEVEL_1"] == "Already there"
 
+    def test_nan_cells_are_treated_as_empty(self):
+        """post_analysis reads the MAF with dtype=str, so an empty cell arrives as NaN.
+
+        NaN is truthy in Python and str(NaN) is "nan", so `v or ""` keeps the NaN and a naive
+        emptiness test concludes the cell is already filled. That silently skipped every row
+        this was meant to fill: the unit tests passed because they built the frame from strings,
+        while the pipeline produced NaN and the levels stayed empty in the real output.
+        """
+        import numpy as _np
+        import pandas as _pd
+        df = _pd.DataFrame([{
+            "ONCOKB_QUERY_TYPE": "CNA", "Variant_Type": "INS",
+            "Tumor_Seq_Allele2": "<DUP>", "ONCOKB_treatments": "[]",
+            "LEVEL_1": _np.nan, "LEVEL_3A": _np.nan,
+            "GENE_IN_ONCOKB": "False", "ONCOKB_geneExist": "True",
+            "VARIANT_IN_ONCOKB": _np.nan, "ONCOKB_variantExist": "True",
+            "ONCOKB_TX_0_level": "LEVEL_1",
+            "ONCOKB_TX_0_drugs": "Ado-Trastuzumab Emtansine",
+            "ONCOKB_TX_1_level": "LEVEL_3A",
+            "ONCOKB_TX_1_drugs": "Trastuzumab Deruxtecan",
+        }])
+        out, _, _ = post._apply_oncokb_fixes(df)
+        assert out.at[0, "LEVEL_1"] == "Ado-Trastuzumab Emtansine"
+        assert out.at[0, "LEVEL_3A"] == "Trastuzumab Deruxtecan"
+
     def test_no_tx_columns_at_all_is_survivable(self):
         r = self._row()
         assert r["LEVEL_1"] == ""

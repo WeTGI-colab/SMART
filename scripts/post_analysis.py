@@ -967,14 +967,16 @@ def _apply_oncokb_fixes(df):
                 out = {lc: [] for lc in _level_cols_tx}
                 for lvl_col in _tx_levels:
                     n = lvl_col[len("ONCOKB_TX_"):-len("_level")]
-                    lvl = str(df.at[idx, lvl_col] or "").strip()
+                    _lv = df.at[idx, lvl_col]
+                    lvl = ("" if _lv is None else str(_lv)).strip()
                     if lvl not in out:
                         continue
                     drug_col = f"ONCOKB_TX_{n}_drugs"
                     if drug_col not in df.columns:
                         continue
-                    drugs = str(df.at[idx, drug_col] or "").strip()
-                    if drugs in ("", "nan", "."):
+                    _dr = df.at[idx, drug_col]
+                    drugs = ("" if _dr is None else str(_dr)).strip()
+                    if drugs in ("", "nan", "NaN", "None", "."):
                         continue
                     # a combination arrives as "A + B"; the verifier and OncoKB list each drug
                     for name in [d.strip() for d in drugs.replace("+", ",").split(",")]:
@@ -982,9 +984,20 @@ def _apply_oncokb_fixes(df):
                             out[lvl].append(name)
                 return {k: ",".join(v) for k, v in out.items()}
 
+            def _blank(v):
+                """Whether a cell holds no value.
+
+                NaN is truthy in Python and str(NaN) is "nan", so `v or ""` keeps the NaN and
+                a naive emptiness test concludes the cell is already filled. post_analysis
+                reads the MAF with dtype=str, which turns every empty cell into NaN, so that
+                mistake silently skipped every row it was meant to fill.
+                """
+                s = str(v) if v is not None else ""
+                return s.strip() in ("", "nan", "NaN", "None", ".")
+
             for cna_idx in df.index[cna_mask]:
                 for lc, val in _levels_from_columns(cna_idx).items():
-                    if lc in df.columns and val and not str(df.at[cna_idx, lc] or "").strip():
+                    if lc in df.columns and val and _blank(df.at[cna_idx, lc]):
                         df.at[cna_idx, lc] = val
 
         if "ONCOKB_treatments" in df.columns:
