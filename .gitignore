@@ -229,6 +229,7 @@ data/jack2_validation_unknown/
 # with one, the pattern would only match a real directory and the link would show up.
 metrics
 
-# Local SpliceAI-lookup instance and its database (~7 GB): reference data and
-# licence-restricted content, never committed. See issue #2.
+# A local SpliceAI-lookup deployment (~8 GB) was staged here before being moved to the
+# reference data directory. Kept as a guard so a repeat of that copy cannot be committed.
+# See issue #2.
 spliceai/

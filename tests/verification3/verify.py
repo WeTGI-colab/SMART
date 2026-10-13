@@ -181,7 +181,17 @@ ONCOKB_CNA_URL = f"{ONCOKB_BASE}/annotate/copyNumberAlterations"
 # ---------------------------------------------------------------------------
 
 def load_maf(path: str) -> pd.DataFrame:
-    df = pd.read_csv(path, sep="\t", comment="#", low_memory=False, dtype=str)
+    # not comment="#": pandas honours a comment character mid-line, so any row holding a
+    # '#' in a value -- ClinVar's CLNVI is `UniProtKB:P01111#VAR_006847` -- is truncated
+    # there and every later column reads as empty. Issue #4.
+    skip = 0
+    with open(path) as fh:
+        for line in fh:
+            if line.startswith("#"):
+                skip += 1
+            else:
+                break
+    df = pd.read_csv(path, sep="\t", skiprows=skip, low_memory=False, dtype=str)
     df = df.fillna("")
     return df
 

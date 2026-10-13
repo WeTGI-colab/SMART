@@ -350,7 +350,17 @@ class TestAgainstARealMaf:
 
     @staticmethod
     def _real():
-        return pd.read_csv(REAL_MAF, sep="\t", comment="#", low_memory=False)
+        # not comment="#": pandas honours it mid-line, so a row is truncated at the
+        # '#' inside a value such as ClinVar's UniProtKB:P01111#VAR_006847 and every
+        # later column comes back empty (issue #4)
+        skip = 0
+        with open(REAL_MAF) as fh:
+            for line in fh:
+                if line.startswith("#"):
+                    skip += 1
+                else:
+                    break
+        return pd.read_csv(REAL_MAF, sep="\t", skiprows=skip, low_memory=False)
 
     def test_every_column_the_flags_depend_on_is_present(self):
         cols = self._real().columns
