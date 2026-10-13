@@ -96,6 +96,31 @@ transcript: `ABCA3--NM_001089.3`. It also reproduces the consequence — the str
 at 106 bp, outside the precomputed window, so the table reports 0.08 and the computation 0.21,
 crossing the threshold at which we flag a row and award O6.
 
+## The validation is now a test
+
+The comparison above is asserted rather than described. `tests/verification5/test_spliceai_lookup_agreement.py`
+(10 tests) checks our annotation against the Broad's service for six public variants whose answers
+are frozen in `tests/verification5/data/spliceai_lookup_frozen.json`, with the endpoint and the
+date recorded in the fixture.
+
+Frozen rather than queried on each run, for three reasons: the service is rate limited and asks
+that batch work be done locally; it returned HTTP 500 on four of 93 rows during this work, so a
+live test would fail for reasons that are not ours; and a dated record is what makes a later
+difference meaningful — if the values stop matching, either our annotation changed or their
+Gencode release did. `utils/freeze_spliceai_lookup.py` refreshes it deliberately.
+
+The six variants each exercise one property: ABCA3 the window, MET and CDKN2A the transcript,
+MSH5 a position with three genes and nine transcripts, BRAF a coding hotspot with no splice
+signal, IDH1 a control that agrees with the precomputed table. Only public variants are listed,
+so nothing patient-derived reaches a third party.
+
+Three groups of test. The first asserts what the frozen answers say about the published tool —
+that ABCA3's strongest signal is beyond 50 bp and reaches 0.2, that MET and CDKN2A come back with
+both transcripts labelled, and that the raw REF/ALT site scores are present, since those are the
+evidence issue #21 needs. The second locks in how the precomputed tables diverge, so replacing
+them would be noticed. The third runs the model locally and requires agreement to two decimals,
+and it is the one the branch rests on; it skips where the model or the reference FASTA is absent.
+
 ## Cost
 
 On an M-series Mac, CPU only: **0.71 s per variant** for 18 variants including model load, with
