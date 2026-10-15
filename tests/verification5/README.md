@@ -23,10 +23,11 @@ See [`tests/README.md`](../README.md) for how this fits with the other layers.
 | `vcf_metadata.py` | harvesting field provenance from the run's own VCF headers, precedence against `Config.yaml`, and the five consistency checks |
 | `check_reference.py` | reading a FASTA through its `.fai`, which records are checkable, and detection of strand flips, off-by-one REFs and a wrong assembly |
 | `verify_local_sources.py` | the comparison logic: contig naming, list separators, rounding tolerance, flags against numbers, and the GENIE recomputation |
+| `verify_reference_files.py` | the reference-integrity check: the fused-header defect found in the lab's CIViC VCF, the bootstrapping hazard (a manifest generated from a corrupt directory must not bless it), truncation and error-page stubs, plain gzip where bgzip is required, stale and mismatched indexes, `.fai` consistency, required versus optional sources, and the exit statuses `entrypoint.sh` switches on |
 
 Per file: `test_svig_uk_classifier` 211, `test_oncokb` 70, `test_annotation_flags` 63, `test_verify_local_sources` 60, `test_post_analysis` 48, `test_vcf2table` 43, `test_check_reference` 42, `test_vcf_metadata` 28, `test_vep_only_mode` 27, `test_multi_transcript` 20, `test_oncokb_maf_query` 8, `test_build_dbnsfp` 7, `test_genie_annotation` 5.
 
-**632 tests, all passing.** Real variants from the verification1 dataset (NRAS Q61R, IDH1 R132H, PIK3CA E545K/H1047R, BRAF V600E, TP53 R175H/R248W, EGFR exon 19 deletion) are used as parametrised ground-truth cases.
+**1,183 tests, all passing.** Real variants from the verification1 dataset (NRAS Q61R, IDH1 R132H, PIK3CA E545K/H1047R, BRAF V600E, TP53 R175H/R248W, EGFR exon 19 deletion) are used as parametrised ground-truth cases.
 
 ## Code coverage
 

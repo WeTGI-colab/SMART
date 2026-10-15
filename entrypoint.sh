@@ -26,6 +26,10 @@ Optional (full pipeline):
   --spliceai compute|lookup  Compute SpliceAI against the reported transcripts (default:
                            compute) or look it up in the precomputed tables. The tables
                            carry no transcript and use a +/-50 bp window; see issue #2
+  --dbnsfp-transcript-match 0|1
+                           Return dbNSFP predictors for the reported transcript only (1,
+                           default) or for every transcript, '&'-separated and unlabelled
+                           (0, the old behaviour). See issue #29.
   --spliceai-mask 0|1      Raw (0) or masked (1) scores. Default 1, which is what the
                            model's developers recommend for variant interpretation
   --config FILE            YAML config file for post_analysis (required when token given)
@@ -47,6 +51,12 @@ Options:
   --pass / --no-pass               Enable/disable PASS filtering (default: ON)
   --ref-check fail|warn            Stop, or only warn, when a VCF's REF alleles do
                                    not match the reference genome (default: fail)
+  --tumour-column NAME             Name the tumour sample column of a tumour/normal VCF.
+                                   Only needed when the run refuses one as ambiguous:
+                                   every value SMART derives from a sample column
+                                   describes the tumour, so it will not guess
+  --normal-column NAME             Name the matched normal column, for VAF_NORMAL and
+                                   the n_* allele counts
   --liftover / --no-liftover       Enable/disable liftover (default: ON)
   --clean-tmp / --keep-tmp         Delete/keep intermediate files (default: clean)
   --clean-tables / --keep-tables   Delete/keep table files after post_analysis (default: clean)
@@ -91,6 +101,9 @@ fi
 # Defaults
 DO_PASS_FILTER=1
 REF_CHECK_MODE=fail
+# Empty unless the run refuses an ambiguous tumour/normal VCF and the user names them.
+TUMOUR_COLUMN=""
+NORMAL_COLUMN=""
 DO_LIFTOVER=1
 CLEAN_TMP=1
 CLEAN_TABLES=1
@@ -121,6 +134,9 @@ TRANSCRIPTS_FILE=""
 # developers recommend for variant interpretation, and what this laboratory uses.
 SPLICEAI_MODE="compute"
 SPLICEAI_MASK="1"
+# dbNSFP holds one value per transcript. 1 returns only the reported transcript's; 0 returns
+# every transcript's, '&'-separated, with nothing marking which is ours (issue #29).
+DBNSFP_TX_MATCH="1"
 REF_DIR=""
 CONFIG_FILE=""
 OUTPUT_DIR_BASE=""
@@ -210,6 +226,23 @@ while [[ $# -gt 0 ]]; do
                 echo "ERROR: --spliceai takes 'compute' or 'lookup', got '$SPLICEAI_MODE'"; exit 2; }
             shift 2
             ;;
+        --tumour-column|--tumor-column)
+            [[ $# -lt 2 ]] && { echo "ERROR: --tumour-column requires a sample-column name"; exit 2; }
+            TUMOUR_COLUMN="$2"
+            shift 2
+            ;;
+        --normal-column)
+            [[ $# -lt 2 ]] && { echo "ERROR: --normal-column requires a sample-column name"; exit 2; }
+            NORMAL_COLUMN="$2"
+            shift 2
+            ;;
+        --dbnsfp-transcript-match)
+            [[ $# -lt 2 ]] && { echo "ERROR: --dbnsfp-transcript-match requires 0|1"; exit 2; }
+            DBNSFP_TX_MATCH="$2"
+            [[ "$DBNSFP_TX_MATCH" != "0" && "$DBNSFP_TX_MATCH" != "1" ]] && {
+                echo "ERROR: --dbnsfp-transcript-match takes '0' or '1', got '$DBNSFP_TX_MATCH'"; exit 2; }
+            shift 2
+            ;;
         --spliceai-mask)
             [[ $# -lt 2 ]] && { echo "ERROR: --spliceai-mask requires 0|1"; exit 2; }
             SPLICEAI_MASK="$2"
@@ -268,6 +301,10 @@ SMART_VERSION="$(cat "$(dirname "${BASH_SOURCE[0]}")/VERSION" 2>/dev/null || ech
 CHAIN="$REF_DIR/liftover/hg19ToHg38.over.chain"
 REF="$REF_DIR/liftover/hg38.fa"
 VEP_DIR="$REF_DIR"
+# vep runs with --merged, so it looks for homo_sapiens_merged/ under --dir rather than
+# homo_sapiens/. Checked here by name: without it VEP fails deep in the annotation step
+# with a message about the cache, long after the run has started.
+VEP_CACHE_DIR="$VEP_DIR/homo_sapiens_merged"
 VEP_PLUGIN_DIR="$REF_DIR/Plugins"
 SPLICEAI_SNV="$REF_DIR/SpliceAI/spliceai_scores.raw.snv.hg38.vcf.gz"
 SPLICEAI_INDEL="$REF_DIR/SpliceAI/spliceai_scores.raw.indel.hg38.vcf.gz"
@@ -284,7 +321,7 @@ GENIE_COUNTS="$REF_DIR/GENIE/genie_o4_counts.tsv.gz"       # optional, GENIE dat
 
 # Validate reference files
 REQUIRED_PATHS=(
-    "$CHAIN" "$REF" "$VEP_PLUGIN_DIR"
+    "$CHAIN" "$REF" "$VEP_PLUGIN_DIR" "$VEP_CACHE_DIR"
     "$SPLICEAI_SNV" "$SPLICEAI_INDEL" "$REVEL_FILE"
     "$CLINVAR_VCF" "$CIVIC_VCF" "$LOEUF_FILE" "$CANCER_HOTSPOTS_VCF"
 )
@@ -292,6 +329,81 @@ REQUIRED_PATHS=(
 for path in "${REQUIRED_PATHS[@]}"; do
     [[ ! -e "$path" ]] && { echo "ERROR: Required resource not found: $path"; exit 2; }
 done
+
+# -----------------------------------------------------------------------------
+# Reference integrity check
+# -----------------------------------------------------------------------------
+# The loop above tests only that each path exists, which is all this script has ever
+# done, and existence is not the property that matters. The CIViC VCF in the lab
+# reference directory exists, is 86 KB of real CIViC content, is bgzip-compressed, has
+# a valid .tbi — and has its eight header lines and its first data record on a single
+# physical line. Its ##INFO declarations are therefore not parseable as header lines
+# and record 1:8013449 is unreachable by tabix. VEP annotates against it without a
+# warning and writes empty CIViC columns, which look exactly like "this variant is not
+# in CIViC". That ran for six months.
+#
+# So before annotating anything, inspect the reference files structurally: header
+# framing, record counts, contig lists, and a tabix query for a position each file
+# itself says it contains. A clinical run must refuse to annotate against a damaged
+# reference rather than produce output from it, because the output is the problem —
+# a damaged reference does not crash the pipeline, it makes it lie quietly.
+#
+# Two modes, so that this never has to be switched off to get a run out:
+#   * with a manifest (written by utils/get_ref_files.sh) — full check, digests included
+#   * without one — structural checks only, which still catch the CIViC class of defect
+# Either way a FATAL finding (exit 1) stops the run. Exit 2 from the checker means the
+# check could not run at all, which is a broken container rather than a broken
+# reference, and is reported as such.
+# Resolved relative to this script rather than from $SCRIPT_DIR, which is not set
+# until line ~490 — the check has to run before anything is annotated, which is well
+# before that. /opt/smart/scripts is the image layout (Dockerfile: COPY scripts/
+# /opt/smart/scripts/) and is kept as a fallback so the check still runs if this
+# script is invoked through a path where dirname does not resolve.
+VERIFY_REF_SCRIPT="$(dirname "${BASH_SOURCE[0]}")/scripts/verify_reference_files.py"
+[[ -f "$VERIFY_REF_SCRIPT" ]] || VERIFY_REF_SCRIPT="/opt/smart/scripts/verify_reference_files.py"
+REF_MANIFEST="${REF_MANIFEST:-$REF_DIR/smart_reference_manifest.json}"
+
+if [[ "${SMART_SKIP_REF_VERIFY:-0}" == "1" ]]; then
+    # An escape hatch, not a setting. Printed on every run that uses it so it cannot be
+    # left on quietly: a run with this set has no evidence that its reference files are
+    # sound and its results are not reportable.
+    echo "WARNING: SMART_SKIP_REF_VERIFY=1 — reference files NOT verified."
+    echo "WARNING: results from this run are not clinically reportable."
+elif [[ ! -f "$VERIFY_REF_SCRIPT" ]]; then
+    echo "WARNING: $VERIFY_REF_SCRIPT not found — reference files NOT verified."
+else
+    echo ">>> Verifying reference files in $REF_DIR"
+    VERIFY_ARGS=(verify --refs "$REF_DIR")
+    if [[ -f "$REF_MANIFEST" ]]; then
+        VERIFY_ARGS+=(--manifest "$REF_MANIFEST")
+    else
+        echo "    No manifest at $REF_MANIFEST — running structural checks only."
+        echo "    Generate one with: utils/get_ref_files.sh, or"
+        echo "    python3 scripts/verify_reference_files.py generate --refs $REF_DIR --manifest $REF_MANIFEST"
+    fi
+    # --strict turns "this file changed but is structurally sound" from a warning into
+    # a failure. Off by default: ClinVar is released weekly and CIViC nightly, so a
+    # legitimately updated reference set must not block a run, or this check gets
+    # commented out. On for a frozen validated reference set.
+    [[ "${SMART_STRICT_REF_VERIFY:-0}" == "1" ]] && VERIFY_ARGS+=(--strict)
+
+    REF_VERIFY_RC=0
+    python3 "$VERIFY_REF_SCRIPT" "${VERIFY_ARGS[@]}" || REF_VERIFY_RC=$?
+    case "$REF_VERIFY_RC" in
+        0) ;;
+        2) echo "ERROR: the reference check could not run (exit 2). This is a problem with"
+           echo "       the container or the arguments, not necessarily with the reference"
+           echo "       files. Refusing to annotate without having checked them."
+           exit 2 ;;
+        *) echo "ERROR: reference verification failed (exit $REF_VERIFY_RC)."
+           echo "       Refusing to annotate against a reference directory that failed its"
+           echo "       integrity check: the pipeline would not fail, it would write empty"
+           echo "       or wrong columns that look like real results."
+           echo "       Rebuild the offending files (utils/get_ref_files.sh rebuilds a file"
+           echo "       that has been deleted; it skips one that merely exists)."
+           exit 2 ;;
+    esac
+fi
 
 # COSMIC Cancer Mutation Census is OPTIONAL — it requires a COSMIC licence so it is
 # not shipped. If the user has built and mounted the VCF (utils/cosmic_cmc_to_vcf.py),
@@ -315,7 +427,19 @@ fi
 # MetaRNN, BayesDel); otherwise annotation runs unchanged without it.
 DBNSFP_PLUGIN=""
 if [[ -e "$DBNSFP_FILE" && -e "${DBNSFP_FILE}.tbi" ]]; then
-    DBNSFP_PLUGIN="--plugin dbNSFP,$DBNSFP_FILE,ALL"
+    # transcript_match=1 by default, so a predictor describes the transcript we report.
+    # Without it dbNSFP returns one value per transcript, '&'-separated and parallel to
+    # Ensembl_transcriptid, and marks none as the reported one -- on verification1 that is
+    # 550 cells across 25 columns, of which 190 had a different value first and 143 had no
+    # value for the reported transcript at all while showing another's. See issue #29.
+    #
+    # Two caveats from the plugin's own documentation. It warns that the flag can return
+    # nothing where VEP's and dbNSFP's Ensembl transcript versions differ, so a row whose
+    # transcript dbNSFP does not carry loses these columns instead of showing a stranger's
+    # value -- which is the point, but it is a visible loss. And MutationTaster fields are
+    # keyed on a different transcript set, so the flag has no effect on them: those two
+    # columns stay unresolved whatever this is set to.
+    DBNSFP_PLUGIN="--plugin dbNSFP,$DBNSFP_FILE,transcript_match=$DBNSFP_TX_MATCH,ALL"
 fi
 
 # Fetch OncoKB version info only when a token is available
@@ -330,48 +454,66 @@ else
     ONCOKB_API_VERSION="N/A (VEP-only mode)"
 fi
 
-echo "============================================================"
-echo "SMART — Somatic Mutation Annotation and Reporting Tool  v${SMART_VERSION}"
-echo "============================================================"
-echo "Tool versions:"
-echo "  VEP:               $(vep --help 2>&1 | grep -oP 'ensembl-vep\s*:\s*\K\S+' || echo 'unknown')"
-echo "  GATK:              $(gatk --version 2>&1 | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1 || echo 'unknown')"
-echo "  bcftools:          $(bcftools --version | head -1 || echo 'unknown')"
-echo "  Python:            $(python3 --version 2>&1 || echo 'unknown')"
-echo "  OncoKB API:        $ONCOKB_API_VERSION"
-echo ""
-
-echo "Reference versions:"
-echo "  ClinVar:           $(basename "$CLINVAR_VCF")"
-echo "  CIViC:             $(basename "$CIVIC_VCF")"
-echo "  CancerHotSpots:    $(basename "$CANCER_HOTSPOTS_VCF")"
-echo "  COSMIC CMC:        $([[ -e "$COSMIC_VCF" ]] && basename "$COSMIC_VCF" || echo '(not provided — optional, licence-gated)')"
-echo "  SpliceAI SNV:      $(basename "$SPLICEAI_SNV")"
-echo "  SpliceAI INDEL:    $(basename "$SPLICEAI_INDEL")"
-echo "  REVEL:             $(basename "$REVEL_FILE")"
-echo "  CADD:              $([[ -e "$CADD_SNV" && -e "$CADD_INDEL" ]] && basename "$CADD_SNV" || echo '(not provided — optional, ~80GB)')"
-echo "  dbNSFP:            $([[ -e "$DBNSFP_FILE" ]] && basename "$DBNSFP_FILE" || echo '(not provided — optional, academic licence)')"
-echo "  GENIE counts:      $([[ -e "$GENIE_COUNTS" ]] && basename "$GENIE_COUNTS" || echo '(not provided — optional, GENIE data-use agreement)')"
-echo "  LOEUF:             $(basename "$LOEUF_FILE")"
-echo "  OncoKB data:       $ONCOKB_DATA_VERSION ($ONCOKB_DATA_DATE)"
-
-echo ""
-
-echo ""
-echo "Config:"
-echo "  PASS filter:      $([[ $DO_PASS_FILTER -eq 1 ]] && echo ENABLED || echo DISABLED)"
-echo "  Reference check:  $REF_CHECK_MODE"
-echo "  SpliceAI:         $SPLICEAI_MODE, mask=$SPLICEAI_MASK"
-echo "  Liftover:         $([[ $DO_LIFTOVER -eq 1 ]] && echo ENABLED || echo DISABLED)"
-echo "  VEP only:         $([[ $VEP_ONLY -eq 1 ]] && echo "YES — stopping after VEP $( [[ -z "$ONCOKB_TOKEN" ]] && echo '(no token provided)' || echo '(--vep-only flag)' )" || echo NO)"
-echo "  Clean tmp:        $([[ $CLEAN_TMP -eq 1 ]] && echo ENABLED || echo DISABLED)"
-echo "  Clean tables:     $([[ $CLEAN_TABLES -eq 1 ]] && echo ENABLED || echo DISABLED)"
-echo "  Parallel jobs:    $JOBS"
-echo "  Transcript file:  ${TRANSCRIPTS_FILE:-N/A (VEP-only mode)}"
-echo "  Config file:      ${CONFIG_FILE:-N/A (VEP-only mode)}"
-echo "  Reference dir:    $REF_DIR"
-echo "  Input dir:        $INPUT_DIR"
-echo "============================================================"
+# Captured as well as printed. stdout goes wherever the caller sends it, which for a
+# suite run is a transient log, so a run's tool and source versions were not
+# recoverable from its own output afterwards. Written to $LOGS_DIR below, once the
+# output directories exist, so every run leaves its provenance beside its results.
+RUN_PROVENANCE=$(
+  echo "============================================================"
+  echo "SMART — Somatic Mutation Annotation and Reporting Tool  v${SMART_VERSION}"
+  echo "============================================================"
+  echo "Tool versions:"
+  echo "  VEP:               $(vep --help 2>&1 | grep -oP 'ensembl-vep\s*:\s*\K\S+' || echo 'unknown')"
+  echo "  GATK:              $(gatk --version 2>&1 | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1 || echo 'unknown')"
+  echo "  bcftools:          $(bcftools --version | head -1 || echo 'unknown')"
+  echo "  Python:            $(python3 --version 2>&1 || echo 'unknown')"
+  echo "  OncoKB API:        $ONCOKB_API_VERSION"
+  echo ""
+  
+  echo "Reference versions:"
+  echo "  ClinVar:           $(basename "$CLINVAR_VCF")"
+  echo "  CIViC:             $(basename "$CIVIC_VCF")"
+  echo "  CancerHotSpots:    $(basename "$CANCER_HOTSPOTS_VCF")"
+  echo "  COSMIC CMC:        $([[ -e "$COSMIC_VCF" ]] && basename "$COSMIC_VCF" || echo '(not provided — optional, licence-gated)')"
+  echo "  SpliceAI SNV:      $(basename "$SPLICEAI_SNV")"
+  echo "  SpliceAI INDEL:    $(basename "$SPLICEAI_INDEL")"
+  echo "  REVEL:             $(basename "$REVEL_FILE")"
+  echo "  CADD:              $([[ -e "$CADD_SNV" && -e "$CADD_INDEL" ]] && basename "$CADD_SNV" || echo '(not provided — optional, ~80GB)')"
+  echo "  dbNSFP:            $([[ -e "$DBNSFP_FILE" ]] && basename "$DBNSFP_FILE" || echo '(not provided — optional, academic licence)')"
+  echo "  GENIE counts:      $([[ -e "$GENIE_COUNTS" ]] && basename "$GENIE_COUNTS" || echo '(not provided — optional, GENIE data-use agreement)')"
+  echo "  LOEUF:             $(basename "$LOEUF_FILE")"
+  echo "  OncoKB data:       $ONCOKB_DATA_VERSION ($ONCOKB_DATA_DATE)"
+  
+  echo ""
+  
+  echo ""
+  echo "Config:"
+  echo "  PASS filter:      $([[ $DO_PASS_FILTER -eq 1 ]] && echo ENABLED || echo DISABLED)"
+  # Not "Reference check: fail", which reads as a failed check. This is the mode -- what to
+  # do IF a REF allele disagrees with the reference genome -- and the run reaching this point
+  # with mode=fail means no disagreement was found.
+  echo "  On REF mismatch:  $([[ "$REF_CHECK_MODE" == "fail" ]] \
+        && echo "stop the run (--ref-check fail)" \
+        || echo "warn and continue (--ref-check warn)")"
+  echo "  dbNSFP values:    $([[ "$DBNSFP_TX_MATCH" == "1" ]] \
+        && echo "the reported transcript's only (transcript_match=1)" \
+        || echo "every transcript's, unlabelled (transcript_match=0)")"
+  echo "  SpliceAI:         $([[ "$SPLICEAI_MODE" == "compute" ]] \
+        && echo "computed against the reported transcripts" \
+        || echo "looked up in the precomputed tables (no transcript)"), $([[ "$SPLICEAI_MASK" == "1" ]] \
+        && echo "masked" || echo "raw") scores"
+  echo "  Liftover:         $([[ $DO_LIFTOVER -eq 1 ]] && echo ENABLED || echo DISABLED)"
+  echo "  VEP only:         $([[ $VEP_ONLY -eq 1 ]] && echo "YES — stopping after VEP $( [[ -z "$ONCOKB_TOKEN" ]] && echo '(no token provided)' || echo '(--vep-only flag)' )" || echo NO)"
+  echo "  Clean tmp:        $([[ $CLEAN_TMP -eq 1 ]] && echo ENABLED || echo DISABLED)"
+  echo "  Clean tables:     $([[ $CLEAN_TABLES -eq 1 ]] && echo ENABLED || echo DISABLED)"
+  echo "  Parallel jobs:    $JOBS"
+  echo "  Transcript file:  ${TRANSCRIPTS_FILE:-N/A (VEP-only mode)}"
+  echo "  Config file:      ${CONFIG_FILE:-N/A (VEP-only mode)}"
+  echo "  Reference dir:    $REF_DIR"
+  echo "  Input dir:        $INPUT_DIR"
+  echo "============================================================"
+)
+echo "$RUN_PROVENANCE"
 echo
 
 SCRIPT_DIR="/opt/smart/scripts"
@@ -390,6 +532,13 @@ LOGS_DIR="${OUTPUT_DIR_BASE}/logs"
 
 # We create directories where all tmp files are saved
 mkdir -p "$OUTPUT_DIR_BASE" "$FILTERED_DIR" "$OUTPUT_DIR" "$REJECT_DIR" "$ANNOTATED_DIR" "$ONCOKB_DIR" "$TABLE_DIR" "$FINAL_TABLE_DIR" "$LOGS_DIR"
+
+# The run's own provenance, beside its results: tool versions, reference file names and the
+# configuration every annotation in this output was produced under. Written here rather than
+# only to stdout, which for a suite run goes to a transient log, so a run's versions were not
+# recoverable from its own output afterwards. scripts/verification_report.py reads it, so a
+# validation report states what was actually run rather than what was intended.
+printf '%s\n' "$RUN_PROVENANCE" > "$LOGS_DIR/run_provenance.txt"
 
 echo "Cleaning previous results..."
 rm -f "$OUTPUT_DIR"/*gz "$OUTPUT_DIR"/*tbi "$OUTPUT_DIR"/*.vcf 2>/dev/null || true
@@ -616,6 +765,8 @@ process_sample() {
         --vcf "$ONCOKB_VCF" \
         --transcripts "$TRANSCRIPTS_FILE" \
         --output "$TABLE_CSV" \
+        ${TUMOUR_COLUMN:+--tumour-column "$TUMOUR_COLUMN"} \
+        ${NORMAL_COLUMN:+--normal-column "$NORMAL_COLUMN"} \
         --debug
 
     # --- MafAnnotator ---

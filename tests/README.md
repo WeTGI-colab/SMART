@@ -20,13 +20,46 @@ from it.
 
 | | Where | Needs | What it answers |
 |---|---|---|---|
-| Unit tests | `verification5/` | python3 + pytest | the logic, 632 tests in about a second |
+| Unit tests | `verification5/` | python3 + pytest | the logic, 1,183 tests in about fifteen seconds |
 | Caller compatibility | `verification2/` | Docker, refs | four callers' VCF conventions (manual) |
 | Transcript choice | `verification3/` | Docker, refs, token | the whitelist changes the annotation and the OncoKB call |
 | Parallel jobs | `verification4/` | Docker, refs, token | `--jobs N` matches a sequential run |
-| API verification | `verification1/` | Docker, refs, token | 219 columns against the sources' own APIs |
-| Source verification | `verify_local_sources.py` | refs | the other 151, against the files on disk |
+| API verification | `verification1/` | Docker, refs, token | **47 columns** against the sources' own APIs |
+| Source verification | `verify_local_sources.py` | refs | a further **146 columns**, against the files on disk |
 | Variant presence | `verify_maf.py` | — | expected variants are in an output |
+
+### What the API verification cohort covers
+
+`verification1` holds 35 records on 22 panel transcripts: 30 SNVs, one in-frame deletion and
+four CNAs. Thirteen were added deliberately to cover what the suite's own field coverage report
+said was untested, rather than for being well known:
+
+- **Breadth of OncoKB evidence.** KRAS Q61H (15 treatments across levels 1/2/3A/4/R1),
+  NRAS G12D (14, plus Dx2 and Px1), KIT D816V (LEVEL_R2 and 17 citations), PDGFRA D842V
+  (LEVEL_1 with LEVEL_R1), IDH2 R140Q (two diagnostic and three prognostic implications) and
+  TP53 Y220C (nine prognostic implications).
+- **`ONCOGENIC` values nothing else produces.** ABL1 T315I is `Resistance`, MLH1 V384D is
+  `Inconclusive`, STK11 F354L is `Likely Neutral`. Before these, only `Oncogenic` and
+  `Likely Oncogenic` were ever exercised.
+- **`ONCOKB_VUS`.** CDH1 R63* is the one variant found with `vus=True`.
+- **Intronic and splice variants.** MET `c.3028+3A>G` (intron 14/20), TP53 `c.376-1G>A`
+  (splice acceptor, intron 4/10) and TP53 `c.782+1G>A` (splice donor, intron 7/10). These fill
+  the `INTRON` field, and they are the first records in this cohort that exercise SpliceAI,
+  `ANNOTATION_FLAGS` and O6 at all — the cohort was otherwise coding hotspots, which is not
+  where splice prediction matters.
+
+**Every added record was confirmed three ways before going in**: its REF against the GRCh38
+FASTA, and OncoKB's `byGenomicChange` endpoint returning the alteration the variant ID claims.
+That third check is not ceremony. Ensembl's variant recoder offered `chr4:54733167 A>T` for
+KIT D816V, which OncoKB resolves to **D820V** — a different variant — and the same happened for
+IDH2 (R149Q) and KRAS (S65I). The VEP HGVS endpoint returned all three TP53 variants
+**strand-flipped**, because it reports `allele_string` on the transcript strand and TP53 is on
+the minus strand: the identical defect as [#19](https://github.com/WeTGI-colab/SMART/issues/19),
+reappearing. Taking the first coordinate a service returns is how #19 happened.
+
+Three OncoKB fields remain uncovered and **no variant can cover them**: `LEVEL_3B`,
+`ONCOKB_diagnosticSummary` and `ONCOKB_prognosticSummary` all require a tumour-type query,
+and the pipeline queries pan-cancer ([#26](https://github.com/WeTGI-colab/SMART/issues/26)).
 
 ## Running them
 
@@ -138,9 +171,15 @@ substitution differs does not.
 
 Worth stating plainly, because it is where the gaps have been.
 
-Of the 425 described columns, 219 are verified against an API, 151 against the files on disk, and
-55 come from the input VCF or are computed by SMART and have no external source to compare
-against. Within the 151:
+Of the 427 described columns, **47** are verified against the sources' own APIs and **146** against
+the files on disk -- 193 distinct columns in all. The rest come from the input VCF, are computed by
+SMART, or have no external source to compare against.
+
+An earlier version of this section said "219 ... against an API". 219 was a count of source
+attributions in Config.yaml, not of anything verified, and it overstated API coverage by 4.7x.
+The two figures above are counted from `verification1/results.tsv` and
+`verification1/local_source_results.tsv`, and a test now checks them against those files.
+Within the 146:
 
 - **GENIE** is not compared but **recomputed** — its columns are aggregates. The O4 match columns
   are deliberately left as invariants only: reproducing the matching rules would be
@@ -178,14 +217,65 @@ df = pd.read_csv(path, sep="\t", skiprows=skip)
 This is [issue #4](https://github.com/WeTGI-colab/SMART/issues/4). It is the mistake that
 produced 350 phantom mismatches on the first run of the source verifier.
 
-## Known defects in the fixtures
+## Columns that never carry a value
 
-`tests/verification1/verification1.vcf.gz` holds 22 variants and is what the pipeline reads;
-`verification1.vcf` holds 18, is two months older, and reading it to see what is tested gives
-the wrong answer. Three of its records carry a REF allele that does not match GRCh38, two of
-them minus-strand genes whose alleles were written on the gene's strand. Both problems, and the
-correct alleles, are in [issue #19](https://github.com/WeTGI-colab/SMART/issues/19) and in
-`verification1/README.md`.
+`ONCOKB_VUS` was empty on every row of every run for years. `oncokb2.0.py` read the OncoKB
+field as `VUS`; its name is `vus`. Nothing caught it, and nothing could have, because three
+different situations are the same empty cell by the time they reach the MAF:
 
-`scripts/check_reference.py` now refuses a run whose REF alleles disagree with the reference, so
-this class of defect cannot reach an output again.
+- the source has no value for this variant,
+- the column does not apply to this kind of variant,
+- the column is broken and will never carry a value.
+
+`dict.get` returns `None` for an absent key exactly as it does for a null value, and the
+pipeline writes `.` for both. The bug was found only because a variant was added that has
+`vus=True` — with the previous cohort the column would have looked legitimately empty forever.
+
+`scripts/audit_empty_columns.py` turns that into something a test can hold. It asks of every
+column: *did any variant, in any run, give it a value?* Those that never did must be listed in
+`verification1/empty_columns_allowed.tsv` with a reason and one of two kinds:
+
+| kind | meaning |
+|---|---|
+| `structural` | no variant could fill it as the pipeline runs. Changing this means changing the pipeline — e.g. everything needing a tumour-type query ([#26](https://github.com/WeTGI-colab/SMART/issues/26)) |
+| `cohort` | a variant would fill it and we have none. The reason names the kind of variant needed |
+
+On the current output: 1,148 columns, 106 never carry a value — 76 structural, 30 `cohort`.
+The `cohort` half is printed on every run as a to-do list, and it is the answer to "what should
+we add next": a non-coding hotspot, a variant in a miRNA, one inside a regulatory motif, an
+upstream variant for `DISTANCE`, a ClinVar "included" variant, one with Dx1 evidence, a
+transcript VEP flags.
+
+The audit fails in **both** directions, and the second is the one that matters:
+
+- a column that is empty and unlisted — possibly the next `ONCOKB_VUS`;
+- a listed column that now carries data — the entry is stale and must be removed.
+
+So adding a variant forces the blank it fills to be re-examined, instead of letting it
+accumulate unexamined. `tests/verification5/test_audit_empty_columns.py` tests the logic on
+synthetic tables, needing no Docker, refs or token, and runs the audit over the real output
+when it is present.
+
+A related guard covers the cause rather than the symptom:
+`tests/verification5/test_oncokb_response_keys.py` tokenises `oncokb2.0.py`, extracts every
+literal key it reads off an OncoKB response, and requires each to exist in a frozen real
+response. All 26 other keys were audited and were correct; `VUS` was the only one wrong.
+
+## Fixture defects, and what now prevents them
+
+`tests/verification1` had two, both fixed and both recorded in
+[issue #19](https://github.com/WeTGI-colab/SMART/issues/19) and in `verification1/README.md`.
+They are worth reading before comparing against any figure published from this fixture, because
+the figures changed.
+
+Its two committed copies held different variants — the `.vcf.gz` the pipeline reads had 22, the
+plain `.vcf` had 18 — and three records carried a REF allele absent from GRCh38, two of them
+minus-strand genes whose alleles had been written on the gene's strand. VEP does not reject such
+a record, so the suite had been verifying variants nobody submitted.
+
+Two guards now exist, and each addresses one of them. `scripts/check_reference.py` runs before
+VEP and by default refuses a run whose REF alleles disagree with the reference, so that class of
+defect cannot reach an output again. And `tests/verification5/test_check_reference.py` asserts
+that the fixture's two copies stay identical and that its corrected alleles stay corrected,
+because regenerating one copy from the other is precisely how four variants stopped being
+tested without anything reporting it.

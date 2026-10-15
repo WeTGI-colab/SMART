@@ -1,0 +1,121 @@
+{
+  "_provenance": {
+    "content": "Key names and nesting only. Every leaf value is replaced by a typed placeholder, and one element of each list of objects is kept so nested key names survive. OncoKB's curated content -- gene and variant summaries, mutation-effect and treatment descriptions, PMIDs, levels -- is deliberately NOT stored here: OncoKB's terms permit academic use but not redistribution to third parties, and this repository is public. The API's key schema is published in OncoKB's own Swagger documentation, and the key names are all this test reads.",
+    "dataVersion": "v7.6",
+    "endpoint": "https://www.oncokb.org/api/v1/annotate/mutations/byGenomicChange",
+    "genomicLocation": "7,140753336,140753336,A,T",
+    "referenceGenome": "GRCh38",
+    "retrieved": "2026-10-14",
+    "variant": "BRAF V600E (public; no patient data)",
+    "why": "Frozen so a test can assert that every key scripts/oncokb2.0.py reads off the response actually exists in it. data.get('VUS') read None on every run for years because the API's key is 'vus'; nothing noticed, because a missing key becomes '.' and '.' looks like a legitimate empty value."
+  },
+  "response": {
+    "alleleExist": false,
+    "dataVersion": "",
+    "diagnosticImplications": [
+      {
+        "abstracts": [],
+        "alterations": [],
+        "description": "",
+        "levelOfEvidence": "",
+        "pmids": [],
+        "tumorType": {
+          "children": {},
+          "code": "",
+          "color": "",
+          "id": 0,
+          "level": 0,
+          "mainType": {
+            "id": null,
+            "name": "",
+            "tumorForm": ""
+          },
+          "name": "",
+          "parent": "",
+          "tissue": "",
+          "tumorForm": ""
+        }
+      }
+    ],
+    "diagnosticSummary": "",
+    "errors": [],
+    "exon": "",
+    "geneExist": false,
+    "geneSummary": "",
+    "highestDiagnosticImplicationLevel": "",
+    "highestFdaLevel": "",
+    "highestPrognosticImplicationLevel": null,
+    "highestResistanceLevel": null,
+    "highestSensitiveLevel": "",
+    "hotspot": false,
+    "lastUpdate": "",
+    "mutationEffect": {
+      "citations": {
+        "abstracts": [],
+        "pmids": []
+      },
+      "description": "",
+      "knownEffect": ""
+    },
+    "oncogenic": "",
+    "otherSignificantResistanceLevels": [],
+    "otherSignificantSensitiveLevels": [],
+    "prognosticImplications": [],
+    "prognosticSummary": "",
+    "query": {
+      "alteration": "",
+      "alterationType": null,
+      "canonicalTranscript": "",
+      "consequence": "",
+      "entrezGeneId": 0,
+      "germline": false,
+      "hgvs": "",
+      "hgvsInfo": null,
+      "hugoSymbol": "",
+      "id": null,
+      "proteinEnd": 0,
+      "proteinStart": 0,
+      "referenceGenome": "",
+      "svType": null,
+      "tumorType": null
+    },
+    "treatments": [
+      {
+        "abstracts": [],
+        "alterations": [],
+        "approvedIndications": [],
+        "description": "",
+        "drugs": [
+          {
+            "drugName": "",
+            "ncitCode": ""
+          }
+        ],
+        "fdaLevel": "",
+        "level": "",
+        "levelAssociatedCancerType": {
+          "children": {},
+          "code": "",
+          "color": "",
+          "id": 0,
+          "level": 0,
+          "mainType": {
+            "id": null,
+            "name": "",
+            "tumorForm": ""
+          },
+          "name": "",
+          "parent": "",
+          "tissue": "",
+          "tumorForm": ""
+        },
+        "levelExcludedCancerTypes": [],
+        "pmids": []
+      }
+    ],
+    "tumorTypeSummary": "",
+    "variantExist": false,
+    "variantSummary": "",
+    "vus": false
+  }
+}

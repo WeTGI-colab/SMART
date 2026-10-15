@@ -114,11 +114,16 @@ if [[ -z "$ONLY" || "$ONLY" == "verification5" ]]; then
     fi
 fi
 
+# These are paths, not results, so they are defined unconditionally. Setting them inside
+# the verification1 branch meant that any `--only` run reached the report section at the
+# end with V1_DIR unset and aborted under `set -u`, after the summary had already printed
+# PASS -- so the run looked successful and then failed on its last line.
+V1_DIR="$SCRIPT_DIR/verification1"
+V1_OUTPUT="$V1_DIR/output"
+V1_RESULTS="$V1_DIR/results.tsv"
+
 # ── Verification 1 — Field-level API verification ────────────────────────────
 if [[ -z "$ONLY" || "$ONLY" == "verification1" ]]; then
-    V1_DIR="$SCRIPT_DIR/verification1"
-    V1_OUTPUT="$V1_DIR/output"
-    V1_RESULTS="$V1_DIR/results.tsv"
 
     mkdir -p "$V1_OUTPUT"
 
@@ -130,11 +135,10 @@ if [[ -z "$ONLY" || "$ONLY" == "verification1" ]]; then
     rm -rf "$V1_OUTPUT"
     mkdir -p "$V1_OUTPUT"
 
-    # --ref-check warn, not the default fail, because this fixture is known to be defective:
-    # three of its records carry a REF allele that does not match GRCh38 (issue #19). The check
-    # still runs and still names them in the log -- the suite is not hiding them, it is carrying
-    # on past a defect it has already reported. Remove this flag when #19 is fixed; the suite
-    # will then fail if the fixture regresses, which is what we want it to do.
+    # The default --ref-check fail, deliberately. Issue #19 is fixed: the three records whose
+    # REF did not match GRCh38 have been corrected, so the fixture passes the check and the
+    # suite now fails if it ever regresses. This previously carried --ref-check warn; do not
+    # put it back to make a failing fixture pass.
 
     docker run --rm \
         -v "$V1_DIR":/data \
@@ -148,7 +152,6 @@ if [[ -z "$ONLY" || "$ONLY" == "verification1" ]]; then
         --output-dir /results \
         --input-dir /data \
         --no-liftover \
-        --ref-check warn \
         --keep-tmp \
         --keep-tables
 
@@ -163,18 +166,90 @@ if [[ -z "$ONLY" || "$ONLY" == "verification1" ]]; then
         RESULTS+=("  verification1: FAIL (MAF missing)")
         FAIL_COUNT=$((FAIL_COUNT + 1))
     else
+        # `|| true` because verify.py's exit status is read below rather than aborting the
+        # run here: a failure in this suite must not stop verification3, verification4 and
+        # the local-source checks from executing, which is what used to happen.
         python3 "$V1_DIR/verify.py" \
             --maf "$V1_MAF" \
             --token "$TOKEN" \
-            --output "$V1_RESULTS"
+            --output "$V1_RESULTS" || true
 
-        failures=$(tail -n +2 "$V1_RESULTS" 2>/dev/null \
-            | awk -F'\t' '$2 ~ /MISMATCH|ERROR|COVERAGE_GAP/' | wc -l | tr -d ' ')
-        if [[ "$failures" -eq 0 ]]; then
-            RESULTS+=("  verification1: PASS")
+        # The Result column, found by name. This previously tested $2 -- the Sample column,
+        # which never contains any of these words -- so the count was always zero and
+        # verification1 was recorded as PASS unconditionally, whatever verify.py reported.
+        if [[ -f "$V1_RESULTS" ]]; then
+            mismatches=$(awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if($i=="Result") c=i; next}
+                                      c && $c ~ /^MISMATCH$/ {n++} END{print n+0}' "$V1_RESULTS")
+            notes=$(awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if($i=="Result") c=i; next}
+                                 c && $c ~ /^(ERROR|COVERAGE_GAP)/ {n++} END{print n+0}' "$V1_RESULTS")
+        else
+            mismatches=1; notes=0
+        fi
+
+        # Empty-column audit: every column that carries no value on any variant must be
+        # listed with a reason. ONCOKB_VUS was empty on every row of every run for years
+        # because the code read the API's "vus" field as "VUS", and nothing could notice --
+        # an absent key, a null value and an inapplicable field are the same empty cell.
+        echo ""
+        echo "----------------------------------------------------------------"
+        echo " VERIFICATION 1: Empty-column audit"
+        echo "----------------------------------------------------------------"
+        # Both files, and the second is the one that matters. The audit used to run only on
+        # the intermediate FINAL_Table MAF, which is written before post_analysis -- so a
+        # column that post_analysis itself emptied passed the audit. End_Position was blank
+        # on 44 of 44 rows of the Tier 1 MAF, the file the laboratory reads, and this audit
+        # existed to catch exactly that and was pointed one step too early.
+        V1_ONCOKB_MAF="$V1_OUTPUT/FINAL_Table/verification1.oncoKB.maf"
+        V1_TIER1_MAF="$V1_OUTPUT/output/Final_result_tier1.maf"
+        AUDIT_EXIT=0
+        # The Tier 1 MAF takes a second allowlist. post_analysis pads the OncoKB indexed
+        # columns out to a fixed count, so patterns that are needed there are stale for
+        # FINAL_Table, where every slot that exists is populated.
+        for maf in "$V1_ONCOKB_MAF" "$V1_TIER1_MAF"; do
+            if [[ -f "$maf" ]]; then
+                echo "--- $(basename "$(dirname "$maf")")/$(basename "$maf")"
+                EXTRA_ALLOW=()
+                if [[ "$maf" == "$V1_TIER1_MAF" ]]; then
+                    EXTRA_ALLOW=(--allowlist "$V1_DIR/empty_columns_allowed_tier1.tsv")
+                fi
+                python3 "$PROJECT_DIR/scripts/audit_empty_columns.py" \
+                    --maf "$maf" \
+                    --allowlist "$V1_DIR/empty_columns_allowed.tsv" \
+                    ${EXTRA_ALLOW[@]+"${EXTRA_ALLOW[@]}"} || AUDIT_EXIT=$?
+            else
+                echo "SKIP: $maf not found"
+            fi
+        done
+
+        # Transcript provenance: per column, did the value come from the transcript the user
+        # supplied? Reported rather than enforced, because the pipeline has columns that are
+        # legitimately not transcript-specific and 29 dbNSFP columns that are not resolved to
+        # the reported transcript at all (issue #29). The point is that it is stated on every
+        # run instead of being invisible.
+        echo ""
+        echo "----------------------------------------------------------------"
+        echo " VERIFICATION 1: Transcript provenance"
+        echo "----------------------------------------------------------------"
+        if [[ -f "$V1_ONCOKB_MAF" ]]; then
+            python3 "$PROJECT_DIR/scripts/transcript_provenance.py" \
+                --maf "$V1_ONCOKB_MAF" \
+                --transcripts "$V1_DIR/verification1_transcripts.txt" || true
+        else
+            echo "SKIP: $V1_ONCOKB_MAF not found"
+        fi
+
+        if [[ "$mismatches" -eq 0 && "$AUDIT_EXIT" -eq 0 ]]; then
+            if [[ "$notes" -gt 0 ]]; then
+                RESULTS+=("  verification1: PASS (${notes} unanswered API calls / known coverage gaps)")
+            else
+                RESULTS+=("  verification1: PASS")
+            fi
             PASS_COUNT=$((PASS_COUNT + 1))
         else
-            RESULTS+=("  verification1: FAIL (${failures} issues — see $V1_RESULTS)")
+            detail=""
+            [[ "$mismatches" -gt 0 ]] && detail="${mismatches} mismatch(es)"
+            [[ "$AUDIT_EXIT" -ne 0 ]] && detail="${detail:+$detail, }empty-column audit failed"
+            RESULTS+=("  verification1: FAIL (${detail} — see $V1_RESULTS)")
             FAIL_COUNT=$((FAIL_COUNT + 1))
         fi
     fi
@@ -246,10 +321,17 @@ if [[ -z "$ONLY" || "$ONLY" == "localsources" ]]; then
     elif python3 "$SCRIPT_DIR/verify_local_sources.py" \
             --maf "$LOCAL_MAF" --refs "$REFS_DIR" \
             --output "$SCRIPT_DIR/verification1/local_source_results.tsv"; then
-        RESULTS+=("  localsources: PASS")
+        n_err=$(awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if($i=="Result") c=i; next}
+                              c && $c ~ /^ERROR/ {n++} END{print n+0}' \
+                "$SCRIPT_DIR/verification1/local_source_results.tsv" 2>/dev/null || echo 0)
+        if [[ "$n_err" -gt 0 ]]; then
+            RESULTS+=("  localsources: PASS (${n_err} unanswered API calls)")
+        else
+            RESULTS+=("  localsources: PASS")
+        fi
         PASS_COUNT=$((PASS_COUNT + 1))
     else
-        RESULTS+=("  localsources: FAIL")
+        RESULTS+=("  localsources: FAIL (mismatches — see local_source_results.tsv)")
         FAIL_COUNT=$((FAIL_COUNT + 1))
     fi
 fi
@@ -266,4 +348,26 @@ echo ""
 echo "  Passed: ${PASS_COUNT}   Failed: ${FAIL_COUNT}"
 echo "████████████████████████████████████████████████████████████"
 
+# ==============================================================================
+# One publishable report from everything the run produced. Composed last, so the
+# local-source checks and verification3 have written their results first. It reads only
+# files the run wrote, and says so where one is missing rather than omitting the section.
+# ==============================================================================
+if [[ -f "$V1_DIR/output/output/Final_result_tier1.maf" ]]; then
+    echo ""
+    echo "================================================================"
+    echo " VERIFICATION REPORT"
+    echo "================================================================"
+    python3 "$PROJECT_DIR/scripts/verification_report.py" \
+        --verification1 "$V1_DIR" \
+        --vcf "$V1_DIR/verification1.vcf" \
+        --verification3 "$PROJECT_DIR/tests/verification3/results.tsv" \
+        --allowlist "$V1_DIR/empty_columns_allowed.tsv" \
+        --out "$PROJECT_DIR/tests/VERIFICATION_REPORT.md" \
+        --pdf "$PROJECT_DIR/tests/VERIFICATION_REPORT.pdf" || true
+fi
+
+# The suite's verdict, asserted last so it is this script's exit status. It used to be the
+# final line; the report block was appended after it, which made the report's status the
+# script's and silently turned every failing run into a passing one.
 [[ "$FAIL_COUNT" -eq 0 ]]

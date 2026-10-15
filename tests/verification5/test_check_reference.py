@@ -273,27 +273,129 @@ FIXTURE = os.path.join(os.path.dirname(__file__), "..", "verification1", "verifi
 
 
 @pytest.mark.skipif(not os.path.exists(FIXTURE), reason="verification1.vcf not present")
-class TestTheKnownBadFixture:
-    """verification1.vcf carries three records whose REF does not match GRCh38.
+class TestTheCorrectedFixture:
+    """verification1.vcf carried three records whose REF did not match GRCh38 (#19).
 
-    Asserted against a stub reference holding just those positions, so the test needs no
-    3 GB FASTA: the point is that the checker flags these and passes the others.
+    All three are now corrected, verified twice over: the REF against the GRCh38 FASTA,
+    and the resulting variant against OncoKB's byGenomicChange endpoint, which resolves
+    each corrected record to the alteration the fixture name claims -- Q209L, E1705K and
+    E746_A750del -- and resolves none of the originals to anything.
+
+    The test now guards the correction rather than the defect, so a regenerated fixture
+    cannot quietly reintroduce it.
     """
 
-    def test_the_three_known_bad_records_are_still_there(self):
+    # GRCh38. EGFR carries the anchor base, making it the canonical 15 bp in-frame
+    # deletion c.2236_2250del; the original wrote the deleted bases without an anchor
+    # and got the last one wrong. GNAQ and DICER1 are both minus-strand genes whose
+    # alleles had been written on the gene's strand instead of the genome's.
+    CORRECTED = {"GNAQ_Q209L":    ("chr9",  77794572, "T", "A"),
+                 "DICER1_E1705K": ("chr14", 95094139, "C", "T"),
+                 "EGFR_del19":    ("chr7",  55174772, "GGAATTAAGAGAAGCA", "G")}
+
+    # The same three records as they were before #19 was fixed, used as a positive control
+    # below: the checker must flag exactly these against GRCh38 and nothing else.
+    PRE_FIX = {"GNAQ_Q209L":    ("chr9",  77794572, "A", "T"),
+               "DICER1_E1705K": ("chr14", 95094139, "G", "A"),
+               "EGFR_del19":    ("chr7",  55174772, "GAATTAAGAGAAGCAT", "G")}
+
+    def test_the_fixture_carries_the_corrected_alleles(self):
+        import re
+        text = open(FIXTURE).read()
+        for vid, (chrom, pos, ref, alt) in self.CORRECTED.items():
+            assert re.search(rf"^{chrom}\t{pos}\t{vid}\t{ref}\t{alt}\t", text, re.M), (
+                f"{vid} does not carry the corrected alleles {ref}>{alt} at {chrom}:{pos}; "
+                f"if the fixture was regenerated, it has reintroduced issue #19")
+
+    def test_the_strand_flipped_alleles_are_gone(self):
+        """The specific wrong values, named, so a partial revert is caught too."""
         import re
         text = open(FIXTURE).read()
         for vid, ref, alt in (("GNAQ_Q209L", "A", "T"),
                               ("DICER1_E1705K", "G", "A"),
                               ("EGFR_del19", "GAATTAAGAGAAGCAT", "G")):
-            assert re.search(rf"\t{vid}\t{ref}\t{alt}\t", text), (
-                f"{vid} no longer has the alleles this test was written against; "
-                f"if the fixture was corrected, update or remove this test")
+            assert not re.search(rf"\t{vid}\t{ref}\t{alt}\t", text), (
+                f"{vid} is back to the pre-#19 alleles {ref}>{alt}")
 
-    def test_the_correct_alleles_are_recorded_for_whoever_fixes_it(self):
-        # GRCh38, verified against the reference: chr9:77794572 T>A,
-        # chr14:95094139 C>T, chr7:55174772 GGAATTAAGAGAAGCA>G
-        expected = {"GNAQ_Q209L": ("chr9", 77794572, "T", "A"),
-                    "DICER1_E1705K": ("chr14", 95094139, "C", "T"),
-                    "EGFR_del19": ("chr7", 55174772, "GGAATTAAGAGAAGCA", "G")}
-        assert len(expected) == 3
+    # Overridable, because the reference set does not live in the repository and its
+    # location differs per machine. Skipped rather than failed where it is absent.
+    HG38 = os.environ.get("SMART_HG38",
+                          os.path.expanduser("~/Documents/external/refs/liftover/hg38.fa"))
+
+    @pytest.mark.skipif(not os.path.exists(
+        os.environ.get("SMART_HG38",
+                       os.path.expanduser("~/Documents/external/refs/liftover/hg38.fa")) + ".fai"),
+        reason="GRCh38 FASTA not present on this machine (set SMART_HG38 to point at it)")
+    def test_the_two_committed_copies_agree(self):
+        """The fixture's second defect in #19: `.vcf` and `.vcf.gz` had different contents.
+
+        The pipeline reads the `.gz`, so the plain file was documentation that disagreed with
+        what was tested -- it held 18 records against the gz's 22, missing EGFR_T790M,
+        KRAS_G12C, PIK3CA_E545K and TP53_R248W, which is where the wrong figure "18 variants"
+        came from. Nothing checked this, and regenerating one from the other is exactly how
+        four variants silently stop being tested.
+        """
+        plain = [l for l in open(FIXTURE).read().splitlines() if not l.startswith("#")]
+        with gzip.open(FIXTURE + ".gz", "rt") as fh:
+            gz = [l for l in fh.read().splitlines() if not l.startswith("#")]
+        assert plain == gz, (
+            f"verification1.vcf has {len(plain)} records and verification1.vcf.gz has "
+            f"{len(gz)}, or their contents differ; the pipeline reads the .gz, so they must "
+            f"be generated from one another and committed together")
+        assert len(gz) == 45, f"the fixture should hold 45 records, found {len(gz)}"
+
+    @pytest.mark.skipif(not os.path.exists(
+        os.environ.get("SMART_HG38",
+                       os.path.expanduser("~/Documents/external/refs/liftover/hg38.fa")) + ".fai"),
+        reason="GRCh38 FASTA not present on this machine (set SMART_HG38 to point at it)")
+    def test_the_checker_detects_the_pre_fix_alleles_against_the_real_assembly(self):
+        """The positive control, and the reason the test above means anything.
+
+        A checker that returned "no mismatches" unconditionally would pass every other test
+        here that uses the real FASTA. So feed it the three alleles as they were before #19
+        was fixed and require it to flag all three, reading the same assembly. The detection
+        tests elsewhere in this file use a stub FASTA; this one uses GRCh38 itself.
+        """
+        import re
+        text = open(FIXTURE).read()
+        for vid, (chrom, pos, ref, alt) in self.PRE_FIX.items():
+            text = re.sub(rf"^{chrom}\t{pos}\t{vid}\t[^\t]+\t[^\t]+",
+                          f"{chrom}\t{pos}\t{vid}\t{ref}\t{alt}", text, flags=re.M)
+        import tempfile
+        with tempfile.NamedTemporaryFile("w", suffix=".vcf", delete=False) as fh:
+            fh.write(text)
+            broken = fh.name
+        try:
+            ref = cr.Reference(self.HG38)
+            try:
+                res = cr.check(broken, ref)
+            finally:
+                ref.close()
+        finally:
+            os.unlink(broken)
+        flagged = {m[2] for m in res["mismatches"]}
+        assert flagged == set(self.PRE_FIX), (
+            f"the checker flagged {sorted(flagged)} against GRCh38; it must flag all three "
+            f"of {sorted(self.PRE_FIX)}, or it is not reading the assembly")
+        # and it must not flag anything else: the other 15 records are correct
+        assert res["n_mismatches"] == 3, f"also flagged records that are correct: {res['mismatches']}"
+
+    def test_the_checker_passes_the_fixture_against_the_real_assembly(self):
+        """The end-to-end assertion: run the real checker over the real FASTA.
+
+        The other tests in this file compare the fixture against values recorded in this
+        file, so they would both be wrong together if the recorded values were. This one
+        reads the assembly, and it is the reason the fixture can be trusted. It skips
+        where the FASTA is absent rather than passing vacuously.
+        """
+        ref = cr.Reference(self.HG38)
+        try:
+            res = cr.check(FIXTURE, ref)
+        finally:
+            ref.close()
+        assert res["n_mismatches"] == 0, (
+            f"REF mismatches against GRCh38: {res['mismatches']}")
+        assert res["checked"] == 41, (
+            f"{res['checked']} records were checked; the fixture holds 45, of which 4 have "
+            f"symbolic ALTs, so 41 should be checkable -- a different number means something "
+            f"is being skipped that should not be")

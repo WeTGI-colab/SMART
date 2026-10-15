@@ -195,7 +195,11 @@ ONCOKB_FIELD_MAP = [
     ("ONCOKB_ALLELE_EXIST",     lambda d: _bool_str(d.get("alleleExist")),                         "alleleExist"),
     ("ONCOKB_GENE_SUMMARY",     lambda d: _str(d.get("geneSummary")),                              "geneSummary"),
     ("ONCOKB_HOTSPOT",          lambda d: _bool_str(d.get("hotspot")),                             "hotspot"),
-    ("ONCOKB_VUS",              lambda d: _bool_str(d.get("VUS")),                                 "VUS"),
+    # "vus", lower case: the API's own key. This read "VUS" and so compared an empty string
+    # against an empty column -- the pipeline had the same typo, so the two agreed on nothing
+    # and the check passed for years. Fixing only one side turns 32 rows into mismatches,
+    # which is how this was found. See the CHANGELOG entry on ONCOKB_VUS.
+    ("ONCOKB_VUS",              lambda d: _bool_str(d.get("vus")),                                 "vus"),
     ("ONCOKB_highestFdaLevel",  lambda d: _str(d.get("highestFdaLevel") or ""),                    "highestFdaLevel"),
     ("ONCOKB_VARIANT_SUMMARY",  lambda d: _str(d.get("variantSummary")),                           "variantSummary"),
     ("GENE_IN_ONCOKB",          lambda d: _bool_str(d.get("geneExist")),                           "geneExist"),
@@ -235,7 +239,80 @@ ONCOKB_COVERAGE_HINTS = {
         "diagnosticSummary. Variants with PROG level: IDH1 R132H (Px2), "
         "NRAS Q61R (Px1), TP53 R175H (Px1). To test, re-query with a specific tumor type."
     ),
+    "LEVEL_3B": (
+        "Cannot be populated by any variant while the pipeline queries pan-cancer, so do "
+        "not try to fix this by adding variants. LEVEL_3B means 'FDA-approved drug in "
+        "another indication', which only exists relative to a stated tumour type. Measured: "
+        "BRAF V600E returns levels 1,2,3A,4 pan-cancer and 1,2,3B for Colorectal; ERBB2 "
+        "V777L returns 1,2,3A,4 pan-cancer and 3B for Colorectal. 66 variants probed "
+        "pan-cancer across genes where 3B evidence exists, 3B found in none of them. Same "
+        "root cause as the two *Summary fields above. See issue #26."
+    ),
+    "ONCOKB_VUS": (
+        "True only for variants OncoKB has curated as a variant of unknown significance, "
+        "which the canonical drivers in this dataset are not. CDH1 R63* is one "
+        "(oncogenic='Likely Oncogenic', vus=True) if a variant is to be added for it."
+    ),
 }
+
+
+
+# ---------------------------------------------------------------------------
+# HTTP with retries
+# ---------------------------------------------------------------------------
+
+RETRY_ATTEMPTS = 6
+RETRY_STATUSES = {429, 500, 502, 503, 504}
+
+
+def http_request(method, url, *, retries=RETRY_ATTEMPTS, **kw):
+    """One HTTP call, retried on the failures that are the service's and not ours.
+
+    Every call here was a single attempt, which is why a verification run reported a
+    varying handful of ERRORs: Ensembl's REST service returns 500 under load and times out,
+    and one unlucky moment lost a check that would have succeeded a second later. An ERROR
+    is not a disagreement -- the comparison simply never happened -- so it is worth some
+    patience to turn it into a real answer.
+
+    Retried: the 5xx family, 429, and the connection and read timeouts. Not retried: 400 and
+    404, which are answers -- the service understood the query and has nothing -- and 401 and
+    403, which will not improve by asking again.
+
+    `Retry-After` is honoured where the service sends it, because guessing against a rate
+    limiter is how a client gets blocked. Otherwise the wait doubles from one second with a
+    little jitter, so several clients backing off together do not synchronise.
+    """
+    import random
+    last = None
+    for attempt in range(retries):
+        try:
+            r = requests.request(method, url, **kw)
+            if r.status_code in RETRY_STATUSES and attempt < retries - 1:
+                wait = r.headers.get("Retry-After")
+                try:
+                    delay = float(wait) if wait else None
+                except ValueError:
+                    delay = None
+                time.sleep(delay if delay is not None
+                           else min(2 ** attempt, 30) + random.uniform(0, 0.4))
+                last = f"HTTP {r.status_code}"
+                continue
+            return r
+        except (requests.Timeout, requests.ConnectionError) as e:
+            last = type(e).__name__
+            if attempt == retries - 1:
+                raise
+            time.sleep(min(2 ** attempt, 30) + random.uniform(0, 0.4))
+    raise requests.RequestException(
+        f"{url.split('?')[0]} did not answer after {retries} attempts ({last})")
+
+
+def http_get(url, **kw):
+    return http_request("GET", url, **kw)
+
+
+def http_post(url, **kw):
+    return http_request("POST", url, **kw)
 
 
 def clean_protein_change(hgvsp_short: str) -> str:
@@ -247,12 +324,30 @@ def clean_protein_change(hgvsp_short: str) -> str:
     return s
 
 
-def query_oncokb_mutation(hugo: str, alteration: str, token: str) -> dict:
+def query_oncokb_mutation(hugo: str, alteration: str, token: str,
+                          consequence: str = "") -> dict:
+    """Query OncoKB the way MafAnnotator does, consequence included.
+
+    The consequence is not decoration. Without it OncoKB answers only about the literal
+    alteration string; with it, it will also resolve a positional or splice
+    interpretation. TP53 `T125=` is the case that proved it: `alteration=T125=` alone
+    returns `Unknown`, while `alteration=T125=&consequence=Splice_Region` returns
+    `Likely Oncogenic` / `Likely Loss-of-function` -- which is what the pipeline's own
+    annotation holds, because `AnnotatorCore` sends the consequence from
+    `CONSEQUENCE_HEADERS = ['VARIANT_CLASSIFICATION', 'MUTATION_TYPE']`.
+
+    Omitting it made this verifier's query strictly weaker than the pipeline's and then
+    report the pipeline as wrong -- a check that fails correct output is as bad as one
+    that passes broken output, and costs more, because it trains the reader to ignore
+    the two red lines that are always there.
+    """
     url = f"{ONCOKB_BASE}/annotate/mutations/byProteinChange"
     params = {"hugoSymbol": hugo, "alteration": alteration,
                "referenceGenome": REF_GENOME}
+    if consequence:
+        params["consequence"] = consequence
     headers = {"Authorization": f"Bearer {token}", "accept": "application/json"}
-    r = requests.get(url, params=params, headers=headers, timeout=15)
+    r = http_get(url, params=params, headers=headers, timeout=30)
     r.raise_for_status()
     return r.json()
 
@@ -262,7 +357,7 @@ def query_oncokb_cna(hugo: str, cna_type: str, token: str) -> dict:
     params = {"hugoSymbol": hugo, "copyNameAlterationType": cna_type,
                "referenceGenome": REF_GENOME}
     headers = {"Authorization": f"Bearer {token}", "accept": "application/json"}
-    r = requests.get(url, params=params, headers=headers, timeout=15)
+    r = http_get(url, params=params, headers=headers, timeout=30)
     r.raise_for_status()
     return r.json()
 
@@ -304,8 +399,12 @@ def run_oncokb(df: pd.DataFrame, token: str) -> list:
                 if not alteration:
                     print(f"  SKIP: no protein change for {vid}")
                     continue
-                print(f"  → Mutation query: {hugo} {alteration}")
-                api_data = query_oncokb_mutation(hugo, alteration, token)
+                # Variant_Classification, because that is the header MafAnnotator
+                # reads (CONSEQUENCE_HEADERS), so the two queries are the same query.
+                consequence = str(row.get("Variant_Classification", "") or "").strip()
+                print(f"  → Mutation query: {hugo} {alteration}"
+                      f"{' [' + consequence + ']' if consequence else ''}")
+                api_data = query_oncokb_mutation(hugo, alteration, token, consequence)
             time.sleep(0.2)
         except Exception as exc:
             print(f"  ERROR querying OncoKB: {exc}")
@@ -462,7 +561,7 @@ def query_vep_hgvs(hgvs: str, refseq: bool = False) -> list:
     }
     if refseq:
         params["refseq"] = 1
-    r = requests.get(url, params=params, headers=VEP_HEADERS, timeout=20)
+    r = http_get(url, params=params, headers=VEP_HEADERS, timeout=30)
     if r.status_code in (400, 404):
         return []
     r.raise_for_status()
@@ -495,7 +594,17 @@ def compare_vep(maf_val: str, api_val: str, col: str) -> str:
     if maf_val == api_val:               return "PASS"
     if maf_val.lower() == api_val.lower(): return "PASS"
     if col == "Consequence":
-        if set(maf_val.split(",")) == set(api_val.split(",")): return "PASS"
+        # Split on both separators and compare as sets. VEP writes a variant's several
+        # consequences '&'-joined into the VCF and the MAF, while the REST API returns them
+        # comma-joined and in a different order, so the two agree in content and never in
+        # spelling. Splitting on ',' alone -- which this did -- compares a one-element set
+        # against a two-element one: MET c.3028+3A>G is
+        # 'splice_donor_region_variant&intron_variant' in the MAF and
+        # 'intron_variant,splice_donor_region_variant' from the API. It went unnoticed until
+        # a variant with more than one consequence was added to the cohort.
+        def _csq(v):
+            return {p.strip().lower() for p in v.replace("&", ",").split(",") if p.strip()}
+        if _csq(maf_val) == _csq(api_val): return "PASS"
     if col == "HGVSp":
         if _strip_hgvsp_version(maf_val) == api_val: return "PASS"
     if col == "Protein_position":
@@ -708,7 +817,7 @@ def query_civic_variant(gene: str, variant_name: str):
     Returns the first GeneVariant whose feature.name matches the gene, or None.
     """
     payload = {"query": _CIVIC_QUERY, "variables": {"name": variant_name}}
-    r = requests.post(CIVIC_GRAPHQL_URL, json=payload, headers=CIVIC_HEADERS, timeout=20)
+    r = http_post(CIVIC_GRAPHQL_URL, json=payload, headers=CIVIC_HEADERS, timeout=30)
     r.raise_for_status()
     data = r.json()
     nodes = data.get("data", {}).get("variants", {}).get("nodes", [])
@@ -728,7 +837,7 @@ def query_civic_variant_by_id(variant_id: int):
     Used to validate the MAF's annotated CIViC ID against the live API.
     """
     payload = {"query": _CIVIC_QUERY_BY_ID, "variables": {"id": variant_id}}
-    r = requests.post(CIVIC_GRAPHQL_URL, json=payload, headers=CIVIC_HEADERS, timeout=20)
+    r = http_post(CIVIC_GRAPHQL_URL, json=payload, headers=CIVIC_HEADERS, timeout=30)
     r.raise_for_status()
     data = r.json()
     node = data.get("data", {}).get("variant")
@@ -866,7 +975,17 @@ def run_civic(df: pd.DataFrame) -> list:
                 "MAF_Value":   "empty",
                 "API_Value":   f"id={api_id} name={api_name}",
                 "Result":      "COVERAGE_GAP",
-                "Note":        "CIViC VCF snapshot may be outdated or coordinates differ",
+                # The snapshot is usually not the reason. CIViC encodes 480 of its 1,261
+                # records (38%) with a symbolic ALT -- <inframe_deletion>, <N_A>,
+                # <frameshift_variant> and so on -- and VEP annotates CIViC with
+                # `exact` matching, which requires the alleles to agree. So no indel or
+                # structural record can ever match, however current the snapshot is.
+                # EGFR E746_A750del is present at the right position, as
+                # `GGAATTAAGAGAAGC > <inframe_deletion>`, and still cannot be matched.
+                # See issue #24.
+                "Note":        ("CIViC record likely carries a symbolic ALT, which VEP's "
+                                "exact matching cannot match; or the snapshot is older "
+                                "than the API"),
             })
             continue
 
@@ -1174,11 +1293,25 @@ def main():
         pd.DataFrame(all_results).to_csv(out_path, sep="\t", index=False)
         print(f"\nResults written to: {out_path}")
 
-    if total_mismatch > 0 or total_error > 0:
+    # An ERROR is a third-party service failing to answer -- Ensembl REST returns 500s and
+    # times out, a varying handful per run -- not a disagreement with SMART's annotation.
+    # Counting them as failures meant a transient outage failed this suite, and because
+    # run_all_verifications.sh runs under `set -e` that aborted the whole run before
+    # verification3, verification4 and the local-source checks executed. They are still
+    # counted, still written to results.tsv and still named in the summary, but only a real
+    # MISMATCH is SMART's fault. A run with errors has checked less than a clean one, so the
+    # message says so rather than claiming a full pass.
+    if total_mismatch > 0:
         print("\nRESULT: FAILED")
         sys.exit(1)
-    elif total_gap > 0:
-        print(f"\nRESULT: PASSED WITH {total_gap} COVERAGE GAP(S) — check CIViC VCF snapshot")
+    elif total_gap > 0 or total_error > 0:
+        parts = []
+        if total_gap:
+            parts.append(f"{total_gap} COVERAGE GAP(S) — see issue #24")
+        if total_error:
+            parts.append(f"{total_error} UNANSWERED API QUER"
+                         f"{'Y' if total_error == 1 else 'IES'} — not checked, re-run to confirm")
+        print("\nRESULT: PASSED WITH " + " AND ".join(parts))
         sys.exit(0)
     else:
         print("\nRESULT: ALL CHECKS PASSED")

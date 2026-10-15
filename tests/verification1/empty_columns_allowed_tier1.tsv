@@ -1,0 +1,15 @@
+# Columns empty only in the Tier 1 MAF (output/Final_result_tier1.maf), combined with
+# empty_columns_allowed.tsv rather than replacing it.
+#
+# They are not in the shared list because they are populated in FINAL_Table and empty
+# here: post_analysis pads the OncoKB indexed columns out to a fixed count, so a pattern
+# that is needed for this table is stale for the other. Splitting the lists keeps both
+# directions of the audit meaningful -- an unlisted empty column is still reported, and a
+# listed column that gains data is still reported stale.
+ONCOKB_TX_*_approvedIndications	structural	OncoKB fills this only where that treatment entry carries an FDA-approved indication string; most levels have none, and 22 of the sibling indexed columns do carry data, so the code path is exercised
+ONCOKB_TX_*_levelExcludedCancerTypes	structural	OncoKB fills this only where the evidence level excludes a cancer type; TX_1 and TX_22 do carry one in this cohort
+ONCOKB_TX_*_abstracts	structural	OncoKB cites a conference abstract instead of a paper for some evidence only; 18 of these indexed columns carry data here
+ONCOKB_DIAG_*_abstracts	structural	as above, for diagnostic rather than therapeutic evidence
+ONCOKB_errors	structural	the annotator's per-row error text. Empty is the intended state, and because this entry exists, a populated one is reported as stale -- which is the alarm wanted
+ONCOKB_otherSignificantSensitiveLevels	cohort	a variant whose OncoKB record has sensitive levels besides the highest. Distinct from ONCOKB_OTHER_SENS_LVLS, which is this column after the Tier 3 rename
+ONCOKB_otherSignificantResistanceLevels	cohort	a variant with resistance levels besides the highest. Distinct from ONCOKB_OTHER_RESIST_LVLS, the renamed Tier 3 column

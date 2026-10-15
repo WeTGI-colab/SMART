@@ -90,12 +90,71 @@ RUN pip3 install --no-cache-dir "tensorflow-cpu==2.15.*" "spliceai==1.3.1" && \
     python3 -c "import tensorflow, spliceai; print('tensorflow', tensorflow.__version__, 'ok')"
 
 # ---------- OncoKB Annotator ----------
+# Pinned. An unpinned clone made the annotator's version a function of the build date
+# rather than of SMART's version, so two images carrying the same SMART version could
+# annotate differently and neither was reproducible. Measured across the published
+# images: smart:1.0.7 shipped annotator 4bfe720 (2026-06-25) while 1.0.8, 2.0.0 and
+# 2.1.0 all shipped 77521cd (2026-08-25) -- a difference nothing recorded. It also makes
+# a collaborator's bug report unanswerable, because the code they ran cannot be
+# identified from the version they name (issue 32).
+#
+# Moving the pin is a deliberate act: the annotator decides how every variant is queried
+# (see resolve_query_type_for_row, whose fallback to Genomic_Change issue 32 turns on),
+# so a change there changes clinical output. Bump it with a measured run, not silently.
+ARG ONCOKB_ANNOTATOR_COMMIT=77521cd2fc568422d87d84b73c24ca65b670a8e4
 RUN git clone https://github.com/oncokb/oncokb-annotator.git /opt/oncokb-annotator && \
-    pip3 install --no-cache-dir -r /opt/oncokb-annotator/requirements/common.txt || true
+    git -C /opt/oncokb-annotator checkout --quiet "$ONCOKB_ANNOTATOR_COMMIT" && \
+    [ "$(git -C /opt/oncokb-annotator rev-parse HEAD)" = "$ONCOKB_ANNOTATOR_COMMIT" ] && \
+    echo "oncokb-annotator pinned at $ONCOKB_ANNOTATOR_COMMIT"
+# Separate layer, because the `|| true` here is for the requirements file (optional
+# upstream) and must not extend to the clone, the checkout or the pin assertion above:
+# on one chain it would leave an image built from an unknown commit reporting success.
+RUN pip3 install --no-cache-dir -r /opt/oncokb-annotator/requirements/common.txt || true
+
+# Remove the annotator's ASCII fold. `append_annotation_to_file` ends with
+#
+#     rowstr = '\t'.join(row)
+#     rowstr = rowstr.encode('ascii', 'ignore').decode('ascii')
+#     outf.write(rowstr + "\n")
+#
+# so every row it writes loses any character outside ASCII, with errors='ignore' -- deleted,
+# not replaced, and not reported. It rewrites every row of the MAF, so the loss is not limited
+# to the columns OncoKB adds: ClinVar disease names, OncoKB summaries and drug names are all
+# affected. `Diffuse_low-grade_glioma,_MAPK_pathway-altered` reaches the MAF as
+# `MAPK_pathwayaltered`, which is not a term that exists and no longer matches its source.
+# See issue 27.
+#
+# Safe to remove: the fold is the last operation before the write and feeds nothing. The API
+# calls happen earlier, on the parsed row values, so nothing downstream in the annotator sees
+# `rowstr`. The container's Python reports UTF-8 as its preferred encoding, so the write
+# succeeds.
+#
+# Asserted in three steps, because a silent no-op would put us back to deleting characters
+# without knowing: the target must be present before (so an upstream removal is noticed rather
+# than assumed), absent after, and the file must still parse.
+RUN f=/opt/oncokb-annotator/AnnotatorCore.py && \
+    grep -q "rowstr.encode('ascii', 'ignore')" "$f" && \
+    sed -i "s|^\( *\)rowstr = rowstr.encode('ascii', 'ignore').decode('ascii')|\1# SMART: ASCII fold removed, see issue 27 -- it deleted every non-ASCII character|" "$f" && \
+    ! grep -q "rowstr.encode('ascii', 'ignore')" "$f" && \
+    python3 -c "import ast; ast.parse(open('$f').read())" && \
+    echo "AnnotatorCore.py: ASCII fold removed"
 
 # ---------- Pipeline scripts ----------
 COPY scripts/ /opt/smart/scripts/
-COPY reference_lists/svig_uk_canonical_variants.tsv reference_lists/svig_uk_vcep_population_thresholds.tsv /opt/smart/reference_lists/
+# Every reference list the Tier 4 classifier resolves a default path for. Two were
+# missing, and the consequence was silent rather than fatal: without
+# svig_uk_functional_assays.tsv the O10/B6 assay route cannot load and the rule falls
+# back to the OncoKB mutation-effect proxy capped at supporting (1 point instead of the
+# assay table's 2), and without svig_uk_gene_specific_splice.tsv the TP53 exon 4/6/9
+# synonymous provision the guideline requires never applies. Nothing in the output said
+# the route had been unavailable, so a container run and a local run gave different
+# classifications for the same variant with no visible reason.
+COPY reference_lists/svig_uk_canonical_variants.tsv \
+     reference_lists/svig_uk_vcep_population_thresholds.tsv \
+     reference_lists/svig_uk_functional_assays.tsv \
+     reference_lists/svig_uk_functional_assay_scores.tsv \
+     reference_lists/svig_uk_gene_specific_splice.tsv \
+     /opt/smart/reference_lists/
 RUN chmod +x /opt/smart/scripts/*.sh /opt/smart/scripts/*.py 2>/dev/null || true
 
 # ---------- Working directory ----------

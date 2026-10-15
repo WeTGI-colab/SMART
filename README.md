@@ -76,7 +76,7 @@ This logic applies to both SNV/indel and CNA variants, ensuring consistent gene 
 | Tool | Version | Purpose |
 |------|---------|---------|
 | GATK | 4.6.0.0 | LiftOver (hg19 → hg38) |
-| Ensembl VEP | 114.2 | Functional annotation |
+| Ensembl VEP | 114.0 | Functional annotation |
 | SpliceAI plugin | 1.3 | Splice-site impact prediction |
 | REVEL plugin | 1.3 | Missense pathogenicity scoring |
 | CADD plugin | v1.7 | Genome-wide deleteriousness scoring (optional — score files not shipped) |
@@ -108,7 +108,7 @@ SMART expects a reference directory with the following structure:
 │   ├── hg19ToHg38.over.chain       # UCSC chain file
 │   └── hg38.fa                      # GRCh38 reference genome + .fai + .dict
 ├── Plugins/                         # VEP plugin files (SpliceAI.pm, REVEL.pm, LOEUF.pm)
-├── SpliceAI/                        # ONLY for --spliceai lookup (91 GB)
+├── SpliceAI/                        # REQUIRED in both --spliceai modes (91 GB)
 │   ├── spliceai_scores.raw.snv.hg38.vcf.gz      (+.tbi)
 │   └── spliceai_scores.raw.indel.hg38.vcf.gz    (+.tbi)
 ├── SpliceAI-lookup/                 # ONLY for --spliceai compute (10 MB)
@@ -133,7 +133,8 @@ SMART expects a reference directory with the following structure:
 │   └── genie_o4_counts.cohort.tsv
 ├── dbNSFP/                          # OPTIONAL — extra in silico predictors (academic licence)
 │   └── dbNSFP5.0a_grch38.smart.gz               (+.tbi)
-└── homo_sapiens/                    # VEP cache directory
+└── homo_sapiens_merged/            # VEP cache directory -- the MERGED cache, because
+                                     # the pipeline runs vep with --merged
     └── 114_GRCh38/
 ```
 
@@ -155,7 +156,7 @@ These are two genuinely different setups and you only need one. The default is *
 
 | | `--spliceai lookup` | `--spliceai compute` *(default)* |
 |---|---|---|
-| **Reference data** | **91 GB** — `spliceai_scores.raw.{snv,indel}.hg38.vcf.gz` | **10 MB** — `gencode.v43.annotation.txt.gz`, plus the GRCh38 FASTA the pipeline already requires |
+| **Reference data** | **91 GB** — `spliceai_scores.raw.{snv,indel}.hg38.vcf.gz` | **10 MB** — `gencode.v43.annotation.txt.gz`, plus the GRCh38 FASTA the pipeline already requires. **Note:** the 91 GB tables are still checked for at startup in either mode (`entrypoint.sh`'s `REQUIRED_PATHS`), so `compute` does not yet let you omit them |
 | Speed | a `tabix` lookup, microseconds | model inference, ~0.6 s per variant |
 | Transcript | **none recorded.** One score per gene, computed on GENCODE v24 canonical (Dec 2015) | the transcript from your `--transcripts-file`, named in `SpliceAI_pred_SYMBOL` as `GENE--REFSEQ` |
 | Window | **±50 bp, fixed.** A splice effect further out is reported as `0.00` | 500 bp |
@@ -187,7 +188,7 @@ validation against the Broad's own service, is in
 ### 1. Clone and build
 
 ```bash
-git clone https://github.com/Manuel-DominguezCBG/SMART.git
+git clone https://github.com/WeTGI-colab/SMART.git
 cd SMART
 docker build -t smart:latest .
 ```
@@ -256,9 +257,11 @@ Usage:
   smart <ONCOKB_TOKEN> --transcripts-file FILE --ref-dir DIR [OPTIONS]
 
 Required:
-  <ONCOKB_TOKEN>                   OncoKB API token
-  --transcripts-file FILE          Transcript whitelist for prioritisation
   --ref-dir DIR                    Reference resources directory
+  --output-dir DIR                 Where results are written. The run aborts without it,
+                                   because results inside the container are lost on exit
+  <ONCOKB_TOKEN>                   OncoKB API token (not needed with --vep-only)
+  --transcripts-file FILE          Transcript whitelist (not needed with --vep-only)
 
 Options:
   --pass / --no-pass               Enable/disable PASS filtering (default: ON)
@@ -302,7 +305,7 @@ The pipeline produces three annotation files and one classification file:
 
 | File | Audience | Contents |
 |------|----------|----------|
-| `Final_result_tier1.maf` | Downstream tools | All non-dropped fields in standard MAF format (~1028 columns; exact count varies with the number of OncoKB treatment, diagnostic, and prognostic entries returned for the variants in the run) |
+| `Final_result_tier1.maf` | Downstream tools | All non-dropped fields in standard MAF format (1,165 columns in the reference run; the exact count varies with the number of OncoKB treatment, diagnostic, and prognostic entries returned for the variants in the run) |
 | `Final_result_tier2.tsv` | Bioinformaticians | Selected fields with two-row header (field names + metadata) |
 | `Final_result_tier3.tsv` | Clinical scientists | Clinically relevant fields with two-row header |
 | `Final_result_tier4.tsv` | Clinical scientists | SVIG-UK oncogenicity classification — kept separate from the annotation. Two-row header (field names; description, source and version of the classification system). One row per Tier 1 row: variant identifiers, tumour type and gene role used, final class and score, **one column per SVIG-UK code** (O1–O11, B1–B7) with the strength and points applied, the evidence behind every code, codes removed by combination rules, and the population, in silico and OncoKB values used. Every row carries `SVIG_UK_REVIEW_STATUS` (automated suggestion, to be confirmed by a clinical scientist) and `SVIG_UK_REVIEW_FLAGS`. A structured copy is written to `Final_result_tier4.json`. See [SVIG-UK oncogenicity classifier](#svig-uk-oncogenicity-classifier) |
@@ -326,12 +329,12 @@ When `--keep-tmp` is used, intermediate files are retained:
 The example below is taken from the [verification1](tests/verification1/) test run — 22 curated variants from a single sample. The variant shown is **IDH1 R132H**, a well-characterised oncogenic hotspot with OncoKB Level 1 actionability in glioma and cholangiocarcinoma.
 
 > **[Browse the full verification1 output interactively →](https://manuel-dominguezcbg.github.io/SMART/example-output.html)**
-> All three tier files (Tier 3: 77 cols · Tier 2: 670 cols · Tier 1: 1,028 cols) rendered as searchable,
+> All three tier files (Tier 3: 78 cols · Tier 2: 700 cols · Tier 1: 1,165 cols) rendered as searchable,
 > sortable tables with colour-coded OncoKB levels and per-tier column visibility controls.
 
 ---
 
-### Tier 3 — Clinical report &nbsp;(`Final_result_tier3.tsv` · 77 columns)
+### Tier 3 — Clinical report &nbsp;(`Final_result_tier3.tsv` · 78 columns)
 
 Optimised for clinical scientists. One row per variant, curated fields only, two-row header (field names + source metadata).
 
@@ -364,10 +367,10 @@ Optimised for clinical scientists. One row per variant, curated fields only, two
 
 ---
 
-### Tier 2 — Bioinformatics report &nbsp;(`Final_result_tier2.tsv` · 670 columns)
+### Tier 2 — Bioinformatics report &nbsp;(`Final_result_tier2.tsv` · 700 columns)
 
 Extends Tier 3 with:
-- Full gnomAD population stratification (exomes + genomes, 7 ancestry groups)
+- Full gnomAD population stratification (exomes, 9 ancestry groups; genomes, 10)
 - All four SpliceAI delta scores (AG, AL, DG, DL) per variant
 - Complete structured ClinVar and CIViC fields (variant type, consequence, disease, therapies, evidence level, AMP category)
 - Expanded OncoKB JSON arrays — every treatment, diagnostic, and prognostic implication is unpacked into indexed columns (`ONCOKB_TX_0_level`, `ONCOKB_TX_0_drugs`, `ONCOKB_TX_0_tumorType`, `ONCOKB_DIAG_0_level`, …)
@@ -378,17 +381,17 @@ Intended for bioinformatics QC, cohort-level analysis, and integration with down
 
 ---
 
-### Tier 1 — Full MAF &nbsp;(`Final_result_tier1.maf` · 1,028 columns)
+### Tier 1 — Full MAF &nbsp;(`Final_result_tier1.maf` · 1,165 columns)
 
-Standard MAF format carrying all non-dropped fields. Includes every `ONCOKB_TX_0` … `ONCOKB_TX_33` treatment expansion column, every diagnostic and prognostic implication entry, plus all raw VCF FORMAT fields.
+Standard MAF format carrying all non-dropped fields. Includes every `ONCOKB_TX_0` … `ONCOKB_TX_35` treatment expansion column (`ONCOKB_TX_0`–`ONCOKB_TX_35` in the reference run), every diagnostic and prognostic implication entry, plus all raw VCF FORMAT fields.
 
-> **Note on the column count.** The OncoKB treatment, diagnostic, and prognostic implications are expanded into indexed columns (`ONCOKB_TX_0` … `ONCOKB_TX_33`, `ONCOKB_DIAG_*`, `ONCOKB_PROG_*`). To avoid emitting a large block of permanently empty columns, this expansion is **pruned dynamically**: only the index positions populated for at least one variant in the run are kept. The canonical full count is **1,028 columns**. Consequently the exact number varies with the breadth of OncoKB evidence returned for that specific set of variants — and if *none* of the variants in a given analysis populate any of the dynamic OncoKB expansion columns, the count can fall to roughly **800**. A lower count is therefore expected behaviour for small or low-evidence variant sets, not a pipeline error. The same dynamic pruning applies to Tier 2.
+> **Note on the column count.** The OncoKB treatment, diagnostic, and prognostic implications are expanded into indexed columns (`ONCOKB_TX_*`, `ONCOKB_DIAG_*`, `ONCOKB_PROG_*`). To avoid emitting a large block of permanently empty columns, this expansion is **pruned dynamically**: only the index positions populated for at least one variant in the run are kept. The reference run reaches **1,165 columns**, with TX indices 0–35 and DIAG 0–3. Consequently the exact number varies with the breadth of OncoKB evidence returned for that specific set of variants — and if *none* of the variants in a given analysis populate any of the dynamic OncoKB expansion columns, the count can fall to roughly **800**. A lower count is therefore expected behaviour for small or low-evidence variant sets, not a pipeline error. The same dynamic pruning applies to Tier 2.
 
 Designed for direct input to downstream tools such as cBioPortal, oncoPrint generators, and custom R/Python analysis scripts.
 
 ---
 
-## Output Annotations (~1028 columns) — [Full field reference →](https://manuel-dominguezcbg.github.io/SMART/fields/)
+## Output Annotations (1,165 columns in the reference run) — [Full field reference →](docs/fields.md)
 
 The final table includes annotations from multiple sources. Key field groups:
 
@@ -420,6 +423,15 @@ SMART classifies variants to route them to the correct OncoKB API endpoint:
 |-------------|----------|-----------------|
 | Mutations | SNVs, indels, MantaINS, MantaBND | `/annotate/mutations/byProteinChange` |
 | Copy Number | MantaDUP, MantaDEL, GAIN, LOSS | `/annotate/copyNumberAlterations` |
+
+**Breakends get no fusion annotation.** `MantaBND` records go to the mutation endpoint, and a
+breakend has no protein change for it to answer about, so OncoKB returns nothing useful.
+OncoKB's `/annotate/structuralVariants` endpoint is not called anywhere in the pipeline. This is
+an actionability gap rather than a classification one: SVIG-UK §6.1 scopes itself to SNVs and
+small indels and states it is "not intended for structural and multigenic copy number
+variants", so no SVIG-UK code depends on it — and there is no published somatic SV oncogenicity
+framework to implement, ClinGen's own guidance asking expert panels to define gene-specific
+criteria instead.
 
 Structural insertions (MantaINS) are intentionally routed to the mutation endpoint because they alter gene sequence and produce specific protein changes (e.g. EGFR Exon 20 insertions) that require distinct targeted therapies, unlike simple gene dosage changes.
 
@@ -525,6 +537,18 @@ earlier heuristic multi-evidence scorer, whose point values were not taken from 
    `[S Tn]` / `[S Fn]` supplementary tables and figures).
 2. Only the official strengths are used — **+8 / +4 / +2 / +1** and **−8 / −4 / −2 / −1** —
    plus the stand-alone outcomes of O1, B1 and B2.
+
+   The points sum to one of five classes [G Fig 1C], which `CLASS_THRESHOLDS` in
+   `scripts/svig_uk_classifier.py` holds verbatim:
+
+   | Total score | Class |
+   |---|---|
+   | ≥ 10 | Oncogenic |
+   | 6 to 9 | Likely Oncogenic |
+   | 0 to 5 | VUS |
+   | −1 to −6 | Likely Benign |
+   | ≤ −7 | Benign |
+
 3. Where the guideline needs a judgement that annotation data cannot supply, the rule is
    either omitted or replaced by a labelled **SMART proxy**: an automatable approximation that is
    never stronger than the guideline would allow.
@@ -630,7 +654,7 @@ Each is optional; when one is missing the dependent codes are listed as not eval
 - The guideline states that professional judgement must always be applied; this classifier is
   decision support, not a replacement for scientist review.
 
-The classifier's rules are covered by 146 unit tests whose expectations are taken from the
+The classifier's rules are covered by 211 unit tests whose expectations are taken from the
 guideline text ([tests/verification5/test_svig_uk_classifier.py](tests/verification5/test_svig_uk_classifier.py)).
 
 ---
@@ -666,7 +690,7 @@ docker run --rm --entrypoint cat monkiky/smart:latest /opt/smart/VERSION
 | SMART | see `VERSION` |
 | VCF format | 4.2 |
 | GATK LiftoverVcf | 4.6.0.0 |
-| Ensembl VEP | 114.2 |
+| Ensembl VEP | 114.0 |
 | OncoKB | 5.4 |
 | SpliceAI | 1.3 |
 | REVEL | 1.3 |
@@ -698,12 +722,12 @@ says. The third is the one that finds the quiet failures.
 
 | | Where | Needs | What it answers |
 |---|---|---|---|
-| Unit tests | `tests/verification5/` | python3 + pytest | the logic — **632 tests** in about a second |
+| Unit tests | `tests/verification5/` | python3 + pytest | the logic — **1,183 tests** in about twenty seconds |
 | Caller compatibility | `tests/verification2/` | Docker, refs | four callers' VCF conventions (manual) |
 | Transcript choice | `tests/verification3/` | Docker, refs, token | the whitelist changes the annotation and the OncoKB call |
 | Parallel jobs | `tests/verification4/` | Docker, refs, token | `--jobs N` matches a sequential run |
-| API verification | `tests/verification1/` | Docker, refs, token | 219 columns against the sources' own APIs |
-| Source verification | `tests/verify_local_sources.py` | refs | the other 151, against the files on disk |
+| API verification | `tests/verification1/` | Docker, refs, token | **47 columns** against the sources' own APIs |
+| Source verification | `tests/verify_local_sources.py` | refs | a further **146 columns**, against the files on disk |
 
 ```bash
 export ONCOKB_TOKEN=your_token_here
@@ -725,9 +749,11 @@ Two things worth knowing before you read an output:
   truncates the row there. On verification1's output that discards 895 of 1,035 columns on 16 of
   22 rows. Count the leading `#` lines and pass `skiprows`.
   ([#4](https://github.com/WeTGI-colab/SMART/issues/4))
-- **`tests/verification1/` has two copies of its fixture and they differ.** The `.vcf.gz` holds
-  22 variants and is what the pipeline reads; the plain `.vcf` holds 18 and is older. Three of
-  its records carry a REF allele that does not match GRCh38.
+- ~~**`tests/verification1/` has two copies of its fixture and they differ**, and three of its
+  records carry a REF allele that does not match GRCh38.~~ **Fixed.** Both copies now hold the
+  same records (45 as of 2.1.0) and the three alleles are corrected, each verified against the
+  GRCh38 FASTA and
+  against OncoKB. Figures published from the old fixture do not carry over.
   ([#19](https://github.com/WeTGI-colab/SMART/issues/19))
 
 ---
@@ -741,7 +767,9 @@ Check that your `--ref-dir` volume mount is correct and the expected subdirector
 VEP annotation can be memory-intensive. Adjust the memory limit in `docker-compose.yml` under `deploy.resources.limits.memory`, or pass `--memory=32g` to `docker run`.
 
 **VEP cache missing**
-The VEP cache (`homo_sapiens/114_GRCh38/`) must exist inside your ref-dir. Download from Ensembl FTP and extract.
+The VEP cache (`homo_sapiens_merged/114_GRCh38/`) must exist inside your ref-dir. It must be the
+**merged** cache -- the pipeline runs `vep ... --merged`, so the plain `homo_sapiens/` cache will not
+satisfy it. Download `homo_sapiens_merged_vep_114_GRCh38.tar.gz` from Ensembl FTP and extract.
 
 **Permission errors on output files**
 The container runs as root by default. To match your host user:

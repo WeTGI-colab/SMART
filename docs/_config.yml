@@ -17,3 +17,4 @@ exclude:
   - annotation_flags.md
   - reference_check.md
   - spliceai_local.md
+  - transcript_specificity.md

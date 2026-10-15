@@ -55,6 +55,7 @@
 
 import csv
 import re
+import sys
 import argparse
 import pandas as pd
 import json
@@ -84,6 +85,12 @@ def get_args():
     )
     parser.add_argument("-v", "--vcf", required=True, help="Input VCF file")
     parser.add_argument("-t", "--transcripts", required=True, help="Transcript whitelist file (NM_*)")
+    parser.add_argument("--tumour-column", "--tumor-column", dest="tumour_column",
+                        help="name the tumour sample column, for a paired VCF whose columns "
+                             "are named something other than TUMOR/NORMAL and which carries "
+                             "no '##tumor_sample=' header")
+    parser.add_argument("--normal-column", dest="normal_column",
+                        help="name the matched normal sample column")
     parser.add_argument("-o", "--output", required=True, help="Final output file")
     parser.add_argument("--debug", action="store_true")
     return parser.parse_args()
@@ -92,6 +99,72 @@ def get_args():
 # ------------------------------------------------------------
 # Load NM transcript whitelist
 # ------------------------------------------------------------
+FIXED_VCF_COLUMNS = ("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT")
+TUMOUR_NAMES = ("TUMOR", "TUMOUR", "TUMOR_SAMPLE", "T")
+NORMAL_NAMES = ("NORMAL", "NORMAL_SAMPLE", "N", "GERMLINE")
+
+
+def select_sample_columns(meta_lines, vcf_columns):
+    """Which sample column is the tumour, and which the normal.
+
+    SMART reports one sample per run, and every number it derives from a sample column --
+    GT, AD, DP, VAF -- describes the tumour. It used to take whichever column came first,
+    with no check that there was only one: for a Strelka or SomaticSniper VCF, where the
+    normal precedes the tumour, that reported the normal's genotype and allele fraction for
+    a somatic variant. A variant at 55% in the tumour came out at 2% with GT 0/0, which
+    reads as a subclonal call rather than as the wrong sample.
+
+    Resolved in order of authority:
+
+      1. one sample column -- it is the tumour, which is the tumour-only case and the
+         laboratory's routine DRAGEN input;
+      2. `##tumor_sample=` / `##normal_sample=` in the header. GATK Mutect2 4.x writes these
+         and they are explicit, so they win over any guess from a name;
+      3. the column names, against TUMOR/TUMOUR and NORMAL. The three paired callers in
+         tests/verification2 -- Mutect2 3.8, Strelka, SomaticSniper -- all use those literal
+         names and none of them declares the header fields above;
+      4. nothing matched: raise, naming the columns, rather than pick one. A wrong sample is
+         a plausible low allele fraction, which is worse than a refusal.
+
+    Returns (tumour, normal_or_None, how) where `how` names the rule that decided, so the
+    run can state it.
+    """
+    samples = [c for c in vcf_columns if c not in FIXED_VCF_COLUMNS]
+    if not samples:
+        return None, None, "no sample column"
+    if len(samples) == 1:
+        return samples[0], None, "the only sample column"
+
+    declared_t = declared_n = None
+    for line in meta_lines:
+        m = re.match(r"##tumor_sample=(.+)$", line.strip())
+        if m:
+            declared_t = m.group(1).strip()
+        m = re.match(r"##normal_sample=(.+)$", line.strip())
+        if m:
+            declared_n = m.group(1).strip()
+    if declared_t and declared_t in samples:
+        other = declared_n if declared_n in samples else None
+        if other is None:
+            other = next((s for s in samples if s != declared_t), None)
+        return declared_t, other, "##tumor_sample in the header"
+
+    upper = {s.upper(): s for s in samples}
+    t = next((upper[n] for n in TUMOUR_NAMES if n in upper), None)
+    n = next((upper[x] for x in NORMAL_NAMES if x in upper), None)
+    if t:
+        return t, n or next((s for s in samples if s != t), None), "the column name"
+
+    raise RuntimeError(
+        "cannot tell which sample column is the tumour: found "
+        + ", ".join(repr(s) for s in samples)
+        + ". SMART reports one sample, and every value it derives from a sample column "
+          "describes the tumour, so guessing would put the normal's allele fraction in the "
+          "report. Name the tumour column with --tumour-column, or give the VCF a "
+          "'##tumor_sample=' header."
+    )
+
+
 def load_nm_transcripts(filename):
     """
     Load transcript whitelist from file.
@@ -148,6 +221,7 @@ def main(args):
     # --------------------------------------------------------
     CSQ_FIELDS = None
     VCF_COLUMNS = None
+    META_LINES = []
 
     with open(args.vcf) as f:
         for line in f:
@@ -155,6 +229,8 @@ def main(args):
                 m = re.search(r'Format: (.+)">', line)
                 CSQ_FIELDS = m.group(1).split("|")
 
+            if line.startswith("##"):
+                META_LINES.append(line)
             elif line.startswith("#CHROM"):
                 VCF_COLUMNS = line.strip().lstrip("#").split("\t")
                 break
@@ -209,6 +285,7 @@ def main(args):
             if csq_raw:
                 first_vep = None
                 first_nm = ""
+                first_feature = None
                 for csq in csq_raw.split(","):
                     fields = csq.split("|")
                     if len(fields) < len(CSQ_FIELDS):
@@ -236,6 +313,14 @@ def main(args):
                     if not nm and vep.get("HGVSc", "").startswith("NM_"):
                         nm = vep["HGVSc"].split(":")[0].split(".")[0]
 
+                    # Record what the first block was, so a fallback can name the transcript
+                    # it actually used. first_nm was initialised and never assigned, so a
+                    # fallback row left NM_Transcript empty -- which reads as "no transcript"
+                    # rather than "an arbitrary one", the more dangerous of the two.
+                    if first_feature is None:
+                        first_feature = vep.get("Feature", "")
+                        first_nm = nm
+
                     if pinned_nm:
                         # Use the transcript pinned by oncokb2.0.py
                         if nm == pinned_nm:
@@ -254,6 +339,32 @@ def main(args):
                     nm_selected = first_nm
 
             row["NM_Transcript"] = nm_selected
+            # Two columns stating whether the annotation describes the transcript that was
+            # asked for. Without them a fallback is invisible: VEP annotates every transcript
+            # and this script keeps one, so a row whose gene the whitelist does not cover
+            # silently carries whichever block VEP emitted first.
+            #
+            #   TRANSCRIPT_REQUESTED  the supplied accession that was used, or empty when none
+            #                         of the supplied transcripts was annotated here
+            #   TRANSCRIPT_MATCH      "match"          the selected transcript is one that was
+            #                                          supplied
+            #                         "fallback:<acc>" none was annotated for this variant, so
+            #                                          VEP's first block was used; <acc> names it
+            #
+            # The test is membership of the supplied list, not which code path got there. A
+            # first version reported the OncoKB-pinned path as its own outcome, "pinned:<acc>",
+            # which was wrong: oncokb2.0.py pins a transcript only when
+            # `candidate in preferred_tx`, so a pin is always one of the supplied transcripts
+            # and therefore a match. It made 32 of 37 rows of the verification cohort look as
+            # though the transcript had been imposed from elsewhere, and -- worse -- a real
+            # fallback would have been lost among them.
+            if nm_selected and nm_selected in nm_transcripts:
+                requested, match = nm_selected, "match"
+            else:
+                used = first_feature or first_nm or "unknown"
+                requested, match = "", f"fallback:{used}"
+            row["TRANSCRIPT_REQUESTED"] = requested
+            row["TRANSCRIPT_MATCH"] = match
             row.update(selected_vep)
 
             # Add remaining INFO fields
@@ -277,6 +388,16 @@ def main(args):
 
     # First: build the DataFrame
     df = pd.DataFrame(rows, columns=output_columns)
+    # The VCF's meta lines travel with the frame so that final_requiretments can decide which
+    # sample column is the tumour from '##tumor_sample=' where a caller declares it. Carried
+    # on .attrs rather than by changing main's return type, which tests/test_multi_transcript
+    # depends on.
+    df.attrs["meta_lines"] = META_LINES
+    # The VCF's own columns, which is what identifies a sample column. The frame's columns
+    # cannot: by this point it also holds NM_Transcript, every CSQ field and the derived
+    # TRANSCRIPT_* and END columns, and anything not in the nine fixed VCF columns would look
+    # like a sample. Passing df.columns made even a single-sample VCF unidentifiable.
+    df.attrs["vcf_columns"] = VCF_COLUMNS
 
     # Nothing else here — keep FORMAT and sample column as-is
     return df
@@ -332,6 +453,12 @@ def calculate_end(row):
     if variant_class == "deletion":
         return pos + len(ref) - 1
 
+    # No VARIANT_CLASS, or one not listed above. A VCF record spans len(REF) bases by
+    # definition, which is also what post_analysis.calculate_end_position and
+    # oncokb_maf_query.split compute -- returning `pos` instead gave a one-base end for
+    # every multi-base REF, and the three implementations disagreed with one right.
+    if ref and set(ref.upper()) <= set("ACGTN"):
+        return pos + len(ref) - 1
     return pos
 
 
@@ -379,7 +506,8 @@ def convert_hgvsp_short(hgvsp):
     return AA3_RE.sub(lambda m: aa_dict[m.group(0)], protein)
 
 
-def final_requiretments(df, output_csv):
+def final_requiretments(df, output_csv, meta_lines=(), vcf_columns=None,
+                        tumour_column=None, normal_column=None):
     """
     Apply final transformations and generate output table.
 
@@ -406,15 +534,74 @@ def final_requiretments(df, output_csv):
     -------
     None
     """
+    # A multi-allelic record has no single ALT for the row to be about: nothing splits
+    # them, so VAF and every allele count come out empty (post_analysis._counts) and the
+    # row's HGVS, consequence and OncoKB answer describe an allele nothing selected. The
+    # input this pipeline is built for -- DRAGEN somatic -- writes one record per ALT, so
+    # this is normally zero; it is announced rather than assumed, because the failure is
+    # silent and a blank allele fraction looks like a caller that reported none.
+    # See issue 33.
+    multiallelic = df["ALT"].astype(str).str.contains(",", na=False) if "ALT" in df.columns else None
+    if multiallelic is not None and multiallelic.any():
+        n = int(multiallelic.sum())
+        sys.stderr.write(
+            f"WARNING: {n} multi-allelic record(s) in this VCF. VAF, t_ref_count, "
+            f"t_alt_count and t_depth will be empty for them, and the allele their "
+            f"annotation describes is unspecified. Split the VCF first "
+            f"(bcftools norm -m-any) to annotate them. See issue 33.\n")
+        for _, r in df[multiallelic].head(10).iterrows():
+            sys.stderr.write(f"         {r.get('CHROM')}:{r.get('POS')} "
+                             f"{r.get('REF')}>{r.get('ALT')}\n")
+        if n > 10:
+            sys.stderr.write(f"         ... and {n - 10} more\n")
+
+    # INFO END is carried by structural variants only, so in a VCF holding even one such
+    # record the column exists and is empty for every SNV and indel. Gating on the
+    # column's absence therefore skipped the calculation for the whole file as soon as
+    # one Manta record was present.
+    #
+    # This is not only a reporting defect. MafAnnotator's per-row query resolution falls
+    # back to Genomic_Change for a row with no usable protein change, and that fallback
+    # tests only that the genomic *headers* exist -- so with an empty End_Position it
+    # builds the query from a blank end and OncoKB answers nothing, which is reported as
+    # ONCOGENIC=Unknown. Every variant with no protein change (promoter, splice-site,
+    # regulatory) was affected. See issue 32.
     if "END" not in df.columns:
         df["END"] = df.apply(calculate_end, axis=1)
+    else:
+        blank = df["END"].isna() | (df["END"].astype(str).str.strip() == "")
+        if blank.any():
+            df.loc[blank, "END"] = df.loc[blank].apply(calculate_end, axis=1)
 
     fixed_cols = ["CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "FORMAT"]
-    sample_candidates = [c for c in df.columns if c not in fixed_cols]
-    sample_col = sample_candidates[0] if sample_candidates else None
+    # Which column is the tumour, decided by select_sample_columns rather than by position.
+    # The chosen columns are renamed to canonical names so that nothing downstream has to
+    # repeat the decision -- post_analysis expands FORMAT_DATA for the tumour and
+    # FORMAT_DATA_NORMAL for the matched normal, and a reader of the table can see which
+    # sample each came from in Tumor_Sample_Barcode and Matched_Norm_Sample_Barcode.
+    if vcf_columns is None:
+        vcf_columns = [c for c in df.columns if c in FIXED_VCF_COLUMNS]
+    if tumour_column:
+        tumour_col, normal_col, how = tumour_column, normal_column, "--tumour-column"
+        if tumour_col not in df.columns:
+            raise RuntimeError(f"--tumour-column {tumour_col!r} is not a column of this VCF; "
+                               f"it has {[c for c in df.columns if c not in fixed_cols]}")
+    else:
+        tumour_col, normal_col, how = select_sample_columns(meta_lines, vcf_columns)
+    print(f"Tumour sample column: {tumour_col!r} ({how})"
+          + (f"; matched normal: {normal_col!r}" if normal_col else "; no matched normal"))
 
     df["NCBI_Build"] = "GRCh38"
-    df["Tumor_Sample_Barcode"] = sample_col if sample_col else ""
+    df["Tumor_Sample_Barcode"] = tumour_col or ""
+    df["Matched_Norm_Sample_Barcode"] = normal_col or ""
+    renames = {}
+    if tumour_col:
+        renames[tumour_col] = "FORMAT_DATA"
+    if normal_col:
+        renames[normal_col] = "FORMAT_DATA_NORMAL"
+    if renames:
+        df = df.rename(columns=renames)
+    sample_col = tumour_col
 
     if "HGVSp" in df.columns:
         df["HGVSp_Short"] = df["HGVSp"].apply(convert_hgvsp_short)
@@ -594,4 +781,7 @@ def final_requiretments(df, output_csv):
 if __name__ == "__main__":
     args = get_args()
     df = main(args)
-    final_requiretments(df, args.output)
+    final_requiretments(df, args.output, meta_lines=df.attrs.get("meta_lines", ()),
+                        vcf_columns=df.attrs.get("vcf_columns"),
+                        tumour_column=getattr(args, "tumour_column", None),
+                        normal_column=getattr(args, "normal_column", None))

@@ -46,7 +46,12 @@ class TestGetCancerFromFilename:
         ("BRCA_breast_sample.vcf",           "BRCA"),
         ("colon_adenocarcinoma.vcf",         "COAD"),
         ("pancreatic_cancer_01.vcf",         "PAAD"),
-        ("thyroid-carcinoma.vcf",            "THY"),   # split on '-' → 'thyroid' matched first
+        # Was asserted as "THY", with the comment "split on '-' -> 'thyroid' matched
+        # first" -- the mechanism of a defect, written down as the expectation. THY and
+        # THCA are different OncoTree codes, so that sent OncoKB the wrong tumour type
+        # and changed every tumour-specific level it returned. See
+        # test_cancer_from_filename.py for the full case.
+        ("thyroid-carcinoma.vcf",            "THCA"),
         ("cholangiocarcinoma_sample.vcf",    "CHOL"),
         ("sarcoma.vcf",                      "SARC"),
         ("ovarian_tumour.vcf",               "OVT"),
@@ -146,11 +151,21 @@ class TestExtractOneLetterProtein:
         assert result == expected
 
     def test_stop_codon_ter_to_asterisk(self):
-        # Ter is replaced with * (1 char) before the 3-letter regex runs.
-        # The regex expects 3-letter alt, so it fails and the partially-
-        # converted string "Arg248*" is returned as-is.
+        """A nonsense variant is now fully converted: Arg248Ter -> R248*.
+
+        It used to come out as `Arg248*`, because `Ter` was replaced first and the
+        substitution regex then needed three characters after the digits and found one. That
+        was harmless, and worth recording why: OncoKB normalises the three-letter form, so
+        `Arg248*`, `R248*` and even `Arg248Ter` all return the same answer -- Likely
+        Oncogenic, "a truncating mutation in a tumor suppressor". Checked against the API.
+
+        The frameshift case was not harmless for exactly the opposite reason. There the
+        truncation produced `W288C`, which is a *valid different variant* that OncoKB answers
+        about, so the wrong answer came back looking right. The danger was never an
+        unparseable query -- it was a legitimate query about something else.
+        """
         csq = self._csq("ENSP:p.Arg248Ter")
-        assert oncokb._extract_one_letter_protein(csq, 1) == "Arg248*"
+        assert oncokb._extract_one_letter_protein(csq, 1) == "R248*"
 
     def test_negative_index_returns_none(self):
         csq = self._csq("ENSP:p.Val600Glu")

@@ -482,10 +482,23 @@ mkdir_if_missing "${REF_ROOT}/gnomAD_constraints"
 LOEUF_GRCH38="${REF_ROOT}/gnomAD_constraints/loeuf_dataset_grch38.tsv.gz"
 LOEUF_GRCH38_TBI="${REF_ROOT}/gnomAD_constraints/loeuf_dataset_grch38.tsv.gz.tbi"
 
-echo "[INFO] Downloading gnomAD LOEUF from Google Drive."
+# Provenance. The numbers in this table are gnomAD v4.1 constraint:
+#
+#   https://storage.googleapis.com/gcp-public-data--gnomad/release/4.1/constraint/gnomad.v4.1.constraint_metrics.tsv
+#   Chen et al., Nature 625:92-100 (2024)
+#
+# The released TSV cannot be used directly: it carries no start/end coordinates (and for
+# its RefSeq half not even a chromosome), so it cannot be tabix-indexed, and the VEP
+# plugin queries by position. The file below is that release with its first column
+# marked '#' and gene spans appended as chrom/start/end. Those spans need a transcript
+# model to resolve, and the model shipped here covers 17,904 of the release's 18,204
+# gene symbols, so rebuilding the index from what is on hand would drop 300 genes this
+# file already has. It is therefore mirrored rather than rebuilt -- and then verified
+# against the release, below, which is the assurance the mirror itself cannot give.
+echo "[INFO] Downloading the indexed gnomAD v4.1 LOEUF table."
 echo "       NOTE: Google Drive may silently return an HTML error page instead"
 echo "             of the file if the link has expired or the quota is exceeded."
-echo "             Verify the downloaded file is not an HTML page if indexing fails."
+echo "             The verification step below catches that, and much more besides."
 
 download_if_missing \
   "https://drive.google.com/uc?export=download&id=1pJMBwZQQLB2K4DelrWCEILzSadmLVybq" \
@@ -502,6 +515,33 @@ if file "$LOEUF_GRCH38" | grep -q "HTML"; then
   echo "        Remove ${LOEUF_GRCH38} and obtain the file manually, then re-run."
   rm -f "$LOEUF_GRCH38"
   exit 1
+fi
+
+# Verify the mirrored table against the release it claims to be. "Not an HTML page" was
+# the only check this file ever had, and it would pass for any other gnomAD release, any
+# truncation that still decompressed, and any edited value. LOEUF and missense Z feed O8
+# and the Tier 3 output, so a substitution changes classifications with no symptom.
+# This also pinned down a mislabel: the repository recorded this file as gnomAD v4.0,
+# and every one of its 211,363 rows matches v4.1 while differing from v4.0 on 210,882.
+LOEUF_VERIFIER="$(dirname "${BASH_SOURCE[0]}")/../scripts/verify_loeuf_against_gnomad.py"
+if [[ -f "$LOEUF_VERIFIER" ]]; then
+  echo "[CHECK] Verifying the LOEUF table against gnomAD v4.1 (downloads ~96 MB once)."
+  set +e
+  python3 "$LOEUF_VERIFIER" "$LOEUF_GRCH38" --release 4.1 \
+    --cache-dir "${REF_ROOT}/gnomAD_constraints" --also-identify
+  LOEUF_RC=$?
+  set -e
+  case "$LOEUF_RC" in
+    0) echo "[OK] LOEUF table verified as gnomAD v4.1." ;;
+    3) echo "[WARN] gnomAD could not be reached, so the LOEUF table was not verified."
+       echo "       The run can proceed, but this file's provenance is unestablished." ;;
+    *) echo "[ERROR] The LOEUF table is not gnomAD v4.1. Refusing to certify it:"
+       echo "        annotating against it would write constraint values of unknown origin"
+       echo "        into clinical output. Remove ${LOEUF_GRCH38} and re-run."
+       exit 1 ;;
+  esac
+else
+  echo "[WARN] ${LOEUF_VERIFIER} not found; LOEUF provenance not verified."
 fi
 
 # -------------------------
@@ -695,6 +735,40 @@ EOF
 echo "[OK] Configuration file created: $CONFIG_FILE"
 
 # -------------------------
+# STEP 13: Verify what was just built
+# -------------------------
+# Nothing above this line checks anything it downloaded or built. There is no checksum
+# in this script and its only sanity guard is the "is this HTML?" test on the Google
+# Drive download in STEP 7. Worse, every step skips itself when its output file already
+# exists, so a file that was written badly once is never looked at again:
+#
+#   if [[ -f "$CIVIC_VCF" ]]; then echo "[SKIP] CIViC VCF already exists" ...
+#
+# That is how the CIViC VCF in the lab reference directory stayed structurally corrupt
+# for six months — its eight header lines and its first data record on one physical
+# line, so the ##INFO declarations were unparseable and record 1:8013449 unreachable by
+# tabix. VEP does not refuse such a file; it annotates, matches nothing, and writes
+# empty CIViC columns that are indistinguishable from "this variant is not in CIViC".
+#
+# So the build now ends by inspecting its own output and recording a manifest. The
+# manifest is deliberately written by the same tool that checks it, and that tool
+# refuses to certify a file that fails its structural checks — see "The bootstrapping
+# hazard" in scripts/verify_reference_files.py. A non-zero exit here means the
+# reference directory is not fit to annotate against, so it is reported loudly rather
+# than swallowed by `set -e` three lines from the end.
+log_step "[STEP 13] Verifying the reference files just built"
+
+REF_MANIFEST="${REF_ROOT}/smart_reference_manifest.json"
+VERIFY_RC=0
+if [[ -f "${SCRIPT_DIR}/../scripts/verify_reference_files.py" ]]; then
+  python3 "${SCRIPT_DIR}/../scripts/verify_reference_files.py" generate \
+    --refs "$REF_ROOT" --manifest "$REF_MANIFEST" || VERIFY_RC=$?
+else
+  echo "[WARN] scripts/verify_reference_files.py not found — reference files NOT verified"
+  VERIFY_RC=0
+fi
+
+# -------------------------
 # Summary
 # -------------------------
 echo ""
@@ -704,7 +778,16 @@ echo "==========================================================================
 echo " Installed by   : $(whoami)"
 echo " Install root   : $(realpath "$REF_ROOT")"
 echo " Config file    : $(realpath "$CONFIG_FILE")"
+echo " Manifest       : ${REF_MANIFEST}"
 echo ""
+if [[ $VERIFY_RC -ne 0 ]]; then
+  echo " VERIFICATION FAILED (exit ${VERIFY_RC}). The reference directory is NOT fit to"
+  echo " annotate against. Read the findings above, fix or delete the offending files,"
+  echo " and re-run this script — a deleted file is rebuilt, whereas a file that merely"
+  echo " exists is skipped."
+  echo "================================================================================"
+  exit "$VERIFY_RC"
+fi
 echo " If a step failed, re-run this script — completed steps will be skipped."
 echo "================================================================================"
 

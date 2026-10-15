@@ -59,6 +59,30 @@ import requests
 # ---------------------------------------------------------------------------
 # Expected annotations per variant and transcript set
 # ---------------------------------------------------------------------------
+#
+# The OncoKB expectations below were written for SMART 1.x and record what it did: a variant
+# annotated on a transcript where the change sits at a different protein position was queried
+# by that protein change, OncoKB had no record of it, and the fields came back Unknown with no
+# therapeutic level. That was the demonstration -- pick the wrong transcript and you lose the
+# therapy.
+#
+# SMART 2.0 deliberately changed it (commit 780ea2a, "OncoKB genomic queries"). When the
+# reported transcript is not the one OncoKB curates on, the query falls back to the genomic
+# change, which the MAF records as
+# `ONCOKB_MAF_QUERY = "Genomic_Change (selected transcript differs from OncoKB...)"`. The
+# genomic change is identical in both runs, so OncoKB returns its real evidence either way.
+#
+# That is the right answer clinically. `chr7:55191822 T>G` is EGFR L858R whichever transcript
+# is used to name it; reporting Unknown because our run called it p.L813R would be a false
+# negative on a licensed first-line therapy. So the expectations are updated to the 2.0
+# behaviour rather than the code being changed back.
+#
+# What this suite still demonstrates, and what it no longer does:
+#   - transcript choice still changes NM_Transcript, HGVSc and HGVSp -- the nomenclature a
+#     clinical report carries, and the DIFFER_FIELDS checks below still assert it;
+#   - it no longer shows transcript choice changing OncoKB's verdict, because 2.0 is robust
+#     to it. Any manuscript text resting on the old behaviour needs rewriting -- see
+#     `section_312.docx` in this directory and issue #25.
 
 EXPECTED = {
     "EGFR_L858R": {
@@ -79,11 +103,12 @@ EXPECTED = {
             "HGVSc":          "c.2438T>G",
             "HGVSp":          "p.Leu813Arg",
             "Hugo_Symbol":    "EGFR",
-            # OncoKB expected outcomes for transcript B (wrong protein position)
+            # Reported as p.L813R, so the HGVSp query finds nothing and 2.0 falls back to
+            # the genomic change -- the same chr7:55191822 T>G as run A, so the same answer.
             "oncokb": {
-                "oncogenic":           "Unknown",
-                "highestSensitiveLevel": None,   # no therapeutic level
-                "mutationEffect":      "Unknown",
+                "oncogenic":           "Oncogenic",
+                "highestSensitiveLevel": "LEVEL_1",
+                "mutationEffect":      "Gain-of-function",
             },
         },
     },
@@ -103,28 +128,37 @@ EXPECTED = {
             "HGVSc":          "c.128G>A",
             "HGVSp":          "p.Arg43His",
             "Hugo_Symbol":    "TP53",
+            # Reported as p.R43His on NM_001126115, so the genomic-change fallback applies
+            # and returns the evidence for chr17:7675088 C>T -- the R175H hotspot.
             "oncokb": {
-                "oncogenic":   "Unknown",
-                "hotspot":     False,
+                "oncogenic":   "Oncogenic",
+                "hotspot":     True,
             },
         },
     },
     # FGFR1 N546K — chr8:38417331 G>T
-    # Demonstrates a non-MANE TSO500 transcript (NM_001174067.2, variant 14)
-    # producing a different protein position (N577K) that is coincidentally
-    # flagged as Likely Oncogenic LEVEL_4 by OncoKB, while the MANE Select
-    # (NM_023110.3) gives the canonical N546K annotation which OncoKB does not
-    # yet classify. This is a false-positive risk of using non-MANE transcripts.
+    # A non-MANE TSO500 transcript (NM_001174067.2, variant 14) puts the change at a
+    # different protein position, N577K, which OncoKB classifies as Likely Oncogenic
+    # LEVEL_4, while the MANE Select (NM_023110.3) gives the canonical N546K that OncoKB
+    # does not classify under that name. In SMART 1.x the two runs therefore disagreed, and
+    # this entry was the illustration of that risk. Under 2.0 both resolve to the same
+    # genomic change and return the same evidence, so the disagreement is gone. The risk it
+    # illustrated has not gone: the protein position reported to a clinician still differs,
+    # and so does anything keyed on it.
     "FGFR1_N546K": {
         "A": {
             "NM_Transcript":  "NM_023110",
             "HGVSc":          "c.1638C>A",
             "HGVSp":          "p.Asn546Lys",
             "Hugo_Symbol":    "FGFR1",
+            # Updated for 2.0: OncoKB has no record of N546K under that protein change, so
+            # the genomic-change fallback supplies the evidence it holds for
+            # chr8:38417331 G>T. Both runs therefore agree, which is the point -- the answer
+            # no longer depends on which transcript was selected.
             "oncokb": {
-                "oncogenic":             "Unknown",
-                "highestSensitiveLevel": None,
-                "mutationEffect":        "Unknown",
+                "oncogenic":             "Likely Oncogenic",
+                "highestSensitiveLevel": "LEVEL_4",
+                "mutationEffect":        "Likely Gain-of-function",
             },
         },
         "B": {
@@ -609,10 +643,20 @@ def run(args):
         pd.DataFrame(all_results).to_csv(args.output, sep="\t", index=False)
         print(f"\nResults written to: {args.output}")
 
-    failed = total_same + total_mismatch + total_error
+    # An ERROR is Ensembl's REST service failing to answer -- 500s and timeouts, several per
+    # run, and nothing to do with SMART. Counting them as failures made a third-party hiccup
+    # fail this suite, and because run_all_verifications.sh runs under `set -e` that aborted
+    # the whole run before verification4 and the local-source checks ever executed. They are
+    # reported and written to results.tsv, but only a SAME or a MISMATCH is SMART's fault.
+    # verification1 already treats its own API errors this way; this makes the two agree.
+    failed = total_same + total_mismatch
     if failed:
         print("\nRESULT: FAILED")
         sys.exit(1)
+    elif total_error:
+        print(f"\nRESULT: PASSED WITH {total_error} UNANSWERED ENSEMBL QUER"
+              f"{'Y' if total_error == 1 else 'IES'} — not checked, re-run to confirm")
+        sys.exit(0)
     else:
         print("\nRESULT: PASSED")
         sys.exit(0)

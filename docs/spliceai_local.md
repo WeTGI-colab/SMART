@@ -1,11 +1,23 @@
 # Computing SpliceAI locally
 
-Exploratory work on branch `spliceai-local-compute`, for [issue #2](https://github.com/WeTGI-colab/SMART/issues/2).
+**This is what SMART does by default.** `entrypoint.sh` sets `SPLICEAI_MODE="compute"`, runs the
+model per sample against an annotation built from your `--transcripts-file`, and the image ships
+`tensorflow-cpu==2.15.*` and `spliceai==1.3.1` to do it. The precomputed tables are still reachable
+with `--spliceai lookup`.
 
-## Why
+This page is the detail behind that default, for [issue
+#2](https://github.com/WeTGI-colab/SMART/issues/2): why computing beats looking up, what was
+measured, what the measurements do **not** cover, and the one known regression that ships with it.
+It began as exploratory work on a branch called `spliceai-local-compute`; that branch has been
+merged and deleted, and the findings below are kept because they are the evidence for the default,
+not a proposal for one. The parts that are still open are collected under
+[Open questions](#open-questions) at the end.
 
-SMART annotates splicing by looking variants up in Illumina's precomputed score files. Those
-have two limits that no configuration can change, because both are baked into the files:
+## Why compute rather than look up
+
+The alternative — `--spliceai lookup`, and SMART's behaviour before this work — reads Illumina's
+precomputed score files. Those have two limits that no configuration can change, because both are
+baked into the files:
 
 - **No transcript.** The INFO is `ALLELE|SYMBOL|DS_AG|...` — one score per gene, computed on
   GENCODE v24 canonical (December 2015). The tool's own help confirms it: `-A grch38` is
@@ -16,7 +28,8 @@ have two limits that no configuration can change, because both are baked into th
   further out is reported as `0.00` — indistinguishable from "no predicted effect".
 
 Running the model takes an annotation as input, so both limits go away together: the scores
-describe the transcripts we report, and the distance becomes a parameter.
+describe the transcripts we report, and the distance becomes a parameter. That is the whole
+argument for the default.
 
 ## How
 
@@ -44,6 +57,44 @@ the thing the precomputed tables never recorded.
 with the precomputed table variant by variant, reporting how many scores change, how many cross
 0.2 (the delta from which the classifier awards O6) or 0.5, and how many have their strongest
 signal beyond ±50 bp.
+
+## How it runs in the pipeline
+
+`entrypoint.sh` takes two flags:
+
+```
+--spliceai compute|lookup    compute against the reported transcripts (default) or look up
+                             the precomputed tables
+--spliceai-mask 0|1          raw (0) or masked (1). Default 1
+```
+
+**The defaults are `compute` and `mask=1`.** Masked because that is what the model's developers
+recommend for variant interpretation and what this laboratory uses; computed because the tables
+carry no transcript and stop at ±50 bp.
+
+How it fits together, with no change to any column name:
+
+1. Once per run, the annotation is built from the same `--transcripts-file` already used for
+   prioritisation, so a score describes the transcript the report names.
+2. Per sample, the model runs on the file VEP is about to annotate — after liftover, so in the
+   assembly the reference describes.
+3. VEP runs **without** the SpliceAI plugin in compute mode.
+4. After MafAnnotator, the scores are merged into the `SpliceAI_pred_*` columns. The names are the
+   plugin's, so the tier split, the `ANNOTATION_FLAGS` threshold, O6 and the cryptic-site check
+   behave the same whichever mode produced them.
+
+Rows the model did not score are left **empty** rather than carrying a precomputed value, so the
+table never mixes the two sources silently in one column.
+
+`compute` requires `gencode.v43.annotation.txt.gz` under
+`$REF_DIR/SpliceAI-lookup/references_files/annotations/`, and fails with a message naming
+`--spliceai lookup` as the alternative rather than falling back silently. The image ships
+`tensorflow-cpu==2.15.*` and `spliceai==1.3.1`; the TensorFlow version is pinned because the
+released package uses `tf.keras`, which Keras 3 removes.
+
+**MNVs are reported, not hidden.** The released model silently returns nothing for a
+multi-nucleotide variant, so the run counts them and warns per sample. In the development cohort
+that is 7 of 1,054. Using the Broad's fork would fix it; see [Open questions](#open-questions).
 
 ## Which SpliceAI, and a caveat on the validation below
 
@@ -135,63 +186,35 @@ On an M-series Mac, CPU only: **0.71 s per variant** for 18 variants including m
 inference itself about 44 ms per model and five models per variant. A 300-variant panel sample is
 therefore a few minutes rather than the microseconds a `tabix` lookup costs.
 
-Against that, the reference data shrinks from **91 GB to 10 MB**. SpliceAI's precomputed
-tables are the single largest component of our 316 GB reference set, ahead of CADD; the model ships in the image and the
-GENCODE annotation is 10 MB, and together they score any variant, on any transcript in the annotation, at any
-distance.
+Against that, the reference data compute mode *reads* is **10 MB rather than 91 GB**. SpliceAI's
+precomputed tables are the single largest component of our 316 GB reference set, ahead of CADD; the
+model ships in the image and the GENCODE annotation is 10 MB, and together they score any variant,
+on any transcript in the annotation, at any distance.
+
+**That saving is not yet realised on disk.** `$SPLICEAI_SNV` and `$SPLICEAI_INDEL` are in
+`entrypoint.sh`'s `REQUIRED_PATHS`, which is checked before anything runs and with no reference to
+`SPLICEAI_MODE`, so a default run still refuses to start without the 91 GB present even though it
+will not read it. Making the requirement mode-dependent is the obvious follow-up and is listed
+under [Open questions](#open-questions). Until then, treat the figure as "what the annotation
+costs to compute", not "what you can delete".
 
 ## What this does not yet show
 
-On the 18 variants of `verification1`, nothing material changed: 4 scores differed, **0 crossed
+On `verification1`, nothing material changed: 4 scores differed, **0 crossed
 0.2 or 0.5**, and although 8 had their strongest signal beyond ±50 bp, those scores were 0.01–0.04
 — noise at distance rather than signal. That cohort is coding hotspots, which is not where this
 matters. Whether it matters for us depends on a cohort with splice-region and intronic variants,
 and that measurement has not been made.
 
-Three variants received no local score: the EGFR in-frame deletion, and the GNAQ and DICER1
-records whose REF allele does not match GRCh38 ([#19](https://github.com/WeTGI-colab/SMART/issues/19)).
-The second of those is the fourth independent detector of that fixture defect, after the SpliceAI
-lookup's omission, `verification1/verify.py`'s SKIP and the VEP API's 400.
+Three variants received no local score when this was measured: the EGFR in-frame deletion, and
+the GNAQ and DICER1 records whose REF allele did not match GRCh38
+([#19](https://github.com/WeTGI-colab/SMART/issues/19)) — the fourth independent detector of that
+fixture defect, after the SpliceAI lookup's omission, `verification1/verify.py`'s SKIP and the VEP
+API's 400. **The fixture has since been corrected**, so the two substitutions now score; an indel
+still does not, which is the model's own limit and not a defect. The measurement above was taken
+before the correction and has not been repeated.
 
-## Now selectable at run time, and computed by default
-
-`entrypoint.sh` takes two flags:
-
-```
---spliceai compute|lookup    compute against the reported transcripts (default) or look up
-                             the precomputed tables
---spliceai-mask 0|1          raw (0) or masked (1). Default 1
-```
-
-**The defaults are `compute` and `mask=1`.** Masked because that is what the model's developers
-recommend for variant interpretation and what this laboratory uses; computed because the tables
-carry no transcript and stop at ±50 bp.
-
-How it fits together, with no change to any column name:
-
-1. Once per run, the annotation is built from the same `--transcripts-file` already used for
-   prioritisation, so a score describes the transcript the report names.
-2. Per sample, the model runs on the file VEP is about to annotate — after liftover, so in the
-   assembly the reference describes.
-3. VEP runs **without** the SpliceAI plugin in compute mode.
-4. After MafAnnotator, the scores are merged into the `SpliceAI_pred_*` columns. The names are the
-   plugin's, so the tier split, the `ANNOTATION_FLAGS` threshold, O6 and the cryptic-site check
-   behave the same whichever mode produced them.
-
-Rows the model did not score are left **empty** rather than carrying a precomputed value, so the
-table never mixes the two sources silently in one column.
-
-`compute` requires `gencode.v43.annotation.txt.gz` under
-`$REF_DIR/SpliceAI-lookup/references_files/annotations/`, and fails with a message naming
-`--spliceai lookup` as the alternative rather than falling back silently. The image gains
-`tensorflow-cpu==2.15.*` and `spliceai==1.3.1`; the TensorFlow version is pinned because the
-released package uses `tf.keras`, which Keras 3 removes.
-
-**MNVs are reported, not hidden.** The released model silently returns nothing for a
-multi-nucleotide variant, so the run counts them and warns per sample. In the development cohort
-that is 7 of 1,054. Using the Broad's fork would fix it and is the open question in the list below.
-
-## Before the default should be trusted
+## The regression this default ships with
 
 **This ships a measured regression until [#21](https://github.com/WeTGI-colab/SMART/issues/21) is
 fixed.** On the development cohort, computing rather than looking up moved three TET2 variants from
@@ -200,16 +223,33 @@ supplying scores that were previously absent trips the O2 cryptic-site check on 
 +1 bp. Masking does not prevent it. So the gain from computing is real and currently masked by a
 rule that penalises it, and the two should be settled together.
 
-## Not decided
+## Open questions
 
-Nothing here changes the pipeline. Before it could:
+Compute is the shipped default; these are the things that were *not* settled by shipping it, kept
+as a list because each one is a reason to read a computed score with a particular caution.
 
-- the per-variant latency needs measuring on the hardware that would run it, not on a laptop;
-- a cohort with splice-region variants needs scoring both ways, to turn "more correct" into a number;
-- the model and annotation versions would have to be pinned and recorded per run, replacing the
-  reproducibility a static file gave for free;
-- the benchmark figures in the manuscript were produced with the precomputed scores, so changing
-  the source means re-running them and saying so;
-- the three unaddressable transcripts need a stated fallback rather than a silent gap;
-- and the fork would have to replace the released package, for the MNV reason above, which
-  means depending on one person's repository rather than Illumina's release.
+- **The MNV gap needs the fork.** The released package silently scores no multi-nucleotide variant.
+  The run warns per sample, so the gap is visible rather than silent, but it is still a gap.
+  Replacing the release with [the Broad's fork](https://github.com/bw2/SpliceAI) would close it and
+  means depending on one person's repository rather than Illumina's release — which is why it has
+  not been done yet.
+- **[#21](https://github.com/WeTGI-colab/SMART/issues/21) is open**, so the measured regression in
+  the section above is live.
+- **The 91 GB is still required on disk** although compute mode does not read it; see the note
+  under [Cost](#cost).
+- **Per-variant latency has only been measured on a laptop.** 0.71 s per variant on an M-series Mac,
+  CPU only. The hardware that runs this in service has not been measured.
+- **No cohort with splice-region and intronic variants has been scored both ways.** `verification1`
+  is coding hotspots and showed nothing material (see above), which is the wrong cohort for the
+  question. Until that measurement exists, "more correct" is an argument from the model's inputs,
+  not a number.
+- **The model and annotation versions are pinned in the image but not recorded per run.**
+  `tensorflow-cpu==2.15.*` and `spliceai==1.3.1` are in the Dockerfile and `gencode.v43` is in the
+  annotation's filename, but `logs/run_provenance.txt` records the mode and the mask, not those
+  versions — so a computed score is reproducible from the image tag, which is weaker than the
+  reproducibility a static table gave for free.
+- **The manuscript's benchmark figures were produced with the precomputed scores.** Re-running them
+  against computed scores, and saying which was used, is outstanding.
+- **Three of the 519 panel transcripts are absent from the GENCODE v43 annotation.**
+  `build_spliceai_annotation.py` names them rather than dropping them silently, but there is no
+  stated fallback for a variant on one of them.

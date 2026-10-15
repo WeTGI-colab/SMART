@@ -1920,6 +1920,23 @@ def _classify_row(row, res, tumour_type=None):
                 synonymous_ok=synonymous_b4_ok))
     if res.mis_z:
         add(rule_o8(row, res, vclass))
+        # A gene absent from the table is not a gene without missense constraint, and the
+        # guard above tests only whether the *table* loaded. It always has, so this note
+        # never appeared: loeuf_dataset_grch38.tsv.gz covers 22 autosomes and carries no
+        # chrX or chrY rows at all, so mis_z_for returns None for every X-linked tumour
+        # suppressor -- ATRX, KDM6A, BCOR, STAG2, DDX3X, PHF6, AMER1, MED12, KDM5C, ZRSR2,
+        # GATA1, BTK, AR -- and O8 was recorded as "not met" when it had never been looked
+        # up. gnomAD v4 does include chrX; this is a defect of our build of the table.
+        #
+        # A note only: the score and the codes are untouched, so no classification changes.
+        if vclass == "missense" and res.mis_z_for(
+                row.get("Hugo_Symbol", ""),
+                [row.get("MANE_SELECT"), row.get("NM_Transcript"),
+                 row.get("Feature")]) is None:
+            notes.append(
+                f"O8 not evaluated: {row.get('Hugo_Symbol', 'this gene')} is absent from the "
+                f"gnomAD constraint table, so missense constraint was not looked up rather "
+                f"than found to be below the threshold")
     else:
         notes.append("O8 not evaluated: gnomAD constraint not provided")
     if res.genie is not None:

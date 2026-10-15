@@ -390,10 +390,54 @@ class TestAgainstARealMaf:
             assert c in cols, f"{c} absent from a real MAF: the flags would be silent"
 
     def test_the_columns_are_added_to_a_real_frame(self):
+        """One row of this cohort qualifies, and it is the right one.
+
+        This used to assert that *no* row qualified, which was true while the cohort was
+        entirely coding hotspots -- there was nothing with LOW or MODIFIER impact for the
+        flag to apply to, so the assertion was really "nothing here exercises this". Adding
+        the intronic records changed that: MET c.3028+3A>G is a LOW-impact splice-region
+        variant that SpliceAI scores at 0.58, over the 0.2 threshold, which is exactly the
+        case the flag exists for. So the test now pins the flag firing on real pipeline
+        output, which nothing did before, rather than its silence.
+        """
         df = post.add_annotation_flags(self._real())
         assert df["SPLICEAI_MAX_DS"].dtype == "float64"
-        assert (df["ANNOTATION_FLAGS"] == "").all(), \
-            "no row of this sample qualifies; a flag here would be a false positive"
+        flagged = df[df["ANNOTATION_FLAGS"].astype(str).ne("")]
+        by_gene = dict(zip(flagged["Hugo_Symbol"], flagged["ANNOTATION_FLAGS"]))
+        assert len(flagged) == 4, (
+            f"expected the two TERT promoter rows, the MET splice-region row and the TP53 "
+            f"synonymous/splice-region row, got "
+            f"{list(zip(flagged['Hugo_Symbol'], flagged['ANNOTATION_FLAGS']))}")
+
+        # the two TERT promoter hotspots: flagged by position from the canonical list (#15)
+        tert = flagged[flagged["Hugo_Symbol"] == "TERT"]
+        assert len(tert) == 2
+        for _, r in tert.iterrows():
+            assert r["ANNOTATION_FLAGS"] == "svig_canonical", (
+                "TERT should carry the canonical flag alone: the model returns no SpliceAI "
+                "score for these promoter positions")
+            assert str(r["IMPACT"]).upper() in post.SPLICEAI_FLAG_IMPACTS
+
+        # the MET splice-region row: flagged by SpliceAI over the threshold (#14)
+        met = flagged[flagged["Hugo_Symbol"] == "MET"].iloc[0]
+        assert str(met["IMPACT"]).upper() in post.SPLICEAI_FLAG_IMPACTS, (
+            "the flag fired on a row whose impact is not LOW or MODIFIER, which would be "
+            "a false positive -- the flag is for rows the tier split would otherwise hide")
+        assert met["SPLICEAI_MAX_DS"] >= post.SPLICEAI_FLAG_THRESHOLD
+        assert met["ANNOTATION_FLAGS"].startswith("splice_predicted(")
+
+        # TP53_T125T: synonymous at the protein level, which VEP calls splice_region_variant
+        # and OncoKB calls X125_splice. MODIFIER impact with a delta of 0.58, so it is exactly
+        # the row a consequence-based filter would drop and the flag exists to keep. Added to
+        # the cohort for the Silent class; it turned out to exercise this rule as well.
+        tp53 = flagged[flagged["Hugo_Symbol"] == "TP53"]
+        assert len(tp53) == 1
+        assert tp53.iloc[0]["ANNOTATION_FLAGS"].startswith("splice_predicted(")
+        assert str(tp53.iloc[0]["IMPACT"]).upper() in post.SPLICEAI_FLAG_IMPACTS
+
+        # The HIGH-impact canonical splice variants are still not flagged: consequence-based
+        # filtering was never going to drop them, so a flag would add noise, not recall.
+        assert len(flagged) == 4, "a HIGH-impact splice variant was flagged"
 
     def test_scores_are_recovered_from_the_real_cells(self):
         df = post.add_annotation_flags(self._real())
@@ -401,18 +445,37 @@ class TestAgainstARealMaf:
             "real SpliceAI cells parsed to nothing"
 
     def test_a_real_row_made_eligible_is_flagged(self):
-        # the sample contains a Silent/LOW row for which SpliceAI returned nothing;
-        # give it a score and the row must be kept, with everything else untouched
+        """Give a low-impact row a score and it must be flagged, nothing else touched.
+
+        This used to take the sample's own LOW row, which was GNAQ. That row was LOW only
+        because the fixture's allele was strand-flipped and VEP therefore called it the
+        synonymous p.Gln209= rather than the intended Q209L missense (#19). Correcting the
+        fixture removed the sample's only low-impact row: verification1 is coding hotspots,
+        all MODERATE or HIGH. So the impact is now set explicitly where none is available,
+        which is what the test always meant to exercise -- the flag's behaviour on a real
+        frame, with real columns and dtypes -- rather than a by-product of a defect.
+        """
         df = self._real()
-        low = df.index[df["IMPACT"].astype(str).str.upper() == "LOW"]
-        assert len(low), "no LOW row in this sample"
-        i = low[0]
+        low = df.index[df["IMPACT"].astype(str).str.upper().isin(post.SPLICEAI_FLAG_IMPACTS)]
+        if len(low):
+            i = low[0]
+        else:
+            i = df.index[0]
+            df["IMPACT"] = df["IMPACT"].astype(object)
+            df.at[i, "IMPACT"] = "LOW"
         before = df.at[i, "Variant_Classification"]
         df.at[i, "SpliceAI_pred_DS_AG"] = 0.95
         out = post.add_annotation_flags(df)
-        assert out.at[i, "ANNOTATION_FLAGS"] == "splice_predicted(0.95)"
+        flags = out.at[i, "ANNOTATION_FLAGS"]
+        # The row picked may be one of the TERT promoter positions, which is already on the
+        # canonical list, so the cell then carries both reasons. That combination is worth
+        # asserting rather than avoiding: it is the evidence that two reasons share one
+        # column, which an earlier comment on #15 claimed from a constructed row and could
+        # not show from a run.
+        assert flags.startswith("splice_predicted(0.95)"), flags
+        if ";" in flags:
+            assert flags == "splice_predicted(0.95);svig_canonical", flags
         assert out.at[i, "Variant_Classification"] == before
-        assert (out["ANNOTATION_FLAGS"] != "").sum() == 1
 
     def test_a_real_row_moved_to_a_canonical_position_is_flagged(self):
         df = self._real()

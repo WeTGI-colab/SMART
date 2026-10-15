@@ -293,7 +293,7 @@ PAGE = f"""<!DOCTYPE html>
   <p class="sub">
     Verification&nbsp;1 &nbsp;&middot;&nbsp; 22&nbsp;annotated variants &nbsp;&middot;&nbsp;
     1&nbsp;tumour sample (TUMOR) &nbsp;&middot;&nbsp; SMART&nbsp;v0.2.0 &nbsp;&middot;&nbsp;
-    OncoKB&nbsp;v7.0 &nbsp;&middot;&nbsp; VEP&nbsp;114.2 &nbsp;&middot;&nbsp; GRCh38
+    OncoKB&nbsp;v7.6 &nbsp;&middot;&nbsp; VEP&nbsp;114.0 &nbsp;&middot;&nbsp; GRCh38
     &nbsp;|&nbsp;
     <a href="./">&larr; Field reference</a> &nbsp;&middot;&nbsp;
     <a href="https://github.com/Manuel-DominguezCBG/SMART">GitHub &nearr;</a>

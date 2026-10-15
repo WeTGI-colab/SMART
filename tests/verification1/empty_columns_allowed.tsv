@@ -1,0 +1,83 @@
+# Columns of verification1's output that carry no value on any variant, each with the reason.
+#
+# Maintained because ONCOKB_VUS was empty on every row of every run for years and nothing
+# noticed: an absent API key, a null value and an inapplicable field all look like an empty
+# cell. scripts/audit_empty_columns.py fails if a column is empty and missing from here, and
+# equally if a row here no longer matches -- the column now has data, so the entry must go.
+#
+# kind = structural : no variant could fill it as the pipeline runs today. Fixing it means
+#                     changing the pipeline, not the cohort.
+# kind = cohort     : a variant would fill it and the cohort has none. The reason says which
+#                     kind of variant. This half of the file is a to-do list.
+pattern	kind	reason
+# ---- needs a tumour-type query; SMART queries OncoKB pan-cancer (issue #26) ----
+LEVEL_3B	structural	needs a tumour-type query (#26): 3B means "approved in another indication", which only exists relative to a stated tumour type
+ONCOKB_DIAG_SUMMARY	structural	needs a tumour-type query (#26); the pan-cancer level is in ONCOKB_DIAG_LVL, which is covered
+ONCOKB_PROG_SUMMARY	structural	needs a tumour-type query (#26); the pan-cancer level is in ONCOKB_PROG_LVL, which is covered
+ONCOKB_TUMOR_TYPE_SUMMARY	structural	needs a tumour-type query (#26)
+ONCOKB_QUERY_TUMOR_TYPE	structural	echoes the tumourType we do not send (#26)
+ONCOKB_diagnosticSummary	structural	needs a tumour-type query (#26)
+ONCOKB_prognosticSummary	structural	needs a tumour-type query (#26)
+ONCOKB_tumorTypeSummary	structural	needs a tumour-type query (#26)
+ONCOKB_query.tumorType	structural	echoes the tumourType we do not send (#26)
+# ---- null in the API response for the query type SMART makes ----
+ONCOKB_query.id	structural	OncoKB returns null for byGenomicChange and byProteinChange queries
+ONCOKB_query.alterationType	structural	OncoKB returns null unless the query states an alteration type
+ONCOKB_query.svType	structural	structural-variant queries only; SMART sends none
+ONCOKB_query.hgvsInfo	structural	populated only for byHGVS queries
+ONCOKB_TX_*_levelAssociatedCancerType.mainType.id	structural	OncoKB leaves the cancer-type sub-fields null for pan-cancer evidence
+ONCOKB_TX_*_levelAssociatedCancerType.code	structural	OncoKB leaves the cancer-type code null for pan-cancer evidence
+ONCOKB_TX_*_levelAssociatedCancerType.name	structural	OncoKB leaves the cancer-type name null for pan-cancer evidence
+ONCOKB_TX_*_levelAssociatedCancerType.parent	structural	OncoKB leaves the cancer-type parent null for pan-cancer evidence
+ONCOKB_TX_*_levelAssociatedCancerType.tissue	structural	OncoKB leaves the cancer-type tissue null for pan-cancer evidence
+ONCOKB_TX_*_levelAssociatedCancerType.color	structural	OncoKB leaves the cancer-type display colour null for pan-cancer evidence
+ONCOKB_DIAG_*_tumorType.mainType.id	structural	OncoKB leaves the tumour-type id null on diagnostic-implication entries for pan-cancer evidence
+# ---- ClinVar germline-only submission fields; SMART is a somatic pipeline ----
+PATHOGENIC (Germline)	structural	ClinVar germline-submission field
+PENETRANCE (Germline)	structural	ClinVar germline-submission field
+GENOMIC_INDICATOR (Germline)	structural	ClinVar germline-submission field
+# Removed when the two TERT promoter variants were added (issue #15): they are 5'Flank
+# upstream_gene_variant records, so VEP reports DISTANCE (45), and they are non-coding
+# cancer hotspots, so CancerHotspots_HOTSPOTNC{,_GENE,_HGVSc} are populated. Two
+# variants closed four gaps -- which is the argument for adding variants rather than
+# explaining blanks away.
+# Removed when NPM1 W288fs and the frameshift indels were added: NPM1's OncoKB record
+# carries LEVEL_Dx1 (the AML-defining diagnostic level), and an indel whose HGVS
+# description shifts from the VCF position populates HGVS_OFFSET. Both were listed here
+# as gaps a variant would fill, and both were filled by the variant chosen for them.
+# ---- would be covered by adding a variant: this is the to-do list ----
+ONCOKB_OTHER_SENS_LVLS	cohort	a variant whose OncoKB record has other significant sensitive levels besides the highest
+ONCOKB_OTHER_RESIST_LVLS	cohort	a variant with other significant resistance levels besides the highest
+ClinVar_CLNDNINCL	cohort	a ClinVar "included" variant, i.e. one interpreted only as part of a haplotype or compound submission
+ClinVar_CLNDISDBINCL	cohort	a ClinVar "included" variant (disease database cross-references)
+ClinVar_CLNSIGINCL	cohort	a ClinVar "included" variant (germline significance)
+ClinVar_ONCDNINCL	cohort	a ClinVar "included" variant with an oncogenicity submission
+ClinVar_ONCDISDBINCL	cohort	a ClinVar "included" variant (oncogenicity disease cross-references)
+ClinVar_ONCINCL	cohort	a ClinVar "included" variant (oncogenicity classification)
+ClinVar_SCIDNINCL	cohort	a ClinVar "included" variant with a somatic clinical-impact submission
+ClinVar_SCIDISDBINCL	cohort	a ClinVar "included" variant (clinical-impact disease cross-references)
+ClinVar_SCIINCL	cohort	a ClinVar "included" variant (clinical-impact classification)
+ClinVar_ONCCONF	cohort	a variant with conflicting ClinVar oncogenicity classifications
+ClinVar_DBVARID	cohort	a structural variant that dbVar also holds
+MOTIF_NAME	cohort	a variant inside a VEP regulatory motif feature
+MOTIF_POS	cohort	a variant inside a VEP regulatory motif feature (position in the motif)
+MOTIF_SCORE_CHANGE	cohort	a variant inside a VEP regulatory motif feature (score change)
+HIGH_INF_POS	cohort	a variant at a high-information position of a regulatory motif
+TRANSCRIPTION_FACTORS	cohort	a variant in a motif with named transcription factors
+miRNA	cohort	a variant inside a miRNA
+FLAGS	cohort	a transcript VEP flags, e.g. cds_start_NF or cds_end_NF
+MANE_PLUS_CLINICAL	cohort	a variant on a gene that has a MANE Plus Clinical transcript
+REFSEQ_MATCH	cohort	a variant where the RefSeq and Ensembl transcripts disagree
+REFSEQ_OFFSET	cohort	a variant where the RefSeq transcript is offset from the Ensembl one
+QUAL	cohort	a VCF carrying real QUAL scores; this fixture writes "." as DRAGEN does for its own records
+Matched_Norm_Sample_Barcode	cohort	a tumour/normal VCF; this fixture is tumour-only (one sample column, TUMOR) so there is no matched normal to name. Populated by select_sample_columns when a second sample is present, covered by tests/verification5/test_sample_columns.py
+CIViC_CSQ_CIViC Assertion *	cohort	a variant CIViC holds a curated *assertion* for. The cohort does match CIViC variant records -- Variant Name, Variant ID and Molecular Profile Name are populated -- so the gap is specifically the assertion tier, which covers far fewer variants
+CIViC_CSQ_CIViC Entity *	cohort	a variant CIViC holds an *evidence item* for. As above, the variant tier matches and the evidence tier does not
+CIViC_CSQ_CIViC Evidence *	cohort	a variant with a CIViC evidence level, rating or phenotype; same gap as the Entity fields
+CIViC_CSQ_CIViC Molecular Profile Aliases	cohort	a CIViC molecular profile that carries aliases
+CIViC_CSQ_CIViC Molecular Profile Score	cohort	a CIViC molecular profile with a curation score, which CIViC assigns from its evidence items
+CIViC_CSQ_CIViC Molecular Profile URL	cohort	populated alongside the profile score
+n_depth	cohort	a tumour/normal VCF; this fixture is tumour-only, so there are no normal-sample counts. Same gap as Matched_Norm_Sample_Barcode
+n_ref_count	cohort	a tumour/normal VCF; see n_depth
+n_alt_count	cohort	a tumour/normal VCF; see n_depth
+VAF_NORMAL	cohort	a tumour/normal VCF. This is the column that makes the normal worth carrying -- a fraction near 0.5 or 1.0 says the variant is germline -- so it is empty only because the fixture has no normal

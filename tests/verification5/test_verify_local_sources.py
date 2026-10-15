@@ -6,6 +6,7 @@ the gap left by verification1 (which can only reach sources with a REST API). It
 comparison logic is what these tests cover -- the normalisation in particular, because a
 naive comparison produced 350 phantom mismatches before it was right.
 """
+import gzip
 import importlib.util
 import os
 import sys
@@ -113,7 +114,7 @@ class TestVerdict:
 class TestFetchFrequencies:
     def test_indels_are_skipped_rather_than_queried(self, tmp_path):
         # the region endpoint takes substitutions; an indel needs a different call
-        got, note = vls.fetch_frequencies("chr7", 55174772, "GAATTAAGAGAAGCAT", "G",
+        got, note = vls.fetch_frequencies("chr7", 55174772, "GGAATTAAGAGAAGCA", "G",
                                           str(tmp_path))
         assert got is None and "substitutions only" in note
 
@@ -353,3 +354,334 @@ class TestPatcherCreatesAbsentColumns:
         cols = lines[1].split("\t")
         assert cols.count("SpliceAI_pred_DS_AG") == 1
         assert dict(zip(cols, lines[2].split("\t")))["SpliceAI_pred_DS_AG"] == "0.01"
+
+
+class TestComputeModeSpliceAI:
+    """Compute mode has no precomputed source, so the checks are internal consistency.
+
+    The module used to skip these rows entirely, which took it from 137 checks to none and
+    stopped looking at the one thing that can go wrong: `spliceai_patch_maf.py` merges the
+    model's VCF into the table on CHROM+POS+REF+ALT, and a key matching the wrong row would
+    put one variant's deltas on another.
+    """
+
+    @staticmethod
+    def _row(**kw):
+        base = {"Hugo_Symbol": "NRAS", "NM_Transcript": "NM_002524",
+                "SpliceAI_pred_SYMBOL": "NRAS--NM_002524.5",
+                "SpliceAI_pred_DS_AG": "0.12", "SpliceAI_pred_DP_AG": "-34"}
+        base.update(kw)
+        return base
+
+    def _verdicts(self, row, cols):
+        out = {}
+        for col, src, note in vls.check_spliceai_computed(row, cols):
+            if note:
+                out[col] = note.split(":")[0]
+            else:
+                out[col] = vls.verdict(row.get(col, ""), src)[0]
+        return out
+
+    def test_compute_mode_is_recognised_from_the_symbol(self):
+        """`GENE--REFSEQ` can only come from a local run: the tables hold a bare symbol."""
+        assert vls.computed_locally(self._row())
+        assert not vls.computed_locally(self._row(SpliceAI_pred_SYMBOL="NRAS"))
+        assert not vls.computed_locally(self._row(SpliceAI_pred_SYMBOL=""))
+
+    def test_a_matching_transcript_passes(self):
+        v = self._verdicts(self._row(), ["SpliceAI_pred_SYMBOL"])
+        assert v["SpliceAI_pred_SYMBOL"] == "PASS"
+
+    def test_the_version_suffix_is_not_what_is_being_tested(self):
+        row = self._row(NM_Transcript="NM_002524.4")
+        v = self._verdicts(row, ["SpliceAI_pred_SYMBOL"])
+        assert v["SpliceAI_pred_SYMBOL"] == "PASS"
+
+    def test_another_genes_scores_on_this_row_are_caught(self):
+        """The misaligned-merge failure, which is why this check exists."""
+        row = self._row(SpliceAI_pred_SYMBOL="KRAS--NM_004985.5")
+        v = self._verdicts(row, ["SpliceAI_pred_SYMBOL"])
+        assert v["SpliceAI_pred_SYMBOL"] == "MISMATCH"
+
+    def test_the_right_gene_but_the_wrong_transcript_is_caught(self):
+        row = self._row(SpliceAI_pred_SYMBOL="NRAS--NM_999999.1")
+        v = self._verdicts(row, ["SpliceAI_pred_SYMBOL"])
+        assert v["SpliceAI_pred_SYMBOL"] == "MISMATCH"
+
+    def test_a_row_with_no_reported_transcript_cannot_pass_vacuously(self):
+        row = self._row(NM_Transcript="")
+        v = self._verdicts(row, ["SpliceAI_pred_SYMBOL"])
+        assert v["SpliceAI_pred_SYMBOL"] == "MISMATCH"
+
+    @pytest.mark.parametrize("ds", ["0", "0.5", "1", "1.0"])
+    def test_a_delta_in_range_passes(self, ds):
+        v = self._verdicts(self._row(SpliceAI_pred_DS_AG=ds), ["SpliceAI_pred_DS_AG"])
+        assert v["SpliceAI_pred_DS_AG"] == "PASS"
+
+    @pytest.mark.parametrize("ds", ["1.3", "-0.2", "12"])
+    def test_a_delta_outside_zero_to_one_is_caught(self, ds):
+        """A delta is a probability; anything else is a corrupted or mis-parsed field."""
+        v = self._verdicts(self._row(SpliceAI_pred_DS_AG=ds), ["SpliceAI_pred_DS_AG"])
+        assert v["SpliceAI_pred_DS_AG"] == "MISMATCH"
+
+    def test_a_non_numeric_delta_is_caught(self):
+        v = self._verdicts(self._row(SpliceAI_pred_DS_AG="D"), ["SpliceAI_pred_DS_AG"])
+        assert v["SpliceAI_pred_DS_AG"] == "MISMATCH"
+
+    @pytest.mark.parametrize("dp", ["0", "-500", "500", "106"])
+    def test_a_position_within_the_window_passes(self, dp):
+        v = self._verdicts(self._row(SpliceAI_pred_DP_AG=dp), ["SpliceAI_pred_DP_AG"])
+        assert v["SpliceAI_pred_DP_AG"] == "PASS"
+
+    def test_a_position_beyond_the_window_is_caught(self):
+        """The pipeline runs with -D 500, so 900 cannot have come from it."""
+        v = self._verdicts(self._row(SpliceAI_pred_DP_AG="900"), ["SpliceAI_pred_DP_AG"])
+        assert v["SpliceAI_pred_DP_AG"] == "MISMATCH"
+
+    @pytest.mark.parametrize("zero", [0.0, 0, "0.0", "0", "0.00"])
+    def test_a_delta_of_exactly_zero_is_a_score_not_a_blank(self, zero):
+        """The most common value SpliceAI reports, and the one a falsy test loses.
+
+        Written after `str(row.get(col, "") or "")` turned every 0.0 into "" -- 0.0 is falsy
+        in Python -- so 95 real checks were reported as "the model returned no score". The
+        same shape of mistake as treating NaN as a value: the test has to distinguish a
+        value that happens to be zero from no value at all.
+        """
+        v = self._verdicts(self._row(SpliceAI_pred_DS_AG=zero), ["SpliceAI_pred_DS_AG"])
+        assert v["SpliceAI_pred_DS_AG"] == "PASS", "a delta of zero was not checked"
+
+    @pytest.mark.parametrize("zero", [0, "0", 0.0])
+    def test_a_delta_position_of_zero_is_a_position_not_a_blank(self, zero):
+        v = self._verdicts(self._row(SpliceAI_pred_DP_AG=zero), ["SpliceAI_pred_DP_AG"])
+        assert v["SpliceAI_pred_DP_AG"] == "PASS"
+
+    def test_a_none_cell_is_still_a_skip(self):
+        """None means the column was absent, which is different from a zero."""
+        v = self._verdicts(self._row(SpliceAI_pred_DS_AG=None), ["SpliceAI_pred_DS_AG"])
+        assert v["SpliceAI_pred_DS_AG"] == "SKIP"
+
+    def test_an_unscored_row_is_skipped_not_failed(self):
+        """The model scores no MNV and no indel; the patcher leaves those cells empty."""
+        row = self._row(SpliceAI_pred_DS_AG="", SpliceAI_pred_DP_AG="")
+        v = self._verdicts(row, ["SpliceAI_pred_DS_AG", "SpliceAI_pred_DP_AG"])
+        assert v["SpliceAI_pred_DS_AG"] == "SKIP"
+        assert v["SpliceAI_pred_DP_AG"] == "SKIP"
+
+    def test_the_cutoff_is_still_not_a_source_value(self):
+        v = self._verdicts(self._row(), ["SpliceAI_cutoff"])
+        assert v["SpliceAI_cutoff"] == "SKIP"
+
+
+class TestLoeufIsTranscriptSpecific:
+    """LOEUF is described everywhere as gene-level. In the dataset it is per transcript.
+
+    Measured on loeuf_dataset_grch38.tsv.gz, counting only the ENST rows: of the 14,247 genes
+    with more than one transcript, 13,236 (93%) carry a different LOEUF on different
+    transcripts. KAT6B is 0.057 on ENST00000650232 (CDS 2,974 bp, 14 coding exons) and 1.891
+    on ENST00000649119 (CDS 23 bp, 1 exon) -- a short transcript has few possible
+    loss-of-function sites, so the expected count is small and the upper bound of the
+    observed/expected interval, which is what LOEUF is, comes out large.
+
+    So looking LOEUF up by gene returns an arbitrary transcript's value and is wrong for 93%
+    of multi-transcript genes, sometimes by the distance between "among the most constrained
+    genes in the genome" and "no constraint signal at all". These tests exist so that
+    `match_by=transcript`, and the by-transcript lookup in check_loeuf, cannot be simplified
+    away as redundant.
+    """
+
+    REFS = os.environ.get("SMART_REFS",
+                          os.path.expanduser("~/Documents/external/refs"))
+    LOEUF = os.path.join(REFS, "gnomAD_constraints", "loeuf_dataset_grch38.tsv.gz")
+
+    def test_the_lookup_is_keyed_on_transcript_not_gene(self):
+        """A static check, so it holds with no reference data present."""
+        src = open(os.path.join(os.path.dirname(__file__), "..",
+                                "verify_local_sources.py")).read()
+        start = src.index("def load_loeuf(")
+        body = src[start:src.index("\ndef ", start + 10)]
+        assert '"transcript"' in body, (
+            "load_loeuf no longer keys on the transcript column; a gene-keyed table would "
+            "return an arbitrary transcript's LOEUF")
+        start = src.index("def check_loeuf(")
+        body = src[start:src.index("\ndef ", start + 10)]
+        assert 'row.get("Feature"' in body, (
+            "check_loeuf no longer looks up by the row's reported transcript")
+
+    @pytest.mark.skipif(not os.path.exists(LOEUF),
+                        reason="LOEUF dataset not present (set SMART_REFS)")
+    def test_the_dataset_really_does_vary_by_transcript(self):
+        """The fact itself, asserted against the file rather than taken from a comment."""
+        import collections
+        per = collections.defaultdict(set)
+        with gzip.open(self.LOEUF, "rt") as fh:
+            hdr = fh.readline().rstrip("\n").lstrip("#").split("\t")
+            gi, ti, li = (hdr.index("gene"), hdr.index("transcript"),
+                          hdr.index("lof.oe_ci.upper"))
+            for line in fh:
+                f = line.rstrip("\n").split("\t")
+                if len(f) <= li or not f[ti].startswith("ENST"):
+                    continue
+                try:
+                    per[f[gi]].add(round(float(f[li]), 4))
+                except ValueError:
+                    continue
+        multi = {g: v for g, v in per.items() if len(v) >= 1}
+        varying = [g for g, v in per.items() if len(v) > 1]
+        assert len(multi) > 10000, f"only {len(multi)} genes read; is the file truncated?"
+        assert len(varying) > 5000, (
+            f"only {len(varying)} genes have a transcript-dependent LOEUF. If this has "
+            f"genuinely changed, the by-transcript lookup may no longer be necessary -- but "
+            f"check the file before relaxing it")
+
+    @pytest.mark.skipif(not os.path.exists(LOEUF),
+                        reason="LOEUF dataset not present (set SMART_REFS)")
+    def test_a_named_gene_spans_the_whole_constraint_range(self):
+        """KAT6B, so the test names a case a reader can look up and check."""
+        vals = {}
+        with gzip.open(self.LOEUF, "rt") as fh:
+            hdr = fh.readline().rstrip("\n").lstrip("#").split("\t")
+            gi, ti, li = (hdr.index("gene"), hdr.index("transcript"),
+                          hdr.index("lof.oe_ci.upper"))
+            for line in fh:
+                f = line.rstrip("\n").split("\t")
+                if len(f) > li and f[gi] == "KAT6B" and f[ti].startswith("ENST"):
+                    try:
+                        vals[f[ti]] = float(f[li])
+                    except ValueError:
+                        pass
+        assert len(vals) > 1, f"KAT6B should have several transcripts, found {sorted(vals)}"
+        assert max(vals.values()) - min(vals.values()) > 1.0, (
+            f"KAT6B's LOEUF no longer spans more than 1.0 across transcripts: {vals}")
+
+
+class TestRetryBackoff:
+    """An ERROR is a service that did not answer, not a disagreement, so it is worth retrying.
+
+    On the 37-variant cohort the previous four attempts still lost 52 checks to Ensembl
+    returning 500 under load, and those counts varied run to run — 130, 26, 52 — which made
+    the same cohort look differently verified on different days.
+    """
+
+    def test_the_wait_doubles_and_is_capped(self):
+        waits = [vls._backoff(a) for a in range(8)]
+        assert waits[0] < waits[1] < waits[2], "the wait does not grow"
+        assert all(w <= 30.5 for w in waits), f"an uncapped wait would stall a run: {waits}"
+
+    def test_the_wait_carries_jitter(self):
+        """Without it, several clients backing off together resynchronise on every round."""
+        seen = {round(vls._backoff(3), 4) for _ in range(40)}
+        assert len(seen) > 1, "the backoff is deterministic, so clients will synchronise"
+
+    def test_six_attempts_are_configured(self):
+        assert vls.VEP_ATTEMPTS >= 6
+
+    def test_the_error_message_states_how_many_tries(self, tmp_path, monkeypatch):
+        """So a reader can tell a brief outage from a service that is simply down."""
+        import urllib.request
+        def boom(*a, **kw):
+            raise OSError("down")
+        monkeypatch.setattr(urllib.request, "urlopen", boom)
+        monkeypatch.setattr(vls.time, "sleep", lambda *_: None)
+        got, note = vls.fetch_frequencies("chr1", 100, "A", "G", str(tmp_path), sleep=0)
+        assert got is None
+        assert f"after {vls.VEP_ATTEMPTS} tries" in note, note
+
+    def test_a_permanent_rejection_is_not_retried(self, tmp_path, monkeypatch):
+        """A 400 is an answer: the service understood and has nothing. Retrying wastes a run."""
+        import urllib.error, urllib.request
+        calls = []
+        def reject(*a, **kw):
+            calls.append(1)
+            raise urllib.error.HTTPError("u", 400, "Bad Request", {}, None)
+        monkeypatch.setattr(urllib.request, "urlopen", reject)
+        monkeypatch.setattr(vls.time, "sleep", lambda *_: None)
+        got, note = vls.fetch_frequencies("chr1", 100, "A", "G", str(tmp_path), sleep=0)
+        assert got is None and "rejected" in note
+        assert len(calls) == 1, f"a 400 was retried {len(calls)} times"
+
+    def test_a_cached_success_is_never_refetched(self, tmp_path, monkeypatch):
+        """The cache is what makes patience affordable: a success is paid for once."""
+        import json as _json, urllib.request
+        cache = tmp_path
+        (cache / "1_100_A_G.json").write_text(_json.dumps([{"colocated_variants": []}]))
+        def boom(*a, **kw):
+            raise AssertionError("the network was used despite a cached response")
+        monkeypatch.setattr(urllib.request, "urlopen", boom)
+        vls.fetch_frequencies("chr1", 100, "A", "G", str(cache), sleep=0)
+
+
+class TestNonAsciiIsNoLongerFolded:
+    """While issue 27 was open, the comparison folded both sides to ASCII, because the
+    annotator deleted those characters and a difference was unavoidable. The image now
+    removes that line, so folding would compare two mutilated values and find them equal --
+    the same shape of mistake as ONCOKB_VUS, where verifier and pipeline shared a typo and
+    the check passed for years on two empty strings.
+    """
+
+    @pytest.mark.parametrize("value", ["PI3Kβ", "α-ketoglutarate", "≥6 months",
+                                       "25%–56%", "Müller"])
+    def test_characters_are_preserved(self, value):
+        assert vls.ascii_fold(value) == value, "a non-ASCII character was dropped"
+
+    def test_a_difference_in_those_characters_is_now_caught(self):
+        """The point of removing the fold: this had to pass before and must fail now."""
+        assert vls.verdict("DOR of ≥6 months", {"DOR of 6 months"})[0] == "MISMATCH"
+        assert vls.verdict("PI3Kβ", {"PI3K"})[0] == "MISMATCH"
+
+    def test_identical_values_still_agree(self):
+        assert vls.verdict("PI3Kβ", {"PI3Kβ"})[0] == "PASS"
+
+
+class TestEveryCheckNamesItsVariant:
+    """`local_source_results.tsv` had `Variant_ID = "."` on all 5,986 rows.
+
+    The expression was `row.get("Variant_ID") or row.get("dbSNP_RS") or "."` and neither
+    column exists in the MAF, so the fallback was the only branch that ever ran. 4,996
+    passing checks were no comfort: the file exists to be read when something disagrees,
+    and there was nothing in it to say which variant had disagreed.
+    """
+
+    def test_the_maf_id_is_used(self):
+        assert vls.variant_label({"ID": "TERT_C228T"}) == "TERT_C228T"
+
+    def test_neither_absent_column_is_required(self):
+        """Both columns the old expression looked for are absent from the MAF."""
+        row = {"ID": "NRAS_Q61R", "Chromosome": "chr1", "Start_Position": "114713908"}
+        assert "Variant_ID" not in row and "dbSNP_RS" not in row
+        assert vls.variant_label(row) == "NRAS_Q61R"
+
+    def test_it_falls_back_to_coordinates_rather_than_a_placeholder(self):
+        row = {"Chromosome": "chr17", "Start_Position": "7675994",
+               "Reference_Allele": "G", "Tumor_Seq_Allele2": "A"}
+        assert vls.variant_label(row) == "chr17:7675994_G>A"
+
+    def test_coordinates_without_alleles_still_identify_the_site(self):
+        assert vls.variant_label({"Chromosome": "chrX", "Start_Position": "101356177"}) \
+            == "chrX:101356177"
+
+    @pytest.mark.parametrize("placeholder", [".", "-", "nan", "", "   "])
+    def test_a_placeholder_id_does_not_win_over_coordinates(self, placeholder):
+        """A VCF writing "." in ID is the normal DRAGEN case, and was the reason this
+        produced "." for every row."""
+        row = {"ID": placeholder, "Chromosome": "chr7", "Start_Position": "140753336",
+               "Reference_Allele": "A", "Tumor_Seq_Allele2": "T"}
+        assert vls.variant_label(row) == "chr7:140753336_A>T"
+
+    def test_dbsnp_is_still_honoured_when_it_is_what_the_input_has(self):
+        assert vls.variant_label({"dbSNP_RS": "rs113488022"}) == "rs113488022"
+
+    def test_a_row_with_nothing_at_all_is_the_only_case_that_yields_a_dot(self):
+        assert vls.variant_label({}) == "."
+
+    def test_the_committed_results_file_names_its_variants(self):
+        """The regression this guards: one distinct Variant_ID across thousands of rows."""
+        import csv as _csv
+        path = os.path.join(os.path.dirname(__file__), "..", "verification1",
+                            "local_source_results.tsv")
+        if not os.path.exists(path):
+            pytest.skip("localsources has not been run")
+        _csv.field_size_limit(10 ** 7)
+        with open(path, encoding="utf-8") as fh:
+            ids = {r["Variant_ID"] for r in _csv.DictReader(fh, delimiter="\t")}
+        assert ids - {"."}, "every row still says '.': no check can be traced to a variant"
+        assert len(ids) > 1, f"only {len(ids)} distinct variant label(s) across the file"

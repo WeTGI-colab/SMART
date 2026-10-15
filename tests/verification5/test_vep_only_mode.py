@@ -169,7 +169,10 @@ class TestOncokbRequiresToken:
         """Second call with same args should NOT hit the network."""
         cache = {}
         cached_value = {"oncogenic": "Oncogenic"}
-        key = ("mut", "BRAF", "V600E", "")
+        # Built by the module, not spelled out here: when the consequence was added to
+        # the key, a hand-written tuple stopped matching and the test went on passing
+        # while asserting the opposite of what it meant.
+        key = oncokb.mutation_cache_key("BRAF", "V600E", "")
         cache[key] = cached_value
 
         with patch("requests.get") as mock_get:
@@ -196,7 +199,7 @@ class TestOncokbRequiresToken:
             )
         assert result == expected
         # Result is cached for next call
-        assert ("mut", "BRAF", "V600E", "") in cache
+        assert oncokb.mutation_cache_key("BRAF", "V600E", "") in cache
 
 
 # ===========================================================================

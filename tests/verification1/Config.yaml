@@ -47,7 +47,7 @@ fields:
   CHROM:
     description: Chromosome name
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: drop
   Start_Position:
     description: Variant start position
@@ -105,109 +105,111 @@ fields:
     version: vcf_v2.4
     tier: 2
   VAF:
-    description: Frequency of existing variant in 1000 Genomes https://www.ensembl.org/info/docs/tools/vep/vep_formats.html
-    source: VCF
+    description: 'Variant allele fraction in this sample, computed by SMART as ALT/(REF+ALT) from the
+      allelic depth (AD) of the variant caller. This is a property of the tumour sample, not a
+      population frequency; the population frequencies are AF, gnomADe_AF and gnomADg_AF'
+    source: SMART
     version: vcf_v2.4
     tier: 3
   HGVSp_Short:
     description: Short HGVS protein notation
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   HGVSp:
     description: The HGVS protein sequence name https://www.ensembl.org/info/docs/tools/vep/vep_formats.html
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   NM_Transcript:
-    description: RefSeq NM transcript identifier
+    description: RefSeq NM transcript identifier actually used for this row's annotation
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   Allele:
     description: Alternate allele used in annotation
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   Consequence:
     description: Predicted variant consequence
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   IMPACT:
     description: Predicted functional impact
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   SYMBOL:
     description: Gene symbol
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   Gene:
     description: Ensembl gene ID
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   Feature_type:
     description: Feature type (Transcript, Regulatory, etc.)
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   Feature:
     description: Ensembl feature identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   BIOTYPE:
     description: Transcript biotype
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   EXON:
     description: Exon number within transcript
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   INTRON:
     description: Intron number within transcript
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   HGVSc:
     description: HGVS coding DNA notation
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   cDNA_position:
     description: Position within cDNA
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   CDS_position:
     description: Position within CDS
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   Protein_position:
     description: Position within protein sequence
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   Amino_acids:
     description: Reference and alternate amino acids
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   Codons:
     description: Reference and alternate codons
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   Existing_variation:
     description: Known variant identifiers rs1234567 and or COSV1234567
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   DISTANCE:
     description: Shortest distance from variant to transcript. Note DISTANCE of 0
@@ -215,166 +217,166 @@ fields:
       variant coordinates are considered to be the flanking bases where insertion
       happens.
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   STRAND:
     description: Strand of the feature (1/-1)
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   FLAGS:
     description: Transcript quality flags. Transcript annotation flags indicating
       potential issues with transcript completeness or coding sequence annotation
       (e.g. cds_start_NF, cds_end_NF) 3https://www.ensembl.org/info/genome/genebuild/transcript_quality_tags.html
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   VARIANT_CLASS:
     description: Sequence Ontology variant class https://www.ensembl.org/info/genome/variation/prediction/classification.html#classes
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   SYMBOL_SOURCE:
     description: Source of gene symbol
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   HGNC_ID:
     description: HGNC gene identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   CANONICAL:
     description: Indicates canonical transcript
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   MANE:
     description: Matched Annotation from NCBI and EMBL-EBI flag. https://www.ensembl.org/info/genome/genebuild/mane.html
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   MANE_SELECT:
     description: MANE Select transcript. https://www.ensembl.org/info/genome/genebuild/mane.html
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   MANE_PLUS_CLINICAL:
     description: MANE Plus Clinical transcript. https://www.ensembl.org/info/genome/genebuild/mane.html
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   TSL:
     description: Transcript support level
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   APPRIS:
     description: APPRIS annotation indicating whether the transcript is a principal
       or alternative isoform https://appris.bioinfo.cnio.es/#/
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   CCDS:
     description: CCDS transcript identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   ENSP:
     description: Ensembl protein identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   SWISSPROT:
     description: UniProt Swiss-Prot identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   TREMBL:
     description: UniProt TrEMBL identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   UNIPARC:
     description: UniParc identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   UNIPROT_ISOFORM:
     description: UniProt isoform identifier
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   SOURCE:
     description: Annotation source
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   GENE_PHENO:
     description: Gene phenotype association
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   SIFT:
     description: SIFT prediction score
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   PolyPhen:
     description: PolyPhen prediction score
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   DOMAINS:
     description: Protein domains overlapping variant
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   miRNA:
     description: microRNA annotation
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   HGVS_OFFSET:
     description: Offset applied to HGVS notation
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   MOTIF_POS:
     description: Position of the variant within the regulatory motif
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   HIGH_INF_POS:
     description: Indicates whether the variant falls at a highly informative position
       in the motif
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   MOTIF_SCORE_CHANGE:
     description: Change in motif binding score caused by the variant
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   MAX_AF:
     description: Maximum allele frequency observed across all population datasets
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   MAX_AF_POPS:
     description: Population in which the maximum allele frequency was observed
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   TRANSCRIPTION_FACTORS:
     description: Transcription factors associated with the regulatory motif
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   MOTIF_NAME:
     description: Regulatory motif affected
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 2
   OriginalContig:
     description: Original contig reported by Manta
@@ -483,8 +485,16 @@ fields:
     version: 1.3
     tier: 2
   REVEL:
-    description: Rare Exome Variant Ensemble Learner score predicting pathogenicity
-      of missense variants. https://sites.google.com/site/revelgenomics/
+    description: 'Rare Exome Variant Ensemble Learner score predicting pathogenicity of
+      missense variants (https://sites.google.com/site/revelgenomics/). REVEL scores the
+      amino-acid substitution, not the transcript structure, so it transfers between
+      transcripts that give the same change. Its source file records one transcript per score
+      and those are older Ensembl identifiers, so the plugin''s default transcript-matched
+      lookup returned nothing for variants annotated on a newer transcript -- BRAF V600E among
+      them, where the file holds 0.931 for ENST00000288602 while the pipeline reports
+      ENST00000646891. The plugin is therefore run with no_match=1: the score is for the
+      substitution, and where the transcript differs from the one reported, the amino-acid
+      change is the same'
     source: REVEL
     version: 1.3
     tier: 3
@@ -499,147 +509,156 @@ fields:
     version: v1.7_GRCh38
     tier: 2
   LOEUF:
-    description: Loss-of-function observed/expected upper bound fraction indicating
-      gene intolerance
-    source: Karczewski et al., Nature 2020 The mutational constraint spectrum quantified
-      from variation in 141,456 humans
-    version: gnomAD_v4.0
+    description: 'Loss-of-function observed/expected upper bound fraction. Per transcript,
+      not per gene: of the 14,247 genes with more than one transcript in the dataset,
+      93 per cent carry a different LOEUF on different transcripts, so the VEP plugin
+      is run with match_by=transcript. Covers autosomes only, because the gnomAD v4.1
+      release in use publishes no chrX or chrY constraint, so no value is reported for
+      an X-linked or Y-linked gene. gnomAD v4.1.1 added the sex chromosomes and v4.1.2
+      is current; upgrading recalibrates the autosomes as well, so it is a revalidation
+      rather than a file swap. See issue 31'
+    source: 'gnomAD v4.1 gene constraint release (no accompanying paper; documented in
+      the release notes and the Hail Table README, methods descending from Samocha 2014,
+      Lek 2016 and Karczewski 2020). NB Chen et al. Nature 625:92-100 (2024) is a
+      different product, the Gnocchi non-coding 1 kb-window map on v3.1.2 genomes, and is
+      not the source of these values'
+    version: gnomAD_v4.1
     tier: 3
   AF:
     description: Global allele frequency from population datasets
     source: VEP
-    version: 114.2
+    version: 114.0
     tier: 3
   AFR_AF:
     description: Allele frequency in African populations (1000G/gnomAD)
     source: gnomAD/1000G
-    version: VEP_114.2
+    version: VEP_114.0
     tier: 2
   AMR_AF:
     description: Allele frequency in Admixed American populations
     source: gnomAD/1000G
-    version: VEP_114.2
+    version: VEP_114.0
     tier: 2
   EAS_AF:
     description: Allele frequency in East Asian populations
     source: gnomAD/1000G
-    version: VEP_114.2
+    version: VEP_114.0
     tier: 2
   EUR_AF:
     description: Allele frequency in European populations
     source: gnomAD/1000G
-    version: VEP_114.2
+    version: VEP_114.0
     tier: 2
   SAS_AF:
     description: Allele frequency in South Asian populations
     source: gnomAD/1000G
-    version: VEP_114.2
+    version: VEP_114.0
     tier: 2
   gnomADe_AF:
     description: Allele frequency in gnomAD exomes
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 3
   gnomADe_AFR_AF:
     description: Allele frequency in African/African-American populations (gnomAD
       exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_AMR_AF:
     description: Allele frequency in Admixed American populations (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_ASJ_AF:
     description: Allele frequency in Ashkenazi Jewish population (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_EAS_AF:
     description: Allele frequency in East Asian populations (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_FIN_AF:
     description: Allele frequency in Finnish populations (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_MID_AF:
     description: Allele frequency in Middle Eastern populations (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_NFE_AF:
     description: Allele frequency in Non-Finnish European populations (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_REMAINING_AF:
     description: Allele frequency in remaining populations (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADe_SAS_AF:
     description: Allele frequency in South Asian populations (gnomAD exomes)
     source: gnomAD Exomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_AF:
     description: Allele frequency in gnomAD genomes
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 3
   gnomADg_AFR_AF:
     description: Allele frequency in African populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_AMI_AF:
     description: Allele frequency in Amish population (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_AMR_AF:
     description: Allele frequency in Admixed American populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_ASJ_AF:
     description: Allele frequency in Ashkenazi Jewish populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_EAS_AF:
     description: Allele frequency in East Asian populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_FIN_AF:
     description: Allele frequency in Finnish populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_MID_AF:
     description: Allele frequency in Middle Eastern populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_NFE_AF:
     description: Allele frequency in Non-Finnish European populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_REMAINING_AF:
     description: Allele frequency in remaining populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   gnomADg_SAS_AF:
     description: Allele frequency in South Asian populations (gnomAD genomes)
     source: gnomAD Genomes
-    version: gnomAD_v4.0
+    version: gnomAD_v4.1
     tier: 2
   CLIN_SIG:
     description: Clinical significance assigned in ClinVar
@@ -1184,9 +1203,12 @@ fields:
     version: changv2
     tier: 2
   hotspot:
-    description: Known somatic site, used to increase confidence in call
-    source: Cancer Hotspots
-    version: changv2
+    description: 'Known somatic site, used to increase confidence in call. Written by the variant caller into the input
+      VCF, not added by SMART; where a run harvests field metadata from its own VCFs this entry
+      is only the fallback. In WGLS runs the caller is DRAGEN, which uses its built-in COSMIC
+      positions when no hotspot file is supplied; the release behind that default is not stated'
+    source: Input VCF (variant caller)
+    version: Not versioned by the caller
     tier: 3
   NCBI_Build:
     description: Genome build used in the OncoKB annotation
@@ -1470,9 +1492,10 @@ fields:
     version: Manta_v1.6
     tier: 2
   FractionInformativeReads:
-    description: Fraction of reads informative for the structural variant
-    source: Manta
-    version: Manta_v1.6
+    description: 'The fraction of informative reads out of the total reads. Written by the variant caller
+      into the input VCF, not added by SMART'
+    source: Input VCF (variant caller)
+    version: Not versioned by the caller
     tier: 2
   HOMLEN:
     description: Length of homologous sequence at the breakpoint

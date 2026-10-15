@@ -66,7 +66,7 @@ class TestCalculateEnd:
     @pytest.mark.parametrize("pos,ref,alt,expected", [
         (114713908, "T", "C",   114713908),     # NRAS Q61R — SNV
         (208248388, "C", "T",   208248388),     # IDH1 R132H — SNV
-        (55174772,  "GAATTAAGAGAAGCAT", "G", 55174787),  # EGFR del — deletion: 55174772 + 16 - 1
+        (55174772,  "GGAATTAAGAGAAGCA", "G", 55174787),  # EGFR del — deletion: 55174772 + 16 - 1
     ])
     def test_real_verification1_variants(self, pos, ref, alt, expected):
         n = len(ref)
@@ -189,3 +189,133 @@ class TestLoadNmTranscripts:
         p = tmp_path / "v.txt"
         p.write_text("NM_023110.3\n")
         assert vcf2table.load_nm_transcripts(str(p)) == {"NM_023110"}
+
+
+class TestTranscriptMatchColumns:
+    """TRANSCRIPT_REQUESTED and TRANSCRIPT_MATCH: did the row get the transcript asked for?
+
+    VEP annotates every transcript overlapping a variant and vcf2table keeps one block. When
+    none of the supplied transcripts is among them it falls back to VEP's first block --
+
+        if not nm_selected and first_vep is not None:
+            # No match found -- use the first CSQ record
+
+    -- which is an arbitrary transcript, chosen by output order. Before these columns nothing
+    in the output said so, and it was worse than merely silent: `first_nm` was initialised and
+    never assigned, so a fallback row left NM_Transcript *empty*, which reads as "no
+    transcript" rather than "one we did not ask for".
+
+    Every other transcript guarantee is downstream of this one: a predictor correctly resolved
+    to the selected transcript is still the wrong answer if the selection was a fallback.
+    """
+
+    @staticmethod
+    def _run(tmp_path, csq_blocks, whitelist, info_extra=""):
+        """Run vcf2table over a one-variant VCF with the given CSQ blocks."""
+        import subprocess, sys, os, csv as _csv
+        fields = ["Allele", "Consequence", "IMPACT", "SYMBOL", "Feature", "HGVSc",
+                  "MANE_SELECT", "MANE", "MANE_PLUS_CLINICAL"]
+        vcf = tmp_path / "in.vcf"
+        info = "CSQ=" + ",".join("|".join(b.get(f, "") for f in fields) for b in csq_blocks)
+        if info_extra:
+            info += ";" + info_extra
+        vcf.write_text(
+            "##fileformat=VCFv4.2\n"
+            f'##INFO=<ID=CSQ,Number=.,Type=String,Description="Consequence annotations. '
+            f'Format: {"|".join(fields)}">\n'
+            '##INFO=<ID=ONCOKB_PREFERRED_TRANSCRIPT,Number=1,Type=String,Description="x">\n'
+            "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tTUMOR\n"
+            f"chr7\t140753336\tv1\tA\tT\t.\tPASS\t{info}\tGT:AD\t0/1:50,20\n")
+        tx = tmp_path / "tx.txt"
+        tx.write_text("\n".join(whitelist) + "\n")
+        out = tmp_path / "out.tsv"
+        script = os.path.join(os.path.dirname(__file__), "..", "..", "scripts", "vcf2table.py")
+        r = subprocess.run([sys.executable, script, "--vcf", str(vcf),
+                            "--transcripts", str(tx), "--output", str(out)],
+                           capture_output=True, text=True)
+        assert r.returncode == 0, r.stderr[-800:]
+        with open(out, newline="") as fh:
+            rows = list(_csv.DictReader(fh, delimiter="\t"))
+        assert len(rows) == 1, f"expected one row, got {len(rows)}"
+        return rows[0]
+
+    def test_a_supplied_transcript_is_reported_as_a_match(self, tmp_path):
+        row = self._run(tmp_path,
+                        [dict(Feature="NM_004333.6", SYMBOL="BRAF",
+                              HGVSc="NM_004333.6:c.1799T>A", Consequence="missense_variant")],
+                        ["NM_004333.6"])
+        assert row["TRANSCRIPT_MATCH"] == "match"
+        assert row["TRANSCRIPT_REQUESTED"] == "NM_004333"
+        assert row["NM_Transcript"] == "NM_004333"
+
+    def test_the_supplied_transcript_is_chosen_over_the_first_block(self, tmp_path):
+        """The whole point of a whitelist: order in the VCF must not decide."""
+        row = self._run(tmp_path,
+                        [dict(Feature="NM_999999.1", SYMBOL="BRAF", Consequence="intron_variant"),
+                         dict(Feature="NM_004333.6", SYMBOL="BRAF",
+                              HGVSc="NM_004333.6:c.1799T>A", Consequence="missense_variant")],
+                        ["NM_004333.6"])
+        assert row["TRANSCRIPT_MATCH"] == "match"
+        assert row["NM_Transcript"] == "NM_004333"
+        assert row["Consequence"] == "missense_variant", "the wrong block was kept"
+
+    def test_a_fallback_is_declared_and_names_the_transcript_used(self, tmp_path):
+        """The silent failure, now stated: no supplied transcript was annotated here."""
+        row = self._run(tmp_path,
+                        [dict(Feature="NM_888888.2", SYMBOL="BRAF",
+                              Consequence="missense_variant")],
+                        ["NM_004333.6"])
+        assert row["TRANSCRIPT_MATCH"] == "fallback:NM_888888.2", row["TRANSCRIPT_MATCH"]
+        assert row["TRANSCRIPT_REQUESTED"] == "", (
+            "nothing was requested for this variant, so the column must be empty rather "
+            "than implying a transcript was honoured")
+
+    def test_a_fallback_names_the_first_block_when_there_are_several(self, tmp_path):
+        row = self._run(tmp_path,
+                        [dict(Feature="NM_111111.1", SYMBOL="BRAF", Consequence="intron_variant"),
+                         dict(Feature="NM_222222.2", SYMBOL="BRAF", Consequence="missense_variant")],
+                        ["NM_004333.6"])
+        assert row["TRANSCRIPT_MATCH"] == "fallback:NM_111111.1"
+
+    def test_an_oncokb_pin_of_a_supplied_transcript_is_a_match(self, tmp_path):
+        """A pin is always one of the supplied transcripts, so it is a match, not an outcome.
+
+        oncokb2.0.py sets ONCOKB_PREFERRED_TRANSCRIPT only when
+        `candidate in preferred_tx` -- the same list the user supplied. A first version of
+        these columns reported the pin path as "pinned:<acc>", which made 32 of the 37
+        verification rows look as though the transcript had come from somewhere other than
+        the user's list, and would have hidden a real fallback among them.
+        """
+        row = self._run(tmp_path,
+                        [dict(Feature="NM_004333.6", SYMBOL="BRAF",
+                              HGVSc="NM_004333.6:c.1799T>A", Consequence="missense_variant")],
+                        ["NM_004333.6"],
+                        info_extra="ONCOKB_PREFERRED_TRANSCRIPT=NM_004333")
+        assert row["TRANSCRIPT_MATCH"] == "match", row["TRANSCRIPT_MATCH"]
+        assert row["TRANSCRIPT_REQUESTED"] == "NM_004333"
+
+    def test_the_only_two_outcomes_are_match_and_fallback(self, tmp_path):
+        """Stated as its own test so a third value cannot creep back in unnoticed."""
+        for blocks, wl in (
+            ([dict(Feature="NM_004333.6", SYMBOL="BRAF",
+                   HGVSc="NM_004333.6:c.1799T>A", Consequence="missense_variant")],
+             ["NM_004333.6"]),
+            ([dict(Feature="NM_888888.2", SYMBOL="BRAF", Consequence="missense_variant")],
+             ["NM_004333.6"]),
+        ):
+            m = self._run(tmp_path, blocks, wl)["TRANSCRIPT_MATCH"]
+            assert m == "match" or m.startswith("fallback:"), m
+
+    def test_a_fallback_no_longer_leaves_the_transcript_column_empty_without_saying_why(
+            self, tmp_path):
+        """NM_Transcript may still be empty on a fallback, but TRANSCRIPT_MATCH explains it.
+
+        That pairing is the fix: an empty transcript with no explanation was the dangerous
+        state, because it looks like missing data rather than a substitution.
+        """
+        row = self._run(tmp_path,
+                        [dict(Feature="NM_888888.2", SYMBOL="BRAF",
+                              Consequence="missense_variant")],
+                        ["NM_004333.6"])
+        assert row["TRANSCRIPT_MATCH"].startswith("fallback:")
+        assert row["TRANSCRIPT_MATCH"] != "match"

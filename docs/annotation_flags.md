@@ -13,13 +13,18 @@ reason to keep a row needs no further column.
 ## The problem they solve
 
 SMART annotates SpliceAI and reaches the output with it: `SpliceAI_pred_DS_AG`, `_DS_AL`, `_DS_DG`
-and `_DS_DL` are columns 113–116 of 807 in a current MAF, and the same four are in the Tier 3
-sheet. The two recurrent TERT promoter variants (C228T and C250T) are annotated correctly too, as
-`upstream_gene_variant`, which SMART maps to `Variant_Classification = 5'Flank`.
+and `_DS_DL` are columns 1,093–1,096 of the 1,165 in the Tier 1 MAF of the committed
+`tests/verification1` run, and the same four are in the Tier 3 sheet. The two recurrent TERT
+promoter variants (C228T and C250T) are annotated correctly too, as `upstream_gene_variant`, which
+SMART maps to `Variant_Classification = 5'Flank`.
 
 Neither is missing. What happens is that a filter on `Variant_Classification` or on VEP's `IMPACT`
 removes the row — as `Silent`, `Intron` or `5'Flank`, or as `LOW`/`MODIFIER` — before anyone reaches
-column 113. The data is there; the row is gone.
+column 1,093. The data is there; the row is gone.
+
+(The exact column positions move with the cohort: the OncoKB evidence columns are padded to the
+widest row in a run. The point is that they are a thousand columns to the right of the ones a
+filter reads, not that they are at any particular index.)
 
 The volume is low and the stakes are not. Across three cohorts (10,124 rows) roughly one variant in
 five is synonymous, intronic or UTR; of those, 11 carry a SpliceAI delta of 0.5 or above and about
@@ -118,16 +123,40 @@ Both are tier 3, so they reach the sheet clinical scientists read.
 ## Verified against a real MAF
 
 The flags run inside the per-sample transform, after the annotation columns have been expanded and
-before `drop_columns`. On a real per-sample MAF from `tests/verification1` — 22 rows, 1,035 columns —
-both columns are added, `SPLICEAI_MAX_DS` parses the real cells (VEP writes them as a numeric column,
-so empty cells arrive as `NaN` rather than as `.`), and both reach the Tier 2 and Tier 3 sheets.
+before `drop_columns`. On the real per-sample MAF from the committed `tests/verification1` run,
+`FINAL_Table/verification1.oncoKB.maf` — 45 rows, 1,151 columns — both columns are added,
+`SPLICEAI_MAX_DS` parses the real cells (VEP writes them as a numeric column, so empty cells arrive
+as `NaN` rather than as `.`), and both reach the Tier 2 and Tier 3 sheets.
 
-That sample contains no row that should be flagged: its two `LOW`/`MODIFIER` rows are a `Silent`
-GNAQ variant and a CDK4 5'UTR variant for which SpliceAI returned no prediction at all, so an empty
-`ANNOTATION_FLAGS` is the correct output and a flag there would be a false positive. The flagging
-path is therefore exercised by taking real rows from that MAF and making them eligible — giving the
-`Silent`/`LOW` row a score, and moving one row to the TERT position — which is what the integration
-tests do.
+`add_annotation_flags()` on that MAF flags **4 of the 45 rows**, one per route into the mechanism:
+
+| Row | Impact / class | `SPLICEAI_MAX_DS` | Flag |
+|---|---|---|---|
+| TERT chr5:1295113 G>A | MODIFIER / `5'Flank` | — | `svig_canonical` |
+| TERT chr5:1295135 G>A | MODIFIER / `5'Flank` | — | `svig_canonical` |
+| MET chr7:116771992 | LOW / `Intron` | 0.58 | `splice_predicted(0.58)` |
+| TP53 chr17:7675994 | LOW / `Splice_Region` | 0.58 | `splice_predicted(0.58)` |
+
+Each is exactly the row a consequence- or impact-based filter drops: two promoter hotspots VEP calls
+`5'Flank`, an intronic change and a protein-synonymous splice-region change. None of them would
+survive the filter this mechanism exists to correct, and all four now carry a reason not to drop
+them.
+
+The two `LOW`/`MODIFIER` rows that are **not** flagged are as important, because they are where a
+looser rule would produce false positives:
+
+- a third TERT `5'Flank` row, chr5:1295113 **G>T**. Same position as the first hotspot, different
+  allele, and only `G>A` is on the canonical list — matching on position alone would flag it.
+- a CDK4 5'UTR row for which SpliceAI returned no prediction at all. An empty `SPLICEAI_MAX_DS` is
+  not a low score, and is not evidence.
+
+The sample used to contain no flaggable row at all, which is why earlier versions of this page said
+so. Its only `Silent`/`LOW` row then was a GNAQ variant that was synonymous only because the
+fixture's allele was strand-flipped; correcting that ([#19](https://github.com/WeTGI-colab/SMART/issues/19))
+turned it into the intended `p.Q209L` missense, and the cohort has since gained the MET, TP53 and
+TERT records above. **There is no `Silent` row in the MAF today.** The unit tests still construct
+eligible rows synthetically, for the boundaries that a 45-variant cohort of coding hotspots does not
+happen to sit on; the integration tests assert the four rows above.
 
 ## Tests
 

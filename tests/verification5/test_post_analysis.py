@@ -280,62 +280,93 @@ class TestStripEmbeddedWhitespace:
 # ===========================================================================
 
 class TestCalculateEndPosition:
+    """End_Position: the last reference base the record spans.
+
+    These tests used to assert the previous behaviour, which produced an **empty**
+    End_Position on 44 of 44 rows of every real run -- the Tier 1 MAF the laboratory reads,
+    copy-number calls included. Three things were wrong and all three are asserted against
+    here now:
+
+      * an end was computed only when `ID == "."`, so a caller that names its records got
+        nothing. Manta names its records; so does any VCF carrying an rsID.
+      * `DUPSVLEN` was read for the Manta rows. No caller writes it -- Manta and DRAGEN-SV
+        write `SVLEN` -- and it is not a column of this table, so those rows were blanked
+        even though `END` sat correct in the same row.
+      * an insertion's end was `start + len(ALT)`, which overstates the reference span.
+
+    The convention is `start + len(REF) - 1`, which is what `oncokb_maf_query.py` already
+    computes for the OncoKB genomic query and is the VCF definition: REF carries the anchor
+    base, so its length is the number of reference bases covered.
+    """
+
     def _df(self, **kwargs) -> pd.DataFrame:
-        defaults = {
-            "Start_Position": 1000,
-            "ID": ".",
-            "REF": "A",
-            "ALT": "G",
-            "DUPSVLEN": "",
-        }
+        defaults = {"Start_Position": 1000, "ID": ".", "REF": "A", "ALT": "G"}
         defaults.update(kwargs)
         return pd.DataFrame([defaults])
 
+    def _end(self, **kwargs):
+        v = post.calculate_end_position(self._df(**kwargs))["End_Position"].iloc[0]
+        return None if v is None or v != v else int(v)
+
     def test_snv_end_equals_start(self):
-        df = self._df(REF="A", ALT="G")    # len(REF)==len(ALT)==1
-        result = post.calculate_end_position(df)
-        assert result["End_Position"].iloc[0] == 1000
+        assert self._end(REF="A", ALT="G") == 1000
 
-    def test_deletion_end_past_start(self):
-        # REF=AG (2), ALT=A (1) → max(2,1)=2 → end = 1000 + 2 - 1 = 1001
-        df = self._df(REF="AG", ALT="A")
-        result = post.calculate_end_position(df)
-        assert result["End_Position"].iloc[0] == 1001
+    def test_a_named_record_is_computed_too(self):
+        """The defect that emptied the column: an ID other than '.' was not a reason to stop."""
+        assert self._end(ID="NRAS_Q61R", REF="A", ALT="G") == 1000
+        assert self._end(ID="rs113488022", REF="A", ALT="G") == 1000
 
-    def test_manta_bnd_returns_none(self):
-        df = self._df(ID="MantaBND:1:1000:2000")
-        result = post.calculate_end_position(df)
-        assert result["End_Position"].iloc[0] is None
+    def test_deletion_spans_the_deleted_bases(self):
+        assert self._end(REF="AG", ALT="A") == 1001
 
-    def test_manta_ins_with_symbolic_alt_uses_dupsvlen(self):
-        df = self._df(ID="MantaINS:1:1000:2000", ALT="<INS>", DUPSVLEN=10)
-        result = post.calculate_end_position(df)
-        assert result["End_Position"].iloc[0] == 1010
+    def test_insertion_spans_only_the_anchor_base(self):
+        """`A>ACTG` inserts after position 1000; the record covers one reference base.
 
-    def test_manta_ins_with_sequence_alt_uses_alt_length(self):
-        df = self._df(ID="MantaINS:1:1000:2000", ALT="ACTG", DUPSVLEN="")
-        result = post.calculate_end_position(df)
-        assert result["End_Position"].iloc[0] == 1004   # 1000 + len("ACTG")
+        The previous behaviour returned 1004, overstating the span by len(ALT)-1.
+        """
+        assert self._end(REF="A", ALT="ACTG") == 1000
 
-    def test_manta_dup_uses_dupsvlen(self):
-        df = self._df(ID="MantaDUP:1:1000:1500", DUPSVLEN=500)
-        result = post.calculate_end_position(df)
-        assert result["End_Position"].iloc[0] == 1500
+    def test_mnv_spans_its_own_length(self):
+        assert self._end(REF="CA", ALT="GT") == 1001
 
-    def test_manta_dup_missing_svlen_returns_none(self):
-        df = self._df(ID="MantaDUP:1:1000:1500", DUPSVLEN="")
-        result = post.calculate_end_position(df)
-        assert result["End_Position"].iloc[0] is None
+    def test_the_callers_end_wins_for_a_symbolic_alt(self):
+        """A copy-number call has no sequence to measure, so END is the only authority.
 
-    def test_end_position_column_created(self):
-        df = self._df()
-        result = post.calculate_end_position(df)
-        assert "End_Position" in result.columns
+        This is the real MET amplification from the verification cohort, whose segment end
+        was present and discarded.
+        """
+        assert self._end(ID="MantaDUP:MET_AMP", Start_Position=116672196,
+                         REF="N", ALT="<DUP>", END="116798037") == 116798037
 
+    def test_svlen_is_used_when_there_is_no_end(self):
+        """SVLEN is what Manta and DRAGEN-SV actually write, and it may be negative."""
+        assert self._end(ID="MantaDEL:1", REF="N", ALT="<DEL>", SVLEN="-500") == 1500
+        assert self._end(ID="MantaDUP:1", REF="N", ALT="<DUP>", SVLEN="500") == 1500
 
-# ===========================================================================
-# drop_columns
-# ===========================================================================
+    def test_svlen_is_not_applied_to_a_sequence_alt(self):
+        """A record with real alleles has its span in REF; SVLEN would double-count."""
+        assert self._end(ID="x", REF="AG", ALT="A", SVLEN="500") == 1001
+
+    def test_a_breakend_has_no_span(self):
+        """A junction, not an interval. Its REF is a placeholder, which would otherwise
+        give end == start and read as a point event."""
+        assert self._end(ID="MantaBND:1", REF="N", ALT="N[chr9:133729451[") is None
+        assert self._end(ID="MantaBND:1", REF="N", ALT="]chr9:133729451]N") is None
+
+    def test_a_placeholder_ref_gives_no_span(self):
+        assert self._end(ID="x", REF=".", ALT="<DUP>") is None
+
+    @pytest.mark.parametrize("end", ["", ".", "nan", "None", None])
+    def test_an_unusable_end_falls_through_to_the_reference_span(self, end):
+        assert self._end(ID="x", REF="AG", ALT="A", END=end) == 1001
+
+    def test_an_end_before_the_start_is_not_trusted(self):
+        """A malformed END must not produce an interval that runs backwards."""
+        assert self._end(ID="x", Start_Position=1000, REF="AG", ALT="A", END="900") == 1001
+
+    def test_a_non_numeric_start_gives_nothing(self):
+        assert self._end(Start_Position="chr1", REF="A", ALT="G") is None
+
 
 class TestDropColumns:
     def test_drops_existing_columns(self):

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 # =============================================================================
-# build_config.py
+# update_confg.py  (the filename's typo is long-standing; nothing is named
+#                   build_config.py anywhere in this repository)
 # =============================================================================
 #
 # DESCRIPTION:
@@ -25,7 +26,7 @@
 #            OncoKB/CIViC clinical fields. No expanded TX/DIAG detail.
 #
 # USAGE:
-#   python build_config.py
+#   python update_confg.py
 #
 # RELATED FILES:
 #   - ConfigORIGINAL.yaml : human-maintained template

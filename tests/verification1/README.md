@@ -13,57 +13,150 @@ annotation logic, VEP field extraction, and post-processing transformations.
 
 | File | Description |
 |---|---|
-| `verification1.vcf.gz` | 22 synthetic variants (18 SNV/indel + 4 CNA) — **this is the file the pipeline reads** |
-| `verification1.vcf` | 18 variants, two months older and missing four of them; see the warning below |
+| `verification1.vcf.gz` | 45 variants (41 SNV/MNV/indel + 4 CNA) — **this is the file the pipeline reads** |
+| `verification1.vcf` | the same 45 records, uncompressed; regenerate both together |
 | `verification1_transcripts.txt` | 15 preferred NM transcript IDs |
 | `Config.yaml` | Pipeline config (tiers, column metadata) |
 
-> ### Known defects in this fixture — [issue #19](https://github.com/WeTGI-colab/SMART/issues/19)
+> ### Fixture defects, both now fixed — [issue #19](https://github.com/WeTGI-colab/SMART/issues/19)
 >
-> **Two copies are committed and they differ.** `verification1.vcf.gz` has 22 variants and is
-> what the pipeline reads; the plain `verification1.vcf` has 18 and lacks `EGFR_T790M`,
-> `KRAS_G12C`, `PIK3CA_E545K` and `TP53_R248W`. Reading the plain file to see what is tested
-> gives the wrong answer, and that is where the figure "18 variants" came from.
+> Kept here because the figures in older documentation and in the paper drafts came from the
+> defective fixture, so anyone comparing against them needs to know what changed.
 >
-> **Three records carry a REF allele that does not match GRCh38**, which
-> `scripts/check_reference.py` now reports:
+> **The two committed copies held different variants.** `verification1.vcf.gz` is what the
+> pipeline reads and had 22 records; the plain `verification1.vcf` had 18 and lacked
+> `EGFR_T790M`, `KRAS_G12C`, `PIK3CA_E545K` and `TP53_R248W`. That is where the figure
+> "18 variants" came from. Both files are now generated from one source, are byte-identical in
+> content, and `tests/verification5/test_check_reference.py` fails if they diverge again.
 >
-> | ID | Position | VCF REF | GRCh38 |
-> |---|---|---|---|
-> | `GNAQ_Q209L` | chr9:77794572 | `A` | `T` |
-> | `DICER1_E1705K` | chr14:95094139 | `G` | `C` |
-> | `EGFR_del19` | chr7:55174772 | `GAATTAAGAGAAGCAT` | `GGAATTAAGAGAAGCA` |
+> **Three records carried a REF allele that does not match GRCh38.** Corrected to:
 >
-> GNAQ and DICER1 are minus-strand genes whose alleles were written on the gene's strand. VEP
-> does not reject them: it takes the reference base from the genome and keeps the submitted ALT,
-> so each is annotated as a different variant from the one its ID names. **The "Change" column
-> below records those wrong annotations** — `GNAQ_Q209L` as `p.Gln209=` and `DICER1_E1705K` as
-> `p.E1705*` — because they were documented from the output rather than from intent. The
-> intended variants are a Gln209Leu and a Glu1705Lys missense, both of which the correct alleles
-> would produce.
+> | ID | Position | was | now (= GRCh38) | annotated as, before → after |
+> |---|---|---|---|---|
+> | `GNAQ_Q209L` | chr9:77794572 | `A>T` | `T>A` | `p.Gln209=` → `p.Q209L` |
+> | `DICER1_E1705K` | chr14:95094139 | `G>A` | `C>T` | `p.E1705*` → `p.E1705K` |
+> | `EGFR_del19` | chr7:55174772 | `GAATTAAGAGAAGCAT>G` | `GGAATTAAGAGAAGCA>G` | no score → `p.E746_A750del` |
+>
+> GNAQ and DICER1 are minus-strand genes whose alleles had been written on the gene's strand
+> rather than the genome's; `EGFR_del19` was written as the deleted bases with no anchor base,
+> and with the last one wrong. VEP does not reject such a record — it takes the reference base
+> from the genome and keeps the submitted ALT — so each was annotated as a different variant
+> from the one its ID names, and OncoKB's genomic-change endpoint returned `geneExist=false`
+> for all three, which is indistinguishable from "OncoKB does not curate this gene".
+>
+> Each correction was verified twice: the REF against the GRCh38 FASTA via
+> `scripts/check_reference.py`, and the resulting variant against OncoKB, which resolves the
+> corrected records to exactly the alterations the IDs claim. The suite runs with the default
+> `--ref-check fail`, so a regression stops the run rather than being reported and passed over.
 
 ## Variants
 
-| Gene | Variant ID | Change | Type |
-|---|---|---|---|
-| NRAS | NRAS_Q61R | p.Q61R | SNV |
-| IDH1 | IDH1_R132H | p.R132H | SNV |
-| PIK3CA | PIK3CA_H1047R | p.H1047R | SNV |
-| EGFR | EGFR_del19 | p.Glu746_Ala750del | Indel |
-| EGFR | EGFR_L858R | p.L858R | SNV |
-| BRAF | BRAF_V600E | p.V600E | SNV |
-| GNAQ | GNAQ_Q209L | p.Gln209= | SNV (synonymous) |
-| PTEN | PTEN_R130stop | p.R130* | SNV |
-| KRAS | KRAS_G13D | p.G13D | SNV |
-| KRAS | KRAS_G12D | p.G12D | SNV |
-| BRCA2 | BRCA2_L3101R | p.L3101R | SNV |
-| DICER1 | DICER1_E1705K | p.E1705* | SNV |
-| TP53 | TP53_R175H | p.R175H | SNV |
-| ERBB2 | ERBB2_S310F | p.S310F | SNV |
-| MET | MantaDUP:MET_AMP | Amplification | CNA |
-| CDKN2A | MantaDEL:CDKN2A_DEL | Deletion | CNA |
-| CDK4 | MantaDUP:CDK4_AMP | Amplification | CNA |
-| ERBB2 | MantaDUP:ERBB2_AMP | Amplification | CNA |
+29 records: 24 SNVs, 1 indel, 4 CNAs.
+The "Reported change" column is what the pipeline actually annotated, read back from
+`output/FINAL_Table/verification1.oncoKB.maf`, not what the variant ID claims — that
+distinction is what issue #19 was about.
+
+| Gene | Variant ID | Reported change | Type | Why it is here |
+|---|---|---|---|---|
+| NRAS | `NRAS_Q61R` | p.Q61R | SNV |  |
+| NRAS | `NRAS_G12D` | *not yet annotated* | SNV | 14 treatments, levels 2/3A/4/R1, Dx2 + Px1 |
+| IDH1 | `IDH1_R132H` | p.R132H | SNV |  |
+| PIK3CA | `PIK3CA_E545K` | p.E545K | SNV |  |
+| PIK3CA | `PIK3CA_H1047R` | p.H1047R | SNV |  |
+| PDGFRA | `PDGFRA_D842V` | *not yet annotated* | SNV | LEVEL_1 avapritinib and LEVEL_R1 |
+| KIT | `KIT_D816V` | *not yet annotated* | SNV | LEVEL_R2, Dx2, Px1, 17 citations |
+| EGFR | `EGFR_del19` | p.E746_A750del | Indel |  |
+| EGFR | `EGFR_T790M` | p.T790M | SNV |  |
+| EGFR | `EGFR_L858R` | p.L858R | SNV |  |
+| MET | `MantaDUP:MET_AMP` | — | CNA |  |
+| BRAF | `BRAF_V600E` | p.V600E | SNV |  |
+| CDKN2A | `MantaDEL:CDKN2A_DEL` | — | CNA |  |
+| GNAQ | `GNAQ_Q209L` | p.Q209L | SNV |  |
+| PTEN | `PTEN_R130stop` | p.R130* | SNV |  |
+| KRAS | `KRAS_Q61H` | *not yet annotated* | SNV | 15 treatments, levels 1/2/3A/4/R1, Dx2 |
+| KRAS | `KRAS_G13D` | p.G13D | SNV |  |
+| KRAS | `KRAS_G12D` | p.G12D | SNV |  |
+| KRAS | `KRAS_G12C` | p.G12C | SNV |  |
+| CDK4 | `MantaDUP:CDK4_AMP` | — | CNA |  |
+| BRCA2 | `BRCA2_L3101R` | p.L3101R | SNV |  |
+| DICER1 | `DICER1_E1705K` | p.E1705K | SNV |  |
+| IDH2 | `IDH2_R140Q` | *not yet annotated* | SNV | Dx2 + Px2; 2 diagnostic and 3 prognostic implications |
+| CDH1 | `CDH1_R63*` | *not yet annotated* | SNV | the one variant found with `vus=True` — covers `ONCOKB_VUS` |
+| TP53 | `TP53_R248W` | p.R248W | SNV |  |
+| TP53 | `TP53_R175H` | p.R175H | SNV |  |
+| ERBB2 | `MantaDUP:ERBB2_AMP` | — | CNA |  |
+| ERBB2 | `ERBB2_S310F` | p.S310F | SNV |  |
+| STK11 | `STK11_F354L` | *not yet annotated* | SNV | `ONCOGENIC` = Likely Neutral, a value nothing else exercises |
+
+Seven were added to close gaps the field coverage report had identified: variants carrying
+many OncoKB treatment levels, diagnostic and prognostic implications, and `ONCOGENIC` values
+no other record produces. Each was confirmed three ways before being added — the REF against
+the GRCh38 FASTA, and OncoKB's `byGenomicChange` endpoint returning the intended alteration.
+That third check matters: Ensembl's recoder offered `chr4:54733167 A>T` for KIT D816V, which
+OncoKB resolves to **D820V**, a different variant; the same happened for IDH2 (R149Q) and KRAS
+(S65I). Trusting the first coordinate returned is how #19 happened.
+
+`LEVEL_3B`, `ONCOKB_diagnosticSummary` and `ONCOKB_prognosticSummary` remain uncovered and no
+variant can cover them: all three require a tumour-type query, and the pipeline queries
+pan-cancer ([#26](https://github.com/WeTGI-colab/SMART/issues/26)).
+
+## Why each variant is here
+
+Nothing in this cohort is here because it is famous. Each record was chosen to exercise
+something the suite could not otherwise reach, and the gap it fills is named so that a future
+reader can tell a deliberate choice from an accident — and so that removing a variant is a
+decision rather than a tidy-up.
+
+The gaps were not guessed. `scripts/audit_empty_columns.py` reports, on every run, which
+output columns carry no value on any variant and which of those a variant could fill; and the
+cohort was compared against the MAF `Variant_Classification` vocabulary and against VEP's
+consequence terms to find classes it had never contained.
+
+### Added for a variant class the cohort had never held
+
+| variant | class it brings | why that matters |
+|---|---|---|
+| `NPM1_W288fs` `chr5:171410539 C>CTCTG` | `Frame_Shift_Ins` | Frameshifts were entirely absent, and the classifier has 25 branches that read `frameshift`. This is the classic AML type-A duplication; OncoKB returns `W288Cfs*12`, Oncogenic, and **LEVEL_Dx1** — the only Dx1 in the cohort, which the empty-column audit had listed as unreachable |
+| `BRCA2_S1982fs` `chr13:32340300 GT>G` | `Frame_Shift_Del` | A frameshift *deletion* behaves differently from an insertion through HGVS shifting and left-alignment. The 6174delT; OncoKB returns `S1982Rfs*22`, Likely Oncogenic, LEVEL_1 with **26 treatments**, more than any other record here |
+| `ASXL1_G646fs` `chr20:32434645 G>GG` | `Frame_Shift_Ins` in a haematological tumour-suppressor | A second frameshift in a different gene role and lineage. `G646Wfs*12`, Likely Oncogenic, Dx2 and Px1 |
+| `ERBB2_ins` `chr17:39724730 C>CATACGTGATGGC` | `In_Frame_Ins` | The cohort had an in-frame deletion and no insertion. A 12 bp exon-20 duplication, `Y772_A775dup`, Oncogenic, LEVEL_1 across 17 treatments |
+| `TP53_T125T` `chr17:7675994 C>T` | `Silent` / `Splice_Region` | Synonymous was absent. It is also the case the `ANNOTATION_FLAGS` work exists for: synonymous at the protein level, and OncoKB classifies it as `X125_splice`, Likely Oncogenic — so a consequence-based filter would drop a variant that is not silent in effect |
+| `BTK_C481S` `chrX:101356177 A>T` | the first record on a **sex chromosome** | The cohort was entirely autosomal, so contig handling on X — which differs per source, `chrX` against `X` — was never exercised. Clinically it is the ibrutinib-resistance variant: OncoKB returns `Resistance` with LEVEL_R1, and `Resistance` is an `ONCOGENIC` value nothing else here produces |
+| `TERT_C228A` `chr5:1295113 G>T` | a **second ALT at a position the cohort already held** | Added from [#32](https://github.com/WeTGI-colab/SMART/issues/32), where a collaborator measured 297 rows reaching OncoKB with a blank `HGVSp_Short` and coming back `ONCOGENIC=Unknown`. The cause was `End_Position`: MafAnnotator resolves the query type per row and falls back to `Genomic_Change` when there is no protein change, but that fallback checks only that the genomic *headers* exist, so a blank end produced a query OncoKB could not answer. This record also exercises something nothing else here does — two different ALTs at one position, which is where a merge keyed on coordinates alone loses a row. OncoKB returns `Likely Oncogenic`, `variantExist=true`, alteration `Promoter`, the same as C228T |
+| `BRAF_MNV` `chr7:140753335 CA>GT` | a **multi-nucleotide variant** | `entrypoint.sh` warns that the released SpliceAI model silently returns nothing for an MNV, and that warning path had never run in a test. Constructed at BRAF codon 600 — a position a laboratory does look at — rather than at an arbitrary locus. Its purpose is the code path, not a clinical claim |
+
+### Added earlier, for the same reasons
+
+| variant | why |
+|---|---|
+| `TERT_C228T`, `TERT_C250T` | the promoter hotspots, and the cohort's first `5'Flank` records. They also closed `DISTANCE` and `CancerHotspots_HOTSPOTNC*`, which no variant had ever populated ([#15](https://github.com/WeTGI-colab/SMART/issues/15)) |
+| `MET_ex14_skip`, `TP53` `c.376-1G>A` and `c.782+1G>A` | the first intronic and splice records. The cohort was coding hotspots, which is not where splice prediction matters, and these are the only records that exercise SpliceAI, `ANNOTATION_FLAGS` and O6 ([#14](https://github.com/WeTGI-colab/SMART/issues/14)) |
+| `ABL1_T315I`, `MLH1_V384D`, `STK11_F354L`, `CDH1_R63*` | the `ONCOGENIC` vocabulary: `Resistance`, `Inconclusive`, `Likely Neutral`, and the only variant found with `vus=True`. Before these, only `Oncogenic` and `Likely Oncogenic` were ever exercised |
+| `KRAS_Q61H`, `NRAS_G12D`, `KIT_D816V`, `PDGFRA_D842V`, `IDH2_R140Q`, `TP53_Y220C` | breadth of OncoKB evidence: treatment levels 1 through 4, R1, R2, and diagnostic and prognostic implications |
+
+### How each was verified before being added
+
+Three independent checks, and all three have caught a mistake:
+
+1. **The REF against the GRCh38 FASTA.** `scripts/check_reference.py` runs on this fixture with
+   the default `--ref-check fail`, so a wrong REF stops the run.
+2. **The consequence from VEP**, so the record is the class it is claimed to be.
+3. **OncoKB's `byGenomicChange` endpoint**, which must return the alteration the variant ID
+   claims.
+
+The third check is not ceremony. Ensembl's variant recoder offered `chr4:54733167 A>T` for KIT
+D816V, which OncoKB resolves to **D820V** — a different variant — and the same happened for
+IDH2 (`R149Q`) and KRAS (`S65I`).
+
+And the VEP HGVS endpoint returns `allele_string` **on the transcript strand**, so for every
+minus-strand gene it gives the reverse complement of the genomic alleles. It did this for
+TP53 `T125T`, for `BTK_C481S`, and for all three TP53 splice records — five times in this
+work. That is the same defect as [#19](https://github.com/WeTGI-colab/SMART/issues/19), and
+the only thing that caught it each time was the FASTA. **Do not add a variant from a
+coordinate a service returned without checking the REF against the reference genome.**
+
+Insertions need care of their own: VEP reports them with `start = end + 1`, the convention for
+a position between two bases, and a VCF record needs an anchor base taken from the genome.
 
 ## Verification script
 

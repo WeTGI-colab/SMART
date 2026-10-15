@@ -19,6 +19,11 @@ orjson>=3.9
 pygments>=2.17
 pyyaml>=6.0
 
+# reportlab renders the verification report to PDF (scripts/verification_report.py). Pure
+# Python: no LaTeX, no headless browser and no system libraries, so the report can be produced
+# inside the image and on a server, not only on a laptop that happens to have a browser.
+reportlab>=4.0
+
 # Testing
 pytest>=7.4
 pytest-cov>=4.1

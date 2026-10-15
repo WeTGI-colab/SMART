@@ -10,8 +10,10 @@ REF disagrees with the FASTA:** it takes the reference base from the genome and 
 submitted ALT. The consequence it then reports belongs to a variant nobody submitted, and
 nothing in the output says so.
 
-This was found in SMART's own test data. `tests/verification1/verification1.vcf` contains
-three records whose REF does not match GRCh38:
+This was found in SMART's own test data. `tests/verification1/verification1.vcf` contained
+three records whose REF did not match GRCh38 — all three now corrected
+([#19](https://github.com/WeTGI-colab/SMART/issues/19)), and kept here because they are the
+clearest illustration of what goes undetected without this check:
 
 | ID | Position | VCF REF | Genome | What SMART reported |
 |---|---|---|---|---|
@@ -28,6 +30,11 @@ missense was reported as a nonsense. The third is an off-by-one REF on a deletio
 None of them produced a warning anywhere in the run. The only step that noticed was the
 SpliceAI lookup, and only by omission — it matches on CHROM+POS+REF+ALT, so these records
 silently received no splice annotation at all. That is what prompted this check.
+
+OncoKB behaved the same way. Queried by genomic change, it answered `geneExist=false` for all
+three — not an error, and indistinguishable from "OncoKB does not curate this gene". The
+corrected records resolve to `Q209L`, `E1705K` and `E746_A750del`, which is how each correction
+was confirmed independently of the FASTA.
 
 A REF mismatch has three usual causes, and all three invalidate a run:
 
@@ -78,9 +85,22 @@ anyway.
 
 ## Tests
 
-`tests/verification5/test_check_reference.py` (42 tests): FASTA reading through a
+`tests/verification5/test_check_reference.py` (45 tests): FASTA reading through a
 hand-built `.fai` including line-wrapped spans, both chromosome naming conventions,
 soft-masked lower-case reference, which records are checkable, detection of a strand flip,
 an off-by-one multi-base REF and a wrong assembly, gzipped input, counting beyond the report
-limit, and the exit status for each mode. Two tests assert the three bad records are still
-present in `verification1.vcf` and record the correct alleles for whoever fixes it.
+limit, and the exit status for each mode.
+
+Two tests guard the correction rather than the defect, in both directions, so a regenerated
+fixture cannot quietly reintroduce [#19](https://github.com/WeTGI-colab/SMART/issues/19):
+
+- `test_the_fixture_carries_the_corrected_alleles` asserts that `verification1.vcf` holds
+  `chr9:77794572 T>A`, `chr14:95094139 C>T` and `chr7:55174772 GGAATTAAGAGAAGCA>G` — the three
+  corrected records;
+- `test_the_strand_flipped_alleles_are_gone` names the three wrong values from the table above and
+  asserts none of them is present, which catches a partial revert that the first test would pass.
+
+The pre-fix alleles are kept in the file as a positive control for the checker itself: the three of
+them, and nothing else in the cohort, must be flagged against GRCh38. A third test asserts that the
+`.vcf` and `.vcf.gz` copies agree, which was the second half of #19 — the pipeline reads the `.gz`,
+so a plain file that disagreed with it was documentation of something untested.

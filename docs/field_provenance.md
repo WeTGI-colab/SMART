@@ -9,15 +9,17 @@ caller's `hotspot` flag was attributed to the wrong resource.
 
 ## The problem this solves
 
-Until now all three came from `Config.yaml`, a file of 423 field definitions maintained by hand.
-A hand-maintained list drifts from what the pipeline actually does:
+Before this, all three came from `Config.yaml` alone — a hand-maintained list of field definitions.
+A hand-maintained list drifts from what the pipeline actually does. **The four figures below are the
+measurements that prompted the change, taken at that time; they are history, not the current
+state.** The current state is in the next section but one.
 
 - `hotspot` was described as a Cancer Hotspots flag, version `changv2`. It is written by the
   variant caller into the input VCF. A clinical scientist reading Tier 3 would have attributed
   it to the wrong database.
 - `FractionInformativeReads` was attributed to Manta. DRAGEN writes it.
 - Six further fields DRAGEN writes had no entry at all.
-- Of 807 columns in a Tier 1 MAF, 475 had no entry.
+- Of the 807 columns in the Tier 1 MAF of the run measured then, 475 had no entry.
 
 None of this was anyone's carelessness. It is what happens to a list that has to be updated by a
 person every time a resource, a caller or a plugin changes.
@@ -56,9 +58,38 @@ gnomAD is more informative and is kept; the version still comes from the run. Wi
 every population-frequency and predictor column would have been relabelled "VEP".
 
 **Columns no VCF describes keep `Config.yaml`.** That is the MAF standard columns, everything
-SMART computes, and the 754 OncoKB MafAnnotator columns, which come from a table and have no
-headers. Their *version*, however, is the OncoKB data version observed in the run: an analysis
-cannot span two OncoKB releases, so the release is a property of the run, not of the tool.
+SMART computes, and the OncoKB MafAnnotator columns, which come from a table and have no
+headers — 848 of the 1,165 Tier 1 columns in the committed `tests/verification1` run resolve to
+source `OncoKB`, so this is the majority of the sheet. Their *version*, however, is the OncoKB data
+version observed in the run: an analysis cannot span two OncoKB releases, so the release is a
+property of the run, not of the tool.
+
+## What it currently resolves
+
+Measured on the committed run under `tests/verification1/output/`, by passing each Tier 1 column
+through `vcf_metadata.resolve()` with that run's own `logs/verification1.vcf_metadata.json`:
+
+| | Count |
+|---|---|
+| Tier 1 columns | 1,165 |
+| resolving to source `OncoKB` (the MafAnnotator table) | 848 |
+| resolving to a named annotation source (VEP, ClinVar, CIViC, gnomAD, CancerHotspots, SpliceAI, COSMIC, CADD, dbNSFP, GENIE, SMART, the input VCF) | 298 |
+| resolving to no source at all | 19 |
+| `Config.yaml` entries behind that: explicit field definitions | 427 |
+| `Config.yaml` entries behind that: wildcard patterns | 36 |
+
+The last two come straight out of the file:
+
+```bash
+python3 -c "import yaml; c=yaml.safe_load(open('Config.yaml')); \
+print(len(c['fields']), 'fields,', len(c['field_patterns']), 'patterns')"
+```
+
+The comparison with "475 of 807 had no entry" is the point of the whole exercise: 19 of 1,165
+columns now resolve to nothing, where 475 of 807 did. The column count itself grows with the
+cohort, because the OncoKB evidence columns are padded to the widest row in a run, which is why
+these figures are stated against a named run rather than in the abstract.
+`tests/verification5/test_docs_claims.py` recomputes them and fails if this table drifts.
 
 ## What is checked
 
