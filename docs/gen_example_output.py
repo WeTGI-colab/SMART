@@ -296,7 +296,7 @@ PAGE = f"""<!DOCTYPE html>
     OncoKB&nbsp;v7.6 &nbsp;&middot;&nbsp; VEP&nbsp;114.0 &nbsp;&middot;&nbsp; GRCh38
     &nbsp;|&nbsp;
     <a href="./">&larr; Field reference</a> &nbsp;&middot;&nbsp;
-    <a href="https://github.com/Manuel-DominguezCBG/SMART">GitHub &nearr;</a>
+    <a href="https://github.com/WeTGI-colab/SMART">GitHub &nearr;</a>
   </p>
 </header>
 
@@ -388,8 +388,8 @@ PAGE = f"""<!DOCTYPE html>
 <footer>
   SMART &middot; Somatic Mutation Annotation and Reporting Tool &middot; University Hospital Southampton<br>
   <a href="./">Field reference</a> &nbsp;&middot;&nbsp;
-  <a href="https://github.com/Manuel-DominguezCBG/SMART">GitHub</a> &nbsp;&middot;&nbsp;
-  <a href="https://github.com/Manuel-DominguezCBG/SMART/blob/main/README.md">Documentation</a>
+  <a href="https://github.com/WeTGI-colab/SMART">GitHub</a> &nbsp;&middot;&nbsp;
+  <a href="https://github.com/WeTGI-colab/SMART/blob/main/README.md">Documentation</a>
 </footer>
 
 <script>

@@ -328,7 +328,7 @@ When `--keep-tmp` is used, intermediate files are retained:
 
 The example below is taken from the [verification1](tests/verification1/) test run — 22 curated variants from a single sample. The variant shown is **IDH1 R132H**, a well-characterised oncogenic hotspot with OncoKB Level 1 actionability in glioma and cholangiocarcinoma.
 
-> **[Browse the full verification1 output interactively →](https://manuel-dominguezcbg.github.io/SMART/example-output.html)**
+> **[Browse the full verification1 output interactively →](https://wetgi-colab.github.io/SMART/example-output.html)**
 > All three tier files (Tier 3: 78 cols · Tier 2: 700 cols · Tier 1: 1,165 cols) rendered as searchable,
 > sortable tables with colour-coded OncoKB levels and per-tier column visibility controls.
 
@@ -447,7 +447,7 @@ Because MafAnnotator does not correctly annotate CNA rows, the pipeline's post-a
 
 > **These results were obtained with the earlier heuristic multi-evidence scorer (v1)**, whose point values were not taken from the SVIG-UK guideline. It has been replaced by the guideline-based [SVIG-UK oncogenicity classifier](#svig-uk-oncogenicity-classifier); re-validation against the same expert classification is pending and these figures will be updated.
 
-SMART's calls were benchmarked against an independent expert classification: the WGLS oncology team manually classified **1,054 onco-related variants across 58 genes** following SVIG-UK. Two classifiers were compared: the current OncoKB-only verdict and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
+SMART's calls were benchmarked against an independent expert classification: the reference laboratory's oncology team manually classified **1,054 onco-related variants across 58 genes** following SVIG-UK. Two classifiers were compared: the current OncoKB-only verdict and an experimental multi-evidence SVIG-UK scorer that also folds in ClinVar, REVEL/SpliceAI, gnomAD frequency, hotspots and gene constraint.
 
 Binary task, positive = geneticist (Likely) Oncogenic:
 
@@ -510,14 +510,14 @@ The v1 multi-evidence scorer used here is kept for reference in `data/jack_list_
 
 ### Class harmonisation
 
-OncoKB, the geneticist (WGLS, 5-class SVIG-UK) and the multi-evidence scorer use
+OncoKB, the geneticist (5-class SVIG-UK) and the multi-evidence scorer use
 different label spaces, so all three were mapped onto a common Oncogenic / VUS / Benign
 scale before comparison:
 
 | Source | → Oncogenic (ONC) | → VUS | → Benign (BEN) |
 |--------|-------------------|-------|----------------|
 | OncoKB-only | `Oncogenic`, `Likely Oncogenic` | `Unknown` / no data | `Likely Neutral`, `Neutral` |
-| Geneticist (`WGLS`) | `Oncogenic`, `Likely Oncogenic` | `VUS` | `Likely Benign`, `Benign` |
+| Geneticist | `Oncogenic`, `Likely Oncogenic` | `VUS` | `Likely Benign`, `Benign` |
 | Multi-evidence | `Oncogenic`, `Likely Oncogenic` | `VUS` | `Likely Benign`, `Benign` |
 
 For the binary metrics, **positive = (Likely) Oncogenic** on both sides.

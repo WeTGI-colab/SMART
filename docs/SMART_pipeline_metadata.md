@@ -8,11 +8,11 @@
 **Pipeline name:** SMART — Somatic Mutation Annotation and Reporting Tool  
 **Version:** 2.1.0 (the single source is the repository's `VERSION` file; the pipeline stamps it
 into the first line of every Tier 1 MAF)  
-**Repository:** https://github.com/Manuel-DominguezCBG/SMART  
+**Repository:** https://github.com/WeTGI-colab/SMART  
 **DOI:** https://doi.org/10.5281/zenodo.20206503  
 **Containerisation:** Docker (`monkiky/smart:2.1.0`; images are published as
 `monkiky/smart:<version>`)  
-**Contact:** Manuel Dominguez — manolo.biomero@gmail.com
+**Contact:** open an issue at https://github.com/WeTGI-colab/SMART/issues
 
 SMART is a Dockerised pipeline for somatic variant annotation and clinical reporting. Starting from
 somatic VCF files, it performs PASS filtering, optional coordinate liftover (hg19 → GRCh38), a REF

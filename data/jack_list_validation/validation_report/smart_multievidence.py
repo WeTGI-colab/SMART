@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SMART multi-evidence (SVIG-UK) classifier vs OncoKB-only vs geneticist (WGLS).
+SMART multi-evidence (SVIG-UK) classifier vs OncoKB-only vs geneticist.
 
 Goal: show how much SMART adds *over raw OncoKB* by combining the other evidence
 columns (ClinVar, REVEL, SpliceAI, gnomAD, hotspots, LOEUF, consequence) using a
@@ -8,7 +8,7 @@ simplified, auditable implementation of the SVIG-UK / ACGS 2025 point system.
 
 Input : output/output/Final_result_tier1.maf
 Output: validation_report/
-          - smart_multievidence_full.tsv   per-variant score, codes, both verdicts, WGLS
+          - smart_multievidence_full.tsv   per-variant score, codes, both verdicts, the geneticist's class
           - rescued_by_multievidence.tsv    OncoKB no-data cases that multi-evidence reclassifies
           - multievidence_summary.md        3-way comparison
 
@@ -19,11 +19,28 @@ NOTE ON SCOPE / LIMITATIONS (stated honestly in the report too):
     context, O11/B7 (tumour phenotype), B2/B5 (gene mode-of-action, repeat region).
   * O2 here does not check TSG status (no gene mode-of-action table), so it is applied
     conservatively and flagged. Thresholds follow the documented framework but the
-    calibration is a v1 approximation, not the certified WGLS pipeline.
+    calibration is a v1 approximation, not the laboratory's certified pipeline.
 """
 import csv
 import os
 from collections import Counter
+
+
+def geneticist_class(row):
+    """The geneticist's class for one row, whatever the input file calls that column.
+
+    The curation export used to name this column after the laboratory, which identified
+    the service in a public repository. Rename it to GENETICIST_CLASS (or GENETICIST, or
+    HUMAN_CLASS) in the export and nothing else needs changing; a file still carrying the
+    old header returns "" here, which the caller reports as an unclassified row rather
+    than failing silently.
+    """
+    for key in ("GENETICIST_CLASS", "GENETICIST", "HUMAN_CLASS"):
+        v = row.get(key)
+        if v not in (None, ""):
+            return v
+    return ""
+
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 INPUT = os.path.join(HERE, "..", "output", "output", "Final_result_tier1.maf")
@@ -196,7 +213,7 @@ def main():
             "ONCOKB_VERDICT": r.get("MY_VERDICT", ""),
             "SMART_MULTI_VERDICT": multi,
             "SMART_SCORE": pts,
-            "WGLS": r.get("WGLS", ""),
+            "GENETICIST_CLASS": geneticist_class(r),
             "EVIDENCE_CODES": ";".join(codes),
         })
 
@@ -212,7 +229,7 @@ def main():
 
     def multi_label(o):
         sp = label3_to_pos(to3(o["SMART_MULTI_VERDICT"]))
-        wp = wgls_pos(o["WGLS"])
+        wp = wgls_pos(geneticist_class(o))
         if sp and wp:           return "TP"
         if (not sp) and (not wp): return "TN"
         if sp and not wp:       return "FP"
@@ -220,7 +237,7 @@ def main():
 
     # leading columns (relevant for the comparison); the rest follow as-is
     lead = ["Hugo_Symbol", "HGVSp_Short", "Consequence", "AGREEMENT",
-            "WGLS", "MY_VERDICT", "TP-TN_FN-FP",
+            "GENETICIST_CLASS", "MY_VERDICT", "TP-TN_FN-FP",
             "SMART_MULTI_VERDICT", "SMART_SCORE", "TP-TN_FN-FP_MULTI",
             "EVIDENCE_CODES"]
     rest = [c for c in orig_fields if c not in lead]
@@ -238,11 +255,11 @@ def main():
             w.writerow(r)
 
     # --- 3-way comparison ---------------------------------------------------
-    okb_pairs = [(o["ONCOKB_VERDICT"] == "Oncogenic", wgls_pos(o["WGLS"])) for o in out_full]
-    multi_pairs = [(label3_to_pos(to3(o["SMART_MULTI_VERDICT"])), wgls_pos(o["WGLS"])) for o in out_full]
+    okb_pairs = [(o["ONCOKB_VERDICT"] == "Oncogenic", wgls_pos(geneticist_class(o))) for o in out_full]
+    multi_pairs = [(label3_to_pos(to3(o["SMART_MULTI_VERDICT"])), wgls_pos(geneticist_class(o))) for o in out_full]
     okb_trip = [(to3({"Oncogenic": "Oncogenic", "VUS": "VUS", "Benign": "Benign"}[o["ONCOKB_VERDICT"]]),
-                 to3(o["WGLS"])) for o in out_full]
-    multi_trip = [(to3(o["SMART_MULTI_VERDICT"]), to3(o["WGLS"])) for o in out_full]
+                 to3(geneticist_class(o))) for o in out_full]
+    multi_trip = [(to3(o["SMART_MULTI_VERDICT"]), to3(geneticist_class(o))) for o in out_full]
 
     okb_cm = confusion(okb_pairs)
     multi_cm = confusion(multi_pairs)
@@ -256,10 +273,10 @@ def main():
     reclassified = [o for o in nodata if o["SMART_MULTI_VERDICT"] not in ("VUS",)]
     to_onc = [o for o in reclassified if o["SMART_MULTI_VERDICT"] in ("Oncogenic", "Likely Oncogenic")]
     to_ben = [o for o in reclassified if o["SMART_MULTI_VERDICT"] in ("Benign", "Likely Benign")]
-    onc_correct = sum(1 for o in to_onc if wgls_pos(o["WGLS"]))
-    ben_match = sum(1 for o in to_ben if to3(o["WGLS"]) == 0)
-    ben_vs_vus = sum(1 for o in to_ben if o["WGLS"] == "VUS")
-    ben_dangerous = sum(1 for o in to_ben if wgls_pos(o["WGLS"]))
+    onc_correct = sum(1 for o in to_onc if wgls_pos(geneticist_class(o)))
+    ben_match = sum(1 for o in to_ben if to3(geneticist_class(o)) == 0)
+    ben_vs_vus = sum(1 for o in to_ben if geneticist_class(o) == "VUS")
+    ben_dangerous = sum(1 for o in to_ben if wgls_pos(geneticist_class(o)))
 
     with open(os.path.join(HERE, "rescued_by_multievidence.tsv"), "w", newline="") as g:
         w = csv.DictWriter(g, fieldnames=list(out_full[0].keys()), delimiter="\t")
@@ -314,7 +331,7 @@ actionable calls needs O4/somatic-frequency data.** See `rescued_by_multievidenc
 
 ## Honesty / limitations
 
-This is a **v1 approximation** of SVIG-UK, not the certified WGLS pipeline:
+This is a **v1 approximation** of SVIG-UK, not the laboratory's certified pipeline:
 - Implemented codes: O2(conservative, no TSG check), O3, O6, O7, O8, O10(OncoKB+ClinVar), B1, B3, B4, B6.
 - Missing (data not in MAF): O4 (GENIE/COSMIC counts — the strongest discriminator), O5, O9, O11, B2, B5, B7.
 - Point thresholds follow the documented framework; calibration is not validated.

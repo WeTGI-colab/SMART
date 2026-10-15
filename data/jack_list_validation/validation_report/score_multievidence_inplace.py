@@ -21,7 +21,7 @@ Scoring scheme (the values we decided — simplified, auditable SVIG-UK / ACGS 2
   NOT implemented (data not in this table): O4 (GENIE/COSMIC somatic counts — the
                strongest discriminator), O5, O9, O11, B2, B5, B7.
   Thresholds follow the documented framework; calibration is a v1 approximation, not the
-  certified WGLS pipeline.
+  certified laboratory pipeline.
 
 Usage:
     python3 score_multievidence_inplace.py            # audit + rewrite in place
@@ -33,6 +33,23 @@ import re
 import sys
 import tempfile
 from collections import Counter
+
+
+def geneticist_class(row):
+    """The geneticist's class for one row, whatever the input file calls that column.
+
+    The curation export used to name this column after the laboratory, which identified
+    the service in a public repository. Rename it to GENETICIST_CLASS (or GENETICIST, or
+    HUMAN_CLASS) in the export and nothing else needs changing; a file still carrying the
+    old header returns "" here, which the caller reports as an unclassified row rather
+    than failing silently.
+    """
+    for key in ("GENETICIST_CLASS", "GENETICIST", "HUMAN_CLASS"):
+        v = row.get(key)
+        if v not in (None, ""):
+            return v
+    return ""
+
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TABLE = os.path.join(HERE, "smart_multievidence_full_annotated.tsv")
@@ -169,7 +186,7 @@ def score_to_5class(pts):
 
 
 def tp_label(verdict, wgls):
-    """Confusion label for one verdict vs the geneticist (WGLS).
+    """Confusion label for one verdict vs the geneticist.
 
     Positive = (likely) oncogenic on BOTH sides. Works for the OncoKB-only verdict
     (MY_VERDICT, whose only oncogenic value is 'Oncogenic') and for the multi-evidence
@@ -189,7 +206,7 @@ def okb_3class(v):
 
 
 def wgls_3class(v):
-    """Geneticist verdict (WGLS) collapsed to ONC / VUS / BEN."""
+    """Geneticist verdict collapsed to ONC / VUS / BEN."""
     return {"Oncogenic": "ONC", "Likely Oncogenic": "ONC", "VUS": "VUS",
             "Likely Benign": "BEN", "Benign": "BEN"}.get(v, "VUS")
 
@@ -235,7 +252,7 @@ def review_candidates(rows, top=20):
     """Print variants SMART called oncogenic but the geneticist did not (OncoKB-only FP),
     deduplicated and ranked by evidence strength. These are the candidates the geneticist
     may want to re-review — strongest first. NOT claims of error: SMART/OncoKB is
-    tumour-agnostic while WGLS is tumour-specific, so a 'general' oncogenic call can be a
+    tumour-agnostic while the geneticist's call is tumour-specific, so a 'general' oncogenic call can be a
     legitimate VUS in this tumour. ClinVar (Likely) Pathogenic is the most independent flag.
     """
     seen, fp = set(), []
@@ -251,13 +268,13 @@ def review_candidates(rows, top=20):
 
     print(f"Candidates for geneticist re-review (SMART oncogenic, geneticist not) — "
           f"{len(fp)} unique, strongest first:")
-    print(f"  {'gene':7} {'variant':14} {'WGLS':14} {'OncoKB':16} "
+    print(f"  {'gene':7} {'variant':14} {'GENETICIST':14} {'OncoKB':16} "
           f"{'ClinVar':24} hot effect")
     for r in fp[:top]:
         hot = "Y" if (r.get("ONCOKB_HOTSPOT") == "TRUE" or
                       r.get("CancerHotspots_HOTSPOT") in ("1", "TRUE", "True")) else "-"
         print(f"  {r.get('Hugo_Symbol',''):7} {r.get('HGVSp_Short',''):14} "
-              f"{r.get('WGLS',''):14} {r.get('ONCOGENIC',''):16} "
+              f"{geneticist_class(r):14} {r.get('ONCOGENIC',''):16} "
               f"{(r.get('ClinVar_CLNSIG','') or '-'):24} {hot}   "
               f"{r.get('MUTATION_EFFECT','')}")
     if len(fp) > top:
@@ -273,10 +290,10 @@ def review_candidates(rows, top=20):
 def confusion_columns(r):
     """Return (okb_label, multi_label): the two TP/TN/FP/FN columns for this row.
 
-    - TP-TN_FN-FP       : OncoKB-only call  (MY_VERDICT)         vs WGLS
-    - TP-TN_FN-FP_MULTI : SMART multi-evidence (SMART_MULTI_VERDICT) vs WGLS
+    - TP-TN_FN-FP       : OncoKB-only call  (MY_VERDICT)         vs the geneticist
+    - TP-TN_FN-FP_MULTI : SMART multi-evidence (SMART_MULTI_VERDICT) vs the geneticist
     """
-    wgls = r.get("WGLS", "")
+    wgls = geneticist_class(r)
     return tp_label(r.get("MY_VERDICT", ""), wgls), tp_label(r.get("SMART_MULTI_VERDICT", ""), wgls)
 
 
@@ -329,9 +346,9 @@ def main():
 
         okb_counts[okb_label] += 1
         multi_counts[multi_label] += 1
-        w3 = wgls_3class(r.get("WGLS", ""))
+        w3 = wgls_3class(geneticist_class(r))
         okb_3x3[(okb_3class(r.get("MY_VERDICT", "")), w3)] += 1
-        multi_3x3[(wgls_3class(verdict), w3)] += 1  # multi verdict shares WGLS label space
+        multi_3x3[(wgls_3class(verdict), w3)] += 1  # multi verdict shares the geneticist's label space
         if r.get("AGREEMENT", "") != "ONCOKB_NO_DATA":  # OncoKB had a call here
             okb_eval_counts[okb_label] += 1
             eval_3x3[(okb_3class(r.get("MY_VERDICT", "")), w3)] += 1
@@ -355,7 +372,7 @@ def main():
     print(f"  TP-TN_FN-FP_MULTI differing from stored  : {changed_multi}")
     print("  EVIDENCE_CODES sum == SMART_SCORE for every row: OK")
     print()
-    print("Confusion vs geneticist (WGLS), positive = (Likely) Oncogenic:")
+    print("Confusion vs geneticist, positive = (Likely) Oncogenic:")
     print(f"  OncoKB-only, all variants        : {line(okb_counts)}")
     print(f"  OncoKB-only, evaluable (has data): {line(okb_eval_counts)}")
     print(f"  Multi-evidence, all variants     : {line(multi_counts)}")

@@ -1229,7 +1229,7 @@ fields:
   hotspot:
     description: 'Known somatic site, used to increase confidence in call. Written by the variant caller into the input
       VCF, not added by SMART; where a run harvests field metadata from its own VCFs this entry
-      is only the fallback. In WGLS runs the caller is DRAGEN, which uses its built-in COSMIC
+      is only the fallback. In our production runs the caller is DRAGEN, which uses its built-in COSMIC
       positions when no hotspot file is supplied; the release behind that default is not stated'
     source: Input VCF (variant caller)
     version: Not versioned by the caller

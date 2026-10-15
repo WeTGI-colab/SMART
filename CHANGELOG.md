@@ -200,6 +200,12 @@ SMART stays an annotation pipeline (Tiers 1–3); classification is a separate o
   haematological / solid tumours, with the most frequent OncoTree codes, patients seen in more
   than one tumour type and the cohort size (`scripts/genie_annotation.py`, enabled when
   `GENIE/genie_o4_counts.tsv.gz` is present; the builder now also writes cohort sizes).
+- **19 links pointed at an account the repository had left behind.** `README.md`,
+  `docs/index.html`, `docs/example-output.html`, `docs/gen_example_output.py` and
+  `docs/SMART_pipeline_metadata.md` still referenced the pre-organisation URL, which returns
+  404 — so the "Browse the full output interactively" link and the Docker badge image had been
+  broken since the move. All repointed at `WeTGI-colab` and verified to return 200.
+
 - **Two of the classifier's four reference lists were missing from the Docker image.** The
   `Dockerfile` copied `svig_uk_canonical_variants.tsv` and
   `svig_uk_vcep_population_thresholds.tsv` and not the rest. The classifier resolves each
@@ -1111,7 +1117,7 @@ SMART stays an annotation pipeline (Tiers 1–3); classification is a separate o
   frame and NMD for canonical splice variants, cryptic-site and first/final-intron
   handling. Frameshifts without a VEP protein change are translated from the genome
   (checked against all 177 VEP-annotated frameshifts in the validation set: 177 identical).
-  On the WGLS set (969 variants) sensitivity rose from 0.664 to 0.724 with no new false
+  On the expert-classified set (969 variants) sensitivity rose from 0.664 to 0.724 with no new false
   positives (in development; not a frozen evaluation). With the O3 CHIP correction, GENIE
   O4 and O5 added below, sensitivity is 0.789 with specificity 0.996 (2 false positives,
   unchanged).
